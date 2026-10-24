@@ -1,0 +1,7 @@
+services:
+  hexaautoparts:
+    build: .
+    container_name: hexaautoparts-lab
+    ports:
+      - "127.0.0.1:3016:3016"
+    restart: "no"

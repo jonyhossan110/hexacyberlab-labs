@@ -1,0 +1,7 @@
+services:
+  hexaelectro:
+    build: .
+    container_name: hexaelectro-lab
+    ports:
+      - "127.0.0.1:3011:3011"
+    restart: "no"

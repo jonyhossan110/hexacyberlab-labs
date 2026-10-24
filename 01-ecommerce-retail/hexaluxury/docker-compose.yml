@@ -1,0 +1,6 @@
+services:
+  hexaluxury:
+    build: .
+    ports:
+      - "127.0.0.1:3013:3013"
+    # Intentionally vulnerable practice lab — local-only binding, never expose.

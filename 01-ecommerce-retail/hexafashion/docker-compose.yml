@@ -1,0 +1,13 @@
+# HexaFashion vulnerable practice lab — INTENTIONALLY INSECURE.
+# Local training only. The port is bound to 127.0.0.1 on the host;
+# never change this to a public interface and never deploy publicly.
+services:
+  hexafashion:
+    build: .
+    container_name: hexafashion-lab
+    ports:
+      - "127.0.0.1:3010:3010"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3010
+    restart: "no"

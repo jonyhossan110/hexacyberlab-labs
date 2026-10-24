@@ -1,0 +1,7 @@
+services:
+  hexamart:
+    build: .
+    container_name: hexamart-lab
+    ports:
+      - "127.0.0.1:3012:3012"
+    restart: "no"

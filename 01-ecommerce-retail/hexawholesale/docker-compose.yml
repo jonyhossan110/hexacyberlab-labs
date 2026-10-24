@@ -1,0 +1,7 @@
+services:
+  hexawholesale:
+    build: .
+    container_name: hexawholesale-lab
+    ports:
+      - "127.0.0.1:3018:3018"
+    restart: "no"

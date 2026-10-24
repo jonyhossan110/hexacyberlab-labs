@@ -1,0 +1,6 @@
+services:
+  hexaforms:
+    build: .
+    ports:
+      - "127.0.0.1:3029:3029"
+    restart: "no"

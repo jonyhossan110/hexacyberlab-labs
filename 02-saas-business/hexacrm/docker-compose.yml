@@ -1,0 +1,7 @@
+services:
+  hexacrm:
+    build: .
+    container_name: hexacrm-lab12
+    ports:
+      - "127.0.0.1:3021:3021"
+    restart: "no"

@@ -1,0 +1,7 @@
+services:
+  hexahr:
+    build: .
+    ports:
+      - "127.0.0.1:3023:3023"
+    volumes:
+      - ./progress.json:/app/progress.json

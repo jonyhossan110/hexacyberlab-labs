@@ -1,0 +1,4 @@
+node_modules/
+progress.json
+*.db
+*.db-journal

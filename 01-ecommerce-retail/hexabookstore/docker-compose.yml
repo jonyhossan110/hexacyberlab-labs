@@ -1,0 +1,7 @@
+services:
+  hexabookstore:
+    build: .
+    container_name: hexabookstore-lab
+    ports:
+      - "127.0.0.1:3017:3017"
+    restart: "no"

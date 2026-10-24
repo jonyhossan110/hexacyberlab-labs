@@ -1,0 +1,106 @@
+# HexaBooking — Vulnerable Appointment-Booking SaaS Practice Lab
+
+**LAB 19 of the HexaCyberLab practice-lab series** (Category 2: SaaS & Business Platforms).
+
+> ⚠️ **SAFETY WARNING — READ FIRST**
+> HexaBooking is an **intentionally vulnerable** training application. It contains real, working security flaws (double-booking, reservation IDOR, price/duration tampering, cookie role forgery and more) **by design**, so you can practise finding and fixing them.
+> - **Local use only.** It binds to `127.0.0.1` by default. **Never deploy it publicly**, never port-forward it, never put it on a shared/cloud server.
+> - **All data is synthetic.** Every user, business, service and reservation is fake. No real credentials are used anywhere.
+> - Practise only on this lab or on systems you own / are authorised to test.
+
+## What it is
+
+A complete, working appointment-booking SaaS in **one zero-dependency Node.js file** (`server.js` — Node built-ins only, no npm packages, no external network calls). Businesses publish services and staff; customers browse, book, pay-status-track and review. Business data lives in memory and is seeded at startup, so **restarting the server resets the business data** — but your **lab progress is saved** (see below) and resumes where you left off.
+
+Business features:
+
+- Register / login / logout with customer, staff, business-owner and platform-admin roles
+- Business directory + search (including one deliberately unlisted business)
+- Services with real prices and durations, per-business staff with schedules and private notes
+- Booking flow: service → staff → date/time slot → promo code → reservation
+- Customer reservation list, detail pages, updates and cancellations
+- Owner dashboard (reservations incl. customer names), service management, staff schedule management
+- Customer reviews per business
+- Platform admin panel and a token-authenticated appointments API
+
+## 🔒 This lab starts LOCKED — the lab key system
+
+The HexaCyberLab labs run **in order**. Lab 19 opens only with the **completion key from Lab 18 (HexaSupport)**:
+
+1. Start the server (below) and open http://127.0.0.1:3028 — you will see the lock screen.
+2. Paste Lab 18's completion key and click **Unlock Lab 19**. The unlock is permanent for this install (it is stored in `progress.json`).
+3. Completing **this** lab 100% reveals **Lab 20's key** on the completion page.
+
+Keys are unguessable and are never written anywhere in plain form — each key exists inside the app only as small transformed fragments scattered through the code, assembled at the moment they are needed (entry key at unlock time; completion key only at 100%). There is no shortcut: the only way to the next lab is through this one.
+
+## 🎯 The test & progress system
+
+- **26 scored security tests** across **8 features** — every vulnerability in `VULNERABILITIES.md` is a test, and the coverage is feature-complete: each feature carries the full set of techniques that apply to it (login alone carries injection bypass, brute force, enumeration, default creds, predictable reset token and cookie tampering).
+- Open **🎯 Tests** (or http://127.0.0.1:3028/tests) to see them grouped by feature, with difficulty, OWASP category and **3 graded hints per test** (reveal them one at a time).
+- **Tests complete by DOING.** There is no "mark done" button — the server detects the exploit actually succeeding (a second active booking in a full slot, a reservation served to the wrong customer, a price the client invented…) and ticks the test off itself.
+- The header bar on every page shows your live progress: tests done / total and %.
+- Progress is stored in `progress.json` in this folder (generated state — safe to delete; deleting it resets progress and re-locks the lab). Close the lab and come back tomorrow — you resume from the same % (e.g. 40%), never from zero.
+
+## 🤖 The Lab Coach chatbot
+
+Every page carries a built-in coach that knows this lab's features, test counts and techniques.
+
+- Ask it what a feature contains, how many tests remain, or who built the labs — it answers freely.
+- **How-to guidance is locked per feature until you have genuinely tried that feature at least 3 times.** Ask earlier and it will refuse and tell you to try first — that struggle is where the learning happens. Passing a test also unlocks its guidance.
+- It does **not** hold the completion key before 100% — asking early gets a refusal. At 100% it will share the key.
+
+## 🏆 Completion
+
+At 100% the lab opens `/complete`: a debrief with total features, per-feature vulnerability counts, the techniques you used, what you learned, what these findings would mean on a real client's website (and the damage they prevent), and how to write each one into a professional client report — plus your completion key for Lab 20. From there, `/certificate` renders a printable completion certificate with the HexaCyberLab logo and your name.
+
+## Run it
+
+**Requirements:** Node.js LTS (v20+).
+
+```bash
+cd hexabooking-vuln-lab
+node server.js
+# open http://127.0.0.1:3028
+```
+
+**Or with Docker:**
+
+```bash
+docker compose up
+# open http://127.0.0.1:3028
+```
+
+Stop with `Ctrl+C`.
+
+## Test accounts
+
+| Role | Email | Password | Notes |
+|---|---|---|---|
+| Platform admin | admin@hexabooking.local | Admin@123 | /admin panel |
+| Business owner | sofia@glowsalon.local | Owner@123 | Glow Salon (business 1) |
+| Business owner | omar@citydental.local | Owner@123 | City Dental (business 2) |
+| Staff | mia@glowsalon.local | Staff@123 | Stylist, Glow Salon |
+| Staff | nina@citydental.local | Staff@123 | Dentist, City Dental |
+| Customer | alice@test.local | alice123 | Has a Dental Checkup booked |
+| Customer | bob@test.local | bob123 | Holds Mia, 2026-10-27 10:00, Haircut |
+
+Promo code: `FIRST20` — "20% off your first booking".
+
+## Reset
+
+- **Progress reset:** delete `progress.json` and restart — the lab re-locks and starts at 0%.
+- **Business data reset:** just restart the server — all businesses, bookings and users return to the seed state.
+
+## Files
+
+- `server.js` — the whole app + lab system
+- `VULNERABILITIES.md` — the 26 scored tests by feature: impact, severity, fix
+- `PRACTICE-GUIDE.md` — the 26 challenges with graded hints and walkthroughs
+- `FIX-AND-RETEST.md` — how to fix each finding and verify the fix
+- `logo.png` — the HexaCyberLab brand logo (certificate + header)
+- `Dockerfile`, `docker-compose.yml` — one-command local setup
+- `progress.json` — your saved progress (generated at runtime; delete to reset)
+
+---
+
+Built by **Md. Jony Hassain, Founder of HexaCyberLab** — for hands-on web penetration-testing practice.

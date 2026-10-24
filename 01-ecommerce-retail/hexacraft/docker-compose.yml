@@ -1,0 +1,7 @@
+services:
+  hexacraft:
+    build: .
+    container_name: hexacraft-lab
+    ports:
+      - "127.0.0.1:3015:3015"
+    restart: "no"

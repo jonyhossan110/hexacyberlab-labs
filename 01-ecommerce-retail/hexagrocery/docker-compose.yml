@@ -1,0 +1,6 @@
+services:
+  hexagrocery:
+    build: .
+    ports:
+      - "127.0.0.1:3014:3014"   # localhost only — never expose this lab
+    restart: "no"
