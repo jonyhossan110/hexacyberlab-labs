@@ -1,0 +1,6 @@
+services:
+  hexabilling:
+    build: .
+    ports:
+      - "127.0.0.1:3057:3057"
+    restart: "no"

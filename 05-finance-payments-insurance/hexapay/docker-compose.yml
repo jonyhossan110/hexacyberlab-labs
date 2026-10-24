@@ -1,0 +1,6 @@
+services:
+  hexapay:
+    build: .
+    ports:
+      - "127.0.0.1:3050:3050"
+    restart: "no"

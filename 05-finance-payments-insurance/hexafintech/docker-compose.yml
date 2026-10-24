@@ -1,0 +1,6 @@
+services:
+  hexafintech:
+    build: .
+    ports:
+      - "127.0.0.1:3053:3053"
+    restart: "no"

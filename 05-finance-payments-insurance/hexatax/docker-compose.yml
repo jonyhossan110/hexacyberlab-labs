@@ -1,0 +1,7 @@
+services:
+  hexatax:
+    build: .
+    container_name: hexatax-lab49
+    ports:
+      - "127.0.0.1:3058:3058"
+    restart: unless-stopped

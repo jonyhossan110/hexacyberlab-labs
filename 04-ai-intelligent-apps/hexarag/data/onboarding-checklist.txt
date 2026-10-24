@@ -1,0 +1,1 @@
+Client onboarding checklist: verify identity, sign MSA, provision workspace, invite team.

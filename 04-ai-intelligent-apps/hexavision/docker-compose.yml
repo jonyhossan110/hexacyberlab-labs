@@ -1,0 +1,7 @@
+services:
+  hexavision:
+    build: .
+    ports:
+      - "127.0.0.1:3042:3042"
+    volumes:
+      - ./progress.json:/app/progress.json

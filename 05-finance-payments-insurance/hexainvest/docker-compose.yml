@@ -1,0 +1,6 @@
+services:
+  hexainvest:
+    build: .
+    container_name: hexainvest-lab45
+    ports:
+      - "127.0.0.1:3054:3054"

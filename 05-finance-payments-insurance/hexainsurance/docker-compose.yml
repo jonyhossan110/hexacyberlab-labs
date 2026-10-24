@@ -1,0 +1,7 @@
+services:
+  hexainsurance:
+    build: .
+    container_name: hexainsurance-lab47
+    ports:
+      - "127.0.0.1:3056:3056"
+    restart: unless-stopped

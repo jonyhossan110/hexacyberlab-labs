@@ -1,0 +1,4 @@
+FORM 1099-INT Interest Income 2025
+Payer: Harbor Savings Bank
+Recipient: Carol Costa  TIN 345-67-8901
+Interest income: 2400

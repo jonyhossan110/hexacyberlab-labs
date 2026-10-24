@@ -1,0 +1,5 @@
+node_modules/
+progress.json
+*.db
+*.log
+.DS_Store

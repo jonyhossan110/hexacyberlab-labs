@@ -1,0 +1,7 @@
+services:
+  hexaresearch:
+    build: .
+    ports:
+      - "127.0.0.1:3043:3043"
+    volumes:
+      - ./progress.json:/app/progress.json

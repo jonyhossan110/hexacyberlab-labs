@@ -1,0 +1,7 @@
+services:
+  hexavoice:
+    build: .
+    ports:
+      - "127.0.0.1:3046:3046"
+    volumes:
+      - ./progress.json:/app/progress.json

@@ -1,0 +1,1 @@
+Index manifest: collections c1..c4 chunked and embedded (simulated).

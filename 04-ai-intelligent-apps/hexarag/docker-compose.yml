@@ -1,0 +1,6 @@
+services:
+  hexarag:
+    build: .
+    ports:
+      - "127.0.0.1:3045:3045"
+    container_name: hexarag-lab36

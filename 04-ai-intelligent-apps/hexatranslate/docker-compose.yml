@@ -1,0 +1,6 @@
+services:
+  hexatranslate:
+    build: .
+    ports:
+      - "127.0.0.1:3047:3047"
+    restart: unless-stopped

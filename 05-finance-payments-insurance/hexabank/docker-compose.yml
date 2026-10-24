@@ -1,0 +1,7 @@
+services:
+  hexabank:
+    build: .
+    ports:
+      - "127.0.0.1:3052:3052"
+    volumes:
+      - ./progress.json:/app/progress.json

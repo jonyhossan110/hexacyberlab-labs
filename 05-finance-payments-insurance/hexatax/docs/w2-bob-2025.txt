@@ -1,0 +1,4 @@
+FORM W-2 Wage and Tax Statement 2025
+Employer: Becker Logistics Inc
+Employee: Bob Becker  TIN 234-56-7890
+Wages: 48000  Federal withholding: 5900

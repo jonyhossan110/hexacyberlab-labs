@@ -1,0 +1,7 @@
+services:
+  hexaloan:
+    build: .
+    ports:
+      - "127.0.0.1:3055:3055"
+    volumes:
+      - ./progress.json:/app/progress.json

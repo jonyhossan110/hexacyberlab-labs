@@ -1,0 +1,7 @@
+services:
+  hexacodeai:
+    build: .
+    ports:
+      - "127.0.0.1:3048:3048"
+    volumes:
+      - ./progress.json:/app/progress.json
