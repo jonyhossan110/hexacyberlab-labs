@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2E7CF6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0D1526"/>
+      <stop offset="1" stop-color="#060912"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="1012" height="1012" rx="118" fill="url(#bg)"/>
+  <rect x="26" y="26" width="972" height="972" rx="104" fill="none" stroke="#2E4066" stroke-width="3"/>
+  <polygon points="512,189 688.7,291 688.7,493 512,595 335.3,493 335.3,291" fill="none" stroke="url(#g)" stroke-width="30"/>
+  <path d="M412,275 L612,275 L612,405 C612,470 560,495 512,510 C464,495 412,470 412,405 Z" fill="url(#g)"/>
+  <text x="512" y="398" font-family="Verdana, Arial, sans-serif" font-size="168" font-weight="bold" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central">H</text>
+  <text x="512" y="712" font-family="Verdana, Arial, sans-serif" font-size="94" font-weight="bold" fill="#FFFFFF" text-anchor="middle">HexaCyberLab</text>
+  <text x="512" y="812" font-family="Verdana, Arial, sans-serif" font-size="57" font-weight="bold" fill="#A78BFA" text-anchor="middle">L A B S</text>
+  <text x="512" y="894" font-family="Verdana, Arial, sans-serif" font-size="33" font-weight="bold" fill="#7E90B4" text-anchor="middle">110 LABS · 2,818 TESTS</text>
+</svg>

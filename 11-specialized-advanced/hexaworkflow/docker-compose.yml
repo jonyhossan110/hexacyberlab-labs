@@ -1,0 +1,6 @@
+services:
+  hexaworkflow:
+    build: .
+    ports:
+      - "127.0.0.1:3118:3118"
+    restart: "no"
