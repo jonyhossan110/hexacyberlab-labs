@@ -1,0 +1,6 @@
+services:
+  hexaagent:
+    build: .
+    ports:
+      - "127.0.0.1:3044:3044"
+    restart: "no"

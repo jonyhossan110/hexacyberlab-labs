@@ -1,0 +1,7 @@
+{
+  "service": "HexaAI platform",
+  "environment": "production",
+  "AI_PROVIDER_KEY": "sk-hexaai-live-9f2e7c1a4b8d03f5",
+  "internal_flag": "HEXAAI{traversal_read_the_platform_config}",
+  "note": "Real deployments keep this outside the web root. This lab keeps it one ../ away from the upload folder."
+}

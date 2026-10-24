@@ -1,0 +1,6 @@
+services:
+  hexaai:
+    build: .
+    ports:
+      - "127.0.0.1:3040:3040"
+    restart: unless-stopped

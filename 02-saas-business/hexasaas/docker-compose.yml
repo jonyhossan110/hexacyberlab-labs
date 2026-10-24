@@ -1,0 +1,8 @@
+# HexaSaaS — LAB 11 (deliberately vulnerable, LOCAL ONLY — never expose publicly)
+services:
+  hexasaas:
+    build: .
+    container_name: hexasaas-lab11
+    ports:
+      - "127.0.0.1:3020:3020"
+    restart: "no"

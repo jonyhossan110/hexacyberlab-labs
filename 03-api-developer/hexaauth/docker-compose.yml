@@ -1,0 +1,6 @@
+services:
+  hexaauth:
+    build: .
+    ports:
+      - "127.0.0.1:3038:3038"
+    restart: unless-stopped

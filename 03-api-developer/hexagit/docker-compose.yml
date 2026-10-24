@@ -1,0 +1,7 @@
+services:
+  hexagit:
+    build: .
+    ports:
+      - "127.0.0.1:3034:3034"
+    volumes:
+      - ./progress.json:/app/progress.json

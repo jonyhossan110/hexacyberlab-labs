@@ -1,0 +1,6 @@
+services:
+  hexapackage:
+    build: .
+    ports:
+      - "127.0.0.1:3039:3039"
+    restart: unless-stopped

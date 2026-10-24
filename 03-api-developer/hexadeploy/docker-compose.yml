@@ -1,0 +1,7 @@
+services:
+  hexadeploy:
+    build: .
+    ports:
+      - "127.0.0.1:3033:3033"
+    volumes:
+      - .:/app

@@ -1,0 +1,6 @@
+services:
+  hexawebhook:
+    build: .
+    ports:
+      - "127.0.0.1:3035:3035"
+    restart: unless-stopped

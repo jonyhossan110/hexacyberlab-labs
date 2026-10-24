@@ -1,0 +1,6 @@
+services:
+  hexamonitor:
+    build: .
+    ports:
+      - "127.0.0.1:3036:3036"
+    restart: "no"
