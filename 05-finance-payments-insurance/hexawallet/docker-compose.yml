@@ -1,0 +1,7 @@
+services:
+  hexawallet:
+    build: .
+    container_name: hexawallet-lab
+    ports:
+      - "127.0.0.1:3051:3051"
+    restart: "no"

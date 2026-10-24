@@ -1,0 +1,2 @@
+Supplementary file for submissions: data dictionary and extended tables.
+This file lives in the files/ folder and is served through /download?file=supp-1.txt.

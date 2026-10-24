@@ -1,0 +1,7 @@
+services:
+  hexafitness:
+    build: .
+    ports:
+      - "127.0.0.1:3076:3076"
+    volumes:
+      - ./progress.json:/app/progress.json

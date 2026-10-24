@@ -1,0 +1,6 @@
+services:
+  hexacare:
+    build: .
+    ports:
+      - "127.0.0.1:3071:3071"
+    container_name: hexacare-lab62

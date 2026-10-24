@@ -1,0 +1,3 @@
+Panoramic X-ray (simulated record)
+Patient: Alice Karim
+Findings: Lower-left molar, periapical radiolucency. Root canal advised.

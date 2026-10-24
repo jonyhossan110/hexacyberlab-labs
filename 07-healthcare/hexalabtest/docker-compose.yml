@@ -1,0 +1,6 @@
+services:
+  hexalabtest:
+    build: .
+    ports:
+      - "127.0.0.1:3073:3073"
+    container_name: hexalabtest-lab64

@@ -1,0 +1,7 @@
+services:
+  hexahealthinsure:
+    build: .
+    ports:
+      - "3079:3079"
+    volumes:
+      - ./progress.json:/app/progress.json

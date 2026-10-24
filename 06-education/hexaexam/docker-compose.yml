@@ -1,0 +1,7 @@
+services:
+  hexaexam:
+    build: .
+    ports:
+      - "127.0.0.1:3062:3062"
+    volumes:
+      - ./progress.json:/app/progress.json

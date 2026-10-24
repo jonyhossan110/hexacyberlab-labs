@@ -1,0 +1,7 @@
+CONFIDENTIAL — EDITORIAL BOARD NOTES (internal only, never for authors/reviewers)
+
+- Paper 1 (Rahman): Reviewer 2 has a conflict of interest — same institution as
+  the author. Reassign before a decision is made.
+- Paper 2 (Carter): desk-reject candidate if benchmarks cannot be reproduced.
+- Budget note: reviewer honoraria for Issue 12 are capped; do not promise more.
+- This file sits OUTSIDE the files/ download folder on purpose.

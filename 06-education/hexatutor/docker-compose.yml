@@ -1,0 +1,7 @@
+services:
+  hexatutor:
+    build: .
+    ports:
+      - "127.0.0.1:3063:3063"
+    volumes:
+      - ./progress.json:/app/progress.json

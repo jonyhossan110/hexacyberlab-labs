@@ -1,0 +1,6 @@
+services:
+  hexakids:
+    build: .
+    ports:
+      - "127.0.0.1:3066:3066"
+    restart: "no"

@@ -1,0 +1,14 @@
+Quantum Error Correction Benchmarks on Noisy Hardware
+Bob Carter, Northgate University
+
+Abstract: A benchmark suite for surface-code decoders running on current noisy
+quantum devices, with a reproducible noise model.
+
+1. Introduction
+Decoder latency dominates logical error rates on today's devices. We benchmark
+six decoders across three hardware backends.
+
+2. Noise model
+We adopt a depolarising model calibrated per backend, described in section 4.
+
+(Full text - training lab seed file.)

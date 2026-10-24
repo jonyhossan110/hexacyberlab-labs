@@ -1,0 +1,8 @@
+services:
+  hexalibrary:
+    build: .
+    container_name: hexalibrary-lab56
+    ports:
+      - "127.0.0.1:3065:3065"
+    volumes:
+      - ./progress.json:/app/progress.json

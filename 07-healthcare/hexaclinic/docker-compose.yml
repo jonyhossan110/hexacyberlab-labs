@@ -1,0 +1,5 @@
+services:
+  hexaclinic:
+    build: .
+    ports:
+      - "127.0.0.1:3070:3070"

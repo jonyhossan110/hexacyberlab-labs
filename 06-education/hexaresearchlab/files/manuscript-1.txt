@@ -1,0 +1,19 @@
+Neural Approaches to Citation Prediction
+Alice Rahman, Dhaka Institute of Technology
+
+Abstract: We study graph neural networks for predicting citation counts of newly
+submitted manuscripts, using the submission graph of a mid-size journal.
+
+1. Introduction
+Citation prediction helps editors triage submissions. We model each manuscript
+as a node in a heterogeneous graph of authors, references and venues.
+
+2. Method
+A two-layer graph attention network encodes the citation graph; a regression
+head predicts the log citation count after 24 months.
+
+3. Dataset
+12,400 manuscripts submitted between 2018 and 2023, split by year. Code and the
+anonymised split definitions are available from the corresponding author.
+
+(Full text - training lab seed file.)

@@ -1,0 +1,11 @@
+Adaptive Interfaces for Low-Literacy Mobile Users
+Bob Carter, Northgate University
+
+Abstract: A longitudinal study of icon-driven interfaces for first-time
+smartphone users, published in the Journal of Applied Computing, Issue 12.
+
+1. Study design
+Sixty participants used three interface variants over eight weeks; task
+completion and error rates were recorded weekly.
+
+(Full text - training lab seed file.)

@@ -1,0 +1,11 @@
+Low-Cost Sensors for River Water Quality Monitoring
+Alice Rahman, Dhaka Institute of Technology
+
+Abstract: Field results from a network of inexpensive sensors deployed across
+three river basins, measuring turbidity, pH and dissolved oxygen.
+
+1. Deployment
+Forty sensor nodes were deployed for nine months; maintenance visits every
+three weeks. Calibration drift is analysed in section 3.
+
+(Full text - training lab seed file.)

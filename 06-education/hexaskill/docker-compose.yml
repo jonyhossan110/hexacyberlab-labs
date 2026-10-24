@@ -1,0 +1,7 @@
+services:
+  hexaskill:
+    build: .
+    container_name: hexaskill-lab58
+    ports:
+      - "127.0.0.1:3067:3067"
+    restart: "no"

@@ -1,0 +1,7 @@
+services:
+  hexaacademy:
+    build: .
+    ports:
+      - "127.0.0.1:3061:3061"
+    volumes:
+      - ./progress.json:/app/progress.json

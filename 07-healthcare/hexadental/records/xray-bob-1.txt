@@ -1,0 +1,3 @@
+Bitewing X-ray (simulated record)
+Patient: Bob Hossain
+Findings: Interproximal caries, upper right premolar.

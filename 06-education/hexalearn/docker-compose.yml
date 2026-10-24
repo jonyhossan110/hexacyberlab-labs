@@ -1,0 +1,6 @@
+services:
+  hexalearn:
+    build: .
+    ports:
+      - "127.0.0.1:3060:3060"
+    container_name: hexalearn-lab51

@@ -1,0 +1,7 @@
+HexaLabTest — Diagnostic Report
+Order #1001
+Patient: Alice Rahman
+Hemoglobin: 13.2 g/dL
+WBC: 6.1 x10^9/L
+HbA1c: 5.4 %
+Reviewed by Dr. Gregory House

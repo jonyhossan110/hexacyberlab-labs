@@ -1,0 +1,3 @@
+THE SILENT STACK
+A simulated ebook file for the HexaLibrary practice lab.
+Chapter 1: The shelves were quiet...

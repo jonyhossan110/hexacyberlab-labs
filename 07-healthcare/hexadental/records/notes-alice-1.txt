@@ -1,0 +1,3 @@
+Clinical notes (simulated record)
+Patient: Alice Karim
+Visit: Cleaning and polish completed. Review in 6 months.
