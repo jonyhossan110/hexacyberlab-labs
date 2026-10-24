@@ -31,6 +31,25 @@ All 110 labs, unlocked and running — one screenshot per lab:
 - **At 100%:** a completion summary (what you tested, what you learned, how each finding translates into real client damage prevented, and how to write it up in a professional report) plus a **certificate** with the HexaCyberLab logo.
 - **Fix & Retest:** every lab ships with a `FIX-AND-RETEST.md` — apply the fixes, re-run the attacks, and confirm each one now fails.
 
+## ⬢ New in v2.0 — the Hexa Gateway
+
+One command now runs the whole programme, and every lab gained a set of professional tools. Start it from the project root:
+
+- **Windows:** `start.ps1`
+- **Linux / macOS / Kali:** `./start.sh`
+- **Anywhere:** `node gateway/server.js`
+
+Then open **http://localhost:4000** — the Gateway dashboard.
+
+1. **🎛 Launcher Dashboard** — all 110 labs in one place: status, port and live progress for each, with Start / Stop / Open. Each lab lives on its own port, so switching labs is like switching websites: change the port in the URL, you are in a different lab.
+2. **📟 Live Server Console** — every lab started through the Gateway logs like a real production server: each request as it arrives, what the server accepted and sent back, and a ★ announcement the moment a test passes. Watch it in the dashboard console or in the terminal window you launched from — this is how you learn what the server actually does when you attack it.
+3. **🐛 Payload Debugger** — inside every lab (toolbar, bottom-left) and at `/hexa/debugger`: paste a payload that failed and it tells you *why* — "your quote breaks here", "this filter ate your tag", "try another encoding". It also captures your recent attempts in that lab automatically. Not the answer — the diagnosis. This is what turns beginners into intermediates.
+4. **📖 Real-World Case Studies** — inside every lab at `/hexa/case-study`, and collected in [`case-studies/`](case-studies/CASE-STUDIES.md): for each vulnerability class, the real company it happened to, the year, what it cost them, and the source. The lab stops being a game and becomes the real world.
+5. **💼 Unlockable Business Skills** — finishing a category at 100% now unlocks a business lesson in the dashboard: what you are selling, scope documents, pricing an audit, talking to clients, proposals & authorization, running the engagement, writing the report, Fix & Retest delivery, getting paid, retainers, and building your brand. The programme is no longer just a place to learn — it is a career ladder. See [`business-skills/`](business-skills/README.md).
+6. **🖥 Kali Terminal** — from the dashboard or any lab's toolbar: a real shell on your own machine in a new browser tab (on Windows, your WSL distros — including Kali — appear automatically). Test the labs the Kali way: `curl`, `nmap`, `sqlmap`, `whatweb` against `http://localhost:<port>`. Plus the full [**Burp Suite Guide**](BURP-SUITE-GUIDE.md): every lab also documents its Burp workflow (Proxy → Repeater → Intruder) in its own README.
+
+> The Gateway binds to **127.0.0.1 only** — it can start programs on your machine, so never expose port 4000 (or any lab port) to a network.
+
 ## How this differs from other vulnerable-app projects
 
 Most well-known training projects put many vulnerabilities inside **one** application. This programme spreads them across **110 complete business applications**, all connected by a single progression system.

@@ -109,3 +109,21 @@ Coupon codes: `ELECTRO10` (10% off), `WELCOME15` (15% off).
 - Local-only defaults; no external network calls; no real credentials anywhere.
 - Synthetic data only. Isolated: runs standalone, shares nothing with other labs.
 - For training with HexaShop / HexaSaaS / HexaAPI / HexaAI in the HexaCyberLab lab series.
+
+## ⬢ Gateway tools for this lab
+
+Run this lab through the **Hexa Gateway** (from the project root: `start.ps1` on Windows, `./start.sh` on Linux/Kali, or `node gateway/server.js`) and you get, inside the lab itself:
+
+- **🖥 Terminal** — a real Kali-style shell in a new tab, aimed at this lab
+- **🐛 Payload Debugger** (`/hexa/debugger`) — paste a failed payload and learn *why* it failed
+- **📖 Real Case** (`/hexa/case-study`) — the real breach behind this lab's vulnerability classes
+- **📟 Live console** — watch every request hit the server and every test pass, in real time
+
+## 🧰 Testing with Burp Suite
+
+Target: `http://localhost:3011`
+
+1. Start Burp Suite → **Proxy** → confirm the listener on `127.0.0.1:8080` is running.
+2. Click **Open browser** in Burp and open `http://localhost:3011` — every request now lands in **Proxy → HTTP history**. (The labs are plain HTTP on localhost, so no CA certificate setup is needed for them.)
+3. Right-click a request → **Send to Repeater** to edit and resend it by hand (change IDs, prices, roles), or **Send to Intruder** to automate attempts such as login brute force.
+4. Full walkthrough with worked examples: [BURP-SUITE-GUIDE.md](../../BURP-SUITE-GUIDE.md) in the project root.

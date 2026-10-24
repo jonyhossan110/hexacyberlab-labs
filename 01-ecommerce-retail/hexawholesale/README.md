@@ -91,3 +91,21 @@ Seed data includes 14 products (one hidden/internal), pre-existing POs `1001–1
 - **Still locked after pasting the key** — check for stray spaces; the key must match exactly. The unlock is saved, so you only paste it once per install.
 - **Login loops back** — allow cookies for `127.0.0.1` in your browser/proxy (sessions are cookie-based; Burp users: keep cookies enabled).
 - **Data looks changed** — someone practised on it. Restart the server to reset the business data.
+
+## ⬢ Gateway tools for this lab
+
+Run this lab through the **Hexa Gateway** (from the project root: `start.ps1` on Windows, `./start.sh` on Linux/Kali, or `node gateway/server.js`) and you get, inside the lab itself:
+
+- **🖥 Terminal** — a real Kali-style shell in a new tab, aimed at this lab
+- **🐛 Payload Debugger** (`/hexa/debugger`) — paste a failed payload and learn *why* it failed
+- **📖 Real Case** (`/hexa/case-study`) — the real breach behind this lab's vulnerability classes
+- **📟 Live console** — watch every request hit the server and every test pass, in real time
+
+## 🧰 Testing with Burp Suite
+
+Target: `http://localhost:3018`
+
+1. Start Burp Suite → **Proxy** → confirm the listener on `127.0.0.1:8080` is running.
+2. Click **Open browser** in Burp and open `http://localhost:3018` — every request now lands in **Proxy → HTTP history**. (The labs are plain HTTP on localhost, so no CA certificate setup is needed for them.)
+3. Right-click a request → **Send to Repeater** to edit and resend it by hand (change IDs, prices, roles), or **Send to Intruder** to automate attempts such as login brute force.
+4. Full walkthrough with worked examples: [BURP-SUITE-GUIDE.md](../../BURP-SUITE-GUIDE.md) in the project root.
