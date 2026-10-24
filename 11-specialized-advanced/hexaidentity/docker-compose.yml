@@ -1,0 +1,6 @@
+services:
+  hexaidentity:
+    build: .
+    ports:
+      - "127.0.0.1:3117:3117"
+    restart: unless-stopped

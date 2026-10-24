@@ -1,0 +1,4 @@
+EVIDENCE FILE EV-4 (simulated, fake data)
+Incident: Phishing wave targeting finance staff
+Sample message headers and the fake landing-page URL list are stored here for the postmortem.
+Training data only.

@@ -1,0 +1,5 @@
+CV - Alice Applicant (SIMULATED - fake data for a local practice lab)
+Email: alice.c@test.local
+Senior Backend Engineer - 8 years experience
+Skills: Node.js, PostgreSQL, distributed systems, API design
+Previous: Lead Engineer, ExampleCorp (fictional)

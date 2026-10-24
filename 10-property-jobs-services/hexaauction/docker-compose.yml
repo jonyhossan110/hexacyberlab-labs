@@ -1,0 +1,7 @@
+services:
+  hexaauction:
+    build: .
+    ports:
+      - "127.0.0.1:3108:3108"
+    volumes:
+      - ./progress.json:/app/progress.json

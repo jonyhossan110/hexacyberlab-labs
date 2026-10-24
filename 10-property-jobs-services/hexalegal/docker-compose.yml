@@ -1,0 +1,7 @@
+services:
+  hexalegal:
+    build: .
+    container_name: hexalegal-lab97
+    ports:
+      - "127.0.0.1:3106:3106"
+    restart: "no"

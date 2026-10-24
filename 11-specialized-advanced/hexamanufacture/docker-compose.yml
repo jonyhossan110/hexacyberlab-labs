@@ -1,0 +1,6 @@
+services:
+  hexamanufacture:
+    build: .
+    ports:
+      - "3113:3113"
+    # Local training lab only — intentional vulnerabilities. Do not expose publicly.

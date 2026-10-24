@@ -1,0 +1,6 @@
+services:
+  hexaenergy:
+    build: .
+    ports:
+      - "127.0.0.1:3115:3115"
+    container_name: hexaenergy-lab106

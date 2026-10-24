@@ -1,0 +1,3 @@
+HexaConsult Deliverable — Engagement 3: Security Posture Review
+Client: Carol Client
+Interim findings (simulated): patching cadence and access review issues.

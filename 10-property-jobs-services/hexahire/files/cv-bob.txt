@@ -1,0 +1,5 @@
+CV - Bob Builder (SIMULATED - fake data for a local practice lab)
+Email: bob.b@test.local
+Backend Developer - 4 years experience
+Skills: JavaScript, REST APIs, testing
+Previous: Developer, SampleSoft (fictional)

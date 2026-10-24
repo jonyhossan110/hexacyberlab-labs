@@ -1,0 +1,3 @@
+HexaConsult Deliverable — Engagement 1: Cloud Migration Assessment
+Client: Alice Client
+Discovery findings (simulated): three legacy workloads, one public storage bucket, MFA gaps.

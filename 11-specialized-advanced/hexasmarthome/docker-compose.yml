@@ -1,0 +1,6 @@
+services:
+  hexasmarthome:
+    build: .
+    ports:
+      - "127.0.0.1:3111:3111"
+    restart: "no"

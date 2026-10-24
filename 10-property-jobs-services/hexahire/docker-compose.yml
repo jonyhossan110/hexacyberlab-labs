@@ -1,0 +1,7 @@
+services:
+  hexahire:
+    build: .
+    container_name: hexahire-lab94
+    ports:
+      - "127.0.0.1:3103:3103"
+    restart: "no"

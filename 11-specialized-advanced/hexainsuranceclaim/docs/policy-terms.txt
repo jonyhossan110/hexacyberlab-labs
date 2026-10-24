@@ -1,0 +1,10 @@
+HexaClaim Insurance — Policy Terms Summary (public)
+---------------------------------------------------
+1. Coverage applies only to the policyholder named on the policy.
+2. Approved claims are paid once, up to the approved payout amount.
+3. Payouts never exceed the amount claimed or the policy coverage limit.
+4. Internal adjuster notes are confidential and never shown to customers.
+5. Evidence files may be reviewed only by the claim owner and staff.
+
+(This public summary is intentionally inconsistent with the training
+build of this application — finding those gaps is the exercise.)

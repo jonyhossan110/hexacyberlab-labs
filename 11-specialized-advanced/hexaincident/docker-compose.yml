@@ -1,0 +1,8 @@
+services:
+  hexaincident:
+    build: .
+    container_name: hexaincident-lab110
+    ports:
+      - "127.0.0.1:3119:3119"
+    volumes:
+      - ./progress.json:/app/progress.json

@@ -1,0 +1,4 @@
+EVIDENCE FILE EV-3 (simulated, fake data) - CONFIDENTIAL
+Incident: Executive mailbox compromise investigation
+Mailbox forensic notes: mailbox of a fictional executive account showed three unknown forwarding rules.
+All names, hosts and addresses in this file are invented for training.

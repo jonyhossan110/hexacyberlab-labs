@@ -1,0 +1,5 @@
+services:
+  hexadirectory:
+    build: .
+    ports:
+      - "127.0.0.1:3109:3109"

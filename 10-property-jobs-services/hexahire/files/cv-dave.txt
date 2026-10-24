@@ -1,0 +1,6 @@
+CV - Dave Data (SIMULATED - fake data for a local practice lab)
+Email: dave.d@test.local
+Data Analyst - 6 years experience
+Skills: SQL, Python, dashboards, statistics
+Previous: Analyst, DemoData Inc. (fictional)
+CONFIDENTIAL: salary expectation and offer details are in the ATS only.

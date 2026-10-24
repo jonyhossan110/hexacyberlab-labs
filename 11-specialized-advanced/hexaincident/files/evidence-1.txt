@@ -1,0 +1,4 @@
+EVIDENCE FILE EV-1 (simulated, fake data)
+Incident: Suspicious outbound traffic from web server
+Packet capture summary: workstation WS-114 opened repeated connections to an unknown external host on port 8443.
+Analyst note: beacon interval approx. 60s. No real data - training lab only.

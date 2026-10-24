@@ -1,0 +1,6 @@
+services:
+  hexastream:
+    build: .
+    ports:
+      - "127.0.0.1:3093:3093"
+    restart: "no"

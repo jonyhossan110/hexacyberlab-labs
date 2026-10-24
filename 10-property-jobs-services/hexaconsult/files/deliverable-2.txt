@@ -1,0 +1,3 @@
+HexaConsult Deliverable — Engagement 2: Q4 Finance Review
+Client: Bob Client
+Controls walkthrough notes (simulated): segregation-of-duties gaps in payments.

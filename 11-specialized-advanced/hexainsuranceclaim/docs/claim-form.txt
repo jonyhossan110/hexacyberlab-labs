@@ -1,0 +1,12 @@
+HexaClaim Insurance — Standard Claim Form (blank template)
+----------------------------------------------------------
+Policyholder name: ______________________
+Policy number:     ______________________
+Date of incident:  ______________________
+Claim type:        [ ] Auto   [ ] Home   [ ] Health
+Description:       ________________________________________
+Amount claimed:    ______________________
+Signature:         ______________________
+
+Submit the completed form together with your evidence files.
+This is a blank public template — it contains no customer data.

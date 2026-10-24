@@ -1,0 +1,7 @@
+services:
+  hexaproperty:
+    build: .
+    container_name: hexaproperty-lab91
+    ports:
+      - "3100:3100"
+    restart: unless-stopped

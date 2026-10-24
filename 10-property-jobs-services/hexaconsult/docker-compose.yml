@@ -1,0 +1,6 @@
+services:
+  hexaconsult:
+    build: .
+    ports:
+      - "127.0.0.1:3107:3107"
+    restart: "no"
