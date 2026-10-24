@@ -1,0 +1,6 @@
+services:
+  hexatravel:
+    build: .
+    ports:
+      - "127.0.0.1:3080:3080"
+    restart: unless-stopped

@@ -1,0 +1,7 @@
+services:
+  hexahotel:
+    build: .
+    container_name: hexahotel-lab72
+    ports:
+      - "127.0.0.1:3081:3081"
+    restart: "no"

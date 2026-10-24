@@ -1,0 +1,3 @@
+HexaPharma returns information (simulated).
+Unopened OTC items may be returned within 14 days.
+Prescription items cannot be returned once dispensed.

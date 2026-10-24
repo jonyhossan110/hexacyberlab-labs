@@ -1,0 +1,7 @@
+services:
+  hexamusic:
+    build: .
+    ports:
+      - "127.0.0.1:3095:3095"
+    volumes:
+      - ./progress.json:/app/progress.json

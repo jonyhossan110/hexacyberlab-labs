@@ -1,0 +1,6 @@
+services:
+  hexacreator:
+    build: .
+    container_name: hexacreator-lab87
+    ports:
+      - "3096:3096"

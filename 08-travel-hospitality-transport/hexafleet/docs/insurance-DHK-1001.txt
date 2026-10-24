@@ -1,0 +1,6 @@
+INSURANCE POLICY (simulated — fake data)
+Policy no: INS-2026-1001
+Vehicle: DHK-1001 Toyota Hilux
+Insurer: Example Mutual Insurance (fictional)
+Coverage: Comprehensive
+Valid: 2026-01-01 to 2026-12-31

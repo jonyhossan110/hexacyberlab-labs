@@ -1,0 +1,6 @@
+services:
+  hexapodcast:
+    build: .
+    container_name: hexapodcast-lab85
+    ports:
+      - "3094:3094"

@@ -1,0 +1,7 @@
+VEHICLE REGISTRATION CERTIFICATE (simulated — fake data)
+Plate: DHK-1001
+Vehicle: Toyota Hilux (Pickup)
+Registered owner: HexaFleet Operations Ltd
+Chassis (fake): MR0FZ29G000000001
+Registration year: 2024
+Status: Active

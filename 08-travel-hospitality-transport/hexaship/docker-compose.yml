@@ -1,0 +1,6 @@
+services:
+  hexaship:
+    build: .
+    ports:
+      - "127.0.0.1:3085:3085"
+    restart: "no"

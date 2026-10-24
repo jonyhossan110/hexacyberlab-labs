@@ -1,0 +1,6 @@
+services:
+  hexaride:
+    build: .
+    ports:
+      - "127.0.0.1:3083:3083"
+    container_name: hexaride-lab74

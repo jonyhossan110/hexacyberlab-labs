@@ -1,0 +1,7 @@
+services:
+  hexacommunity:
+    build: .
+    container_name: hexacommunity-lab
+    ports:
+      - "127.0.0.1:3099:3099"
+    restart: "no"

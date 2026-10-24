@@ -1,0 +1,6 @@
+services:
+  hexarestaurant:
+    build: .
+    ports:
+      - "127.0.0.1:3089:3089"
+    container_name: hexarestaurant-lab80

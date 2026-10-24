@@ -1,0 +1,7 @@
+VEHICLE REGISTRATION CERTIFICATE (simulated — fake data)
+Plate: DHK-1002
+Vehicle: Ford Transit (Van)
+Registered owner: HexaFleet Operations Ltd
+Chassis (fake): WF0XXXTTGX0000002
+Registration year: 2023
+Status: Active

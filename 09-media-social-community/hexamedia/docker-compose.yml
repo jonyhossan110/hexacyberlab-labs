@@ -1,0 +1,6 @@
+services:
+  hexamedia:
+    build: .
+    ports:
+      - "127.0.0.1:3092:3092"
+    container_name: hexamedia-lab83

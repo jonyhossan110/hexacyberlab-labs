@@ -1,0 +1,6 @@
+services:
+  hexatelemed:
+    build: .
+    ports:
+      - "127.0.0.1:3075:3075"
+    restart: "no"

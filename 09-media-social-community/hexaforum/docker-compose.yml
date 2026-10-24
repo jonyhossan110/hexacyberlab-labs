@@ -1,0 +1,6 @@
+services:
+  hexaforum:
+    build: .
+    ports:
+      - "127.0.0.1:3091:3091"
+    container_name: hexaforum-lab82

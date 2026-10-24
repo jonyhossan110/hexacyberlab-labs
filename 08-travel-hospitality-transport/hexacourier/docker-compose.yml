@@ -1,0 +1,6 @@
+services:
+  hexacourier:
+    build: .
+    container_name: hexacourier-lab77
+    ports:
+      - "3086:3086"

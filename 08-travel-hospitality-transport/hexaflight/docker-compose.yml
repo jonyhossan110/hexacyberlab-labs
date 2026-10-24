@@ -1,0 +1,7 @@
+services:
+  hexaflight:
+    build: .
+    ports:
+      - "3082:3082"
+    volumes:
+      - ./progress.json:/app/progress.json

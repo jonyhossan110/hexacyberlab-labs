@@ -1,0 +1,6 @@
+services:
+  hexapharma:
+    build: .
+    container_name: hexapharma-lab63
+    ports:
+      - "127.0.0.1:3072:3072"

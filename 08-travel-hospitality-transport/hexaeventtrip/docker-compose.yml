@@ -1,0 +1,6 @@
+services:
+  hexaeventtrip:
+    build: .
+    ports:
+      - "127.0.0.1:3088:3088"
+    container_name: hexaeventtrip-lab79

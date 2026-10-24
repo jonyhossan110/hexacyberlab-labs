@@ -1,0 +1,7 @@
+VEHICLE REGISTRATION CERTIFICATE (simulated — fake data)
+Plate: DHK-1003
+Vehicle: Mitsubishi Fuso (Truck)
+Registered owner: HexaFleet Operations Ltd
+Chassis (fake): JL7BCE1J400000003
+Registration year: 2022
+Status: Active

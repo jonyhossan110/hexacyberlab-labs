@@ -1,0 +1,7 @@
+services:
+  hexafleet:
+    build: .
+    ports:
+      - "127.0.0.1:3084:3084"
+    volumes:
+      - .:/app

@@ -1,0 +1,6 @@
+services:
+  hexachat:
+    build: .
+    ports:
+      - "127.0.0.1:3098:3098"
+    restart: "no"
