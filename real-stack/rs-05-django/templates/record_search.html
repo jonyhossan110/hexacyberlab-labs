@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Record Search{% endblock %}
+{% block content %}
+<h1>Search records</h1>
+<p class="muted">The clinic's original search page — it looks across titles and clinical notes.</p>
+<form method="get" class="searchbar"><input name="q" value="{{ q }}" placeholder="Try: ECG, diabetes, knee…"><button>Search</button></form>
+{% if q %}<p class="muted">{{ results|length }} result(s)</p>
+{% for r in results %}<div class="review"><a href="/records/{{ r.id }}/"><b>{{ r.title }}</b></a><p>{{ r.body|truncatechars:160 }}</p><p class="muted">Patient #{{ r.patient_id }}</p></div>{% endfor %}{% endif %}
+{% endblock %}

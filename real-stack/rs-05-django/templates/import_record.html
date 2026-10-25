@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Import a record{% endblock %}
+{% block content %}
+<h1>Import a record from another clinic</h1>
+<p>Moved to HexaClinic from another provider? Paste the URL of your exported record and the portal will fetch and attach it to your file.</p>
+{% if message %}<p class="ok">{{ message }}</p>{% endif %}
+<form method="post" class="form">{% csrf_token %}
+<label>Record URL<input name="url" placeholder="https://other-clinic.example/records/export/123" required></label>
+<button>Fetch and import</button></form>
+{% if fetched %}<h2>What the server fetched</h2><pre class="log">{{ fetched|truncatechars:3000 }}</pre>{% endif %}
+{% endblock %}

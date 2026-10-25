@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<section class="hero"><h1>Your care team, one login away</h1>
+<p>Book and manage appointments, read your records and lab results, and message your doctor — HexaClinic's patient portal since 2021.</p>
+{% if not portal_user %}<p><a href="/register/">Register as a patient</a> · <a href="/login/">Log in</a></p>{% endif %}
+</section>
+<h2>Our doctors</h2>
+<div class="grid">
+{% for d in doctors %}<div class="card"><h3>Dr. {{ d.get_full_name }}</h3><p>{{ d.profile.specialty }}</p><p class="muted">{{ d.email }}</p></div>{% endfor %}
+</div>
+<p class="muted">Reception: +46 31 555 0100 · Lorensberg, Gothenburg · Open Mon–Fri 08:00–17:00</p>
+{% endblock %}

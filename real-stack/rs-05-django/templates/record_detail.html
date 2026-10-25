@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Record #{{ record.id }}{% endblock %}
+{% block content %}
+<h1>{{ record.title }}</h1>
+<p class="muted">Patient: {{ record.patient.get_full_name }} ({{ record.patient.email }}) · Doctor: Dr. {{ record.doctor.get_full_name }} · {{ record.created_at|date:"Y-m-d H:i" }}</p>
+<h2>Clinical note</h2>
+{# The care team asked for "rich formatting" in notes. The developer
+   reached for |safe — Django's autoescaping switched off by hand. #}
+<div class="notebody">{{ record.body|safe }}</div>
+{% if record.attachment %}<p>Attachment: <a href="/media/download/?file={{ record.attachment }}">{{ record.attachment }}</a></p>{% endif %}
+<h2>Messages</h2>
+{% for m in record.messages.all %}<div class="review"><b>{{ m.author.get_full_name|default:m.author.username }}</b> <span class="muted">{{ m.created_at|date:"Y-m-d H:i" }}</span><p>{{ m.body|safe }}</p></div>{% empty %}<p class="muted">No messages yet.</p>{% endfor %}
+<form method="post" class="form">{% csrf_token %}
+<label>Add a message to this record<textarea name="body" required></textarea></label>
+<button>Send message</button></form>
+{% endblock %}

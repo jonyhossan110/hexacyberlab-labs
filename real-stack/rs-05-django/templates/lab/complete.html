@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Complete{% endblock %}
+{% block content %}
+<h1>🏁 RS-05 — {{ done_n }}/{{ total }} tests</h1>
+{% if done_n < total %}
+<p>Not complete yet. Still open:</p>
+<ul>{% for t in tests_def %}{% if not t.passed %}<li>{{ t.name }}</li>{% endif %}{% endfor %}</ul>
+<p><a href="/lab/tests">Open the test list with hints</a></p>
+{% else %}
+<div class="cert"><h2>🎓 Real Stack Milestone RS-05 — Complete</h2>
+<p>Django, tested like a professional: black-box first, code review second, one finding written up — and one password hash actually cracked.</p>
+<p>Completion code: <b>{{ code }}</b></p></div>
+<h2>Fix-the-code debrief</h2>
+{% for title, code_text in fixes %}<div class="fix"><b>{{ title }}</b><pre>{{ code_text }}</pre></div>{% endfor %}
+<h2>Business impact — what HexaClinic was risking</h2>
+<p>A clinic portal holds the most sensitive category of personal data there is. This one let any patient read every other patient's record by changing a number, let stored markup run in a doctor's browser, kept every password as a fast MD5 hash, and guarded the whole database with an admin password from the install runbook. In business language: a reportable health-data breach, regulator sanctions, and the end of the clinic's reputation — caused not by Django failing, but by a team switching off, one by one, the protections they chose it for.</p>
+{% endif %}
+<h2>🔓 Prove the password storage is broken</h2>
+<p class="muted">Find any stored password hash inside the app (your profile page shows yours, straight from the users table) — it begins with the hasher's name. Crack it offline and submit the plaintext here; the server checks your answer against the real stored hashes of MD5-configured accounts.</p>
+{% if crack_msg %}<p class="ok">{{ crack_msg }}</p>{% endif %}
+<form method="post" class="form">{% csrf_token %}<input type="hidden" name="do" value="crack">
+<label>Cracked plaintext password<input name="plaintext" placeholder="e.g. the password behind a hash you found"></label>
+<button>Submit plaintext</button></form>
+<h2>✍ Mini report — one professional finding</h2>
+{% if report_msg %}<p class="ok">{{ report_msg }}</p>{% endif %}
+<form method="post" class="form">{% csrf_token %}<input type="hidden" name="do" value="report">
+<label>Finding title<input name="title" placeholder="e.g. Patient records readable by any logged-in patient (IDOR)" required></label>
+<label>Severity<select name="severity"><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+<label>Evidence — what you sent and what came back<textarea name="evidence" required></textarea></label>
+<label>Business impact — money, customers, trust<textarea name="impact" required></textarea></label>
+<label>Recommended fix<textarea name="fix" required></textarea></label>
+<button>Submit finding</button></form>
+{% endblock %}

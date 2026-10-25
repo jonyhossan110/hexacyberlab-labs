@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1>Your profile</h1>
+{% if message %}<p class="ok">{{ message }}</p>{% endif %}
+<form method="post" class="form">{% csrf_token %}
+{{ form.as_p }}
+<button>Save profile</button></form>
+<h2>Account details</h2>
+<p>Username: <b>{{ portal_user.username }}</b> · Staff: {{ portal_user.is_staff }} · Admin: {{ portal_user.is_superuser }}</p>
+<p class="muted">Legacy sync hash (read-only, shown for the old portal migration):<br><code>{{ portal_user.password }}</code></p>
+{% endblock %}

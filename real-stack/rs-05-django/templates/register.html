@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<h1>Register as a patient</h1>
+{% if error %}<p class="err">{{ error }}</p>{% endif %}
+<form method="post" class="form">{% csrf_token %}
+<label>Username<input name="username" required></label>
+<label>First name<input name="first_name"></label>
+<label>Last name<input name="last_name"></label>
+<label>Email<input name="email" type="email"></label>
+<label>Password<input name="password" type="password" required></label>
+<button>Create my account</button></form>
+{% endblock %}

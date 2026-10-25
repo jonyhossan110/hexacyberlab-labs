@@ -1,0 +1,6 @@
+HexaClinic — Laboratory result (fictional)
+Patient: Amelia Hart
+Panel: Full blood count + thyroid
+Haemoglobin: 132 g/L
+TSH: 2.1 mIU/L
+All values within reference range.

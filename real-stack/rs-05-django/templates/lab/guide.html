@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Real Website Guide{% endblock %}
+{% block content %}
+<h1>📖 Real Website Guide — recognising Django</h1>
+<h2>Fingerprint drill — prove it is Django before you test</h2>
+<ul>
+<li><b>Cookies:</b> <code>sessionid</code> and <code>csrftoken</code> are Django's defaults, set before you even log in.</li>
+<li><b>The admin:</b> <code>/admin/</code> answers with Django's unmistakable login page ("Django administration").</li>
+<li><b>Error pages:</b> with DEBUG on, the yellow technical page names the URLconf, the exception and the settings module — the framework introducing itself.</li>
+<li><b>Form fields:</b> a hidden <code>csrfmiddlewaretoken</code> input in every honest form; its absence somewhere is a finding, not a detail.</li>
+<li><b>Password format:</b> Django stores <code>algorithm$salt$hash</code> — the algorithm prefix tells you the hasher that was configured when the password was set.</li>
+<li><b>WhatWeb:</b> <code>whatweb http://localhost:3205</code> names Django, its session cookie and the admin route in seconds.</li>
+</ul>
+<h2>What to test first on a real Django site</h2>
+<ol>
+<li><b>Settings, not code:</b> DEBUG, ALLOWED_HOSTS, the first entry of PASSWORD_HASHERS, a SECRET_KEY you can find in a leaked repo. Django's defaults are strong; deployments are not.</li>
+<li><b>Every place the ORM was bypassed:</b> raw(), extra(), RawSQL — search pages and "legacy reports" are the usual suspects.</li>
+<li><b>Templates with |safe, mark_safe or autoescape off</b> — the framework's main XSS defence, disabled by hand.</li>
+<li><b>ModelForms:</b> fields lists that include privilege attributes (is_staff, role, balance) reused on public pages.</li>
+<li><b>@csrf_exempt</b> — grep for it in any source you receive; every hit on a state-changing view is a report line.</li>
+<li><b>/admin/ hygiene:</b> default or install-day credentials, no MFA, reachable from the internet.</li>
+<li><b>Login behaviour:</b> does the session key change at login? Django's auth.login() cycles it — a hand-rolled login often does not.</li>
+</ol>
+<h2>Burp workflow for this lab</h2>
+<p>Proxy the portal and map it with the site map. Keep two browsers (or two cookie jars) — patient and doctor — to feel the IDOR and the |safe message properly. Work the record search in <b>Repeater</b>: compare a normal query against a tautology and watch whose records come back. Send the appointment-cancel POST from <b>Repeater</b> with the token stripped and no Referer. Note your <code>sessionid</code> cookie before and after login in <b>Comparer</b>. The debug page you trigger on a malformed record URL is worth a screenshot for your report — it is the finding, verbatim.</p>
+<h2>The professional habit</h2>
+<p>Django findings read best as "the framework already prevents this; the deployment switched it off" — with the setting or the line as evidence. The Complete page will ask you to write one up properly, and to prove the MD5 finding by actually cracking a hash.</p>
+{% endblock %}

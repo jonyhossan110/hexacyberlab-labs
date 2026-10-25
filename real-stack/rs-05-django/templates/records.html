@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Records{% endblock %}
+{% block content %}
+<h1>Medical records</h1>
+{% for r in records %}<div class="review"><a href="/records/{{ r.id }}/"><b>#{{ r.id }} — {{ r.title }}</b></a><p class="muted">Patient: {{ r.patient.get_full_name }} · Doctor: Dr. {{ r.doctor.get_full_name }} · {{ r.created_at|date:"Y-m-d H:i" }}</p></div>{% empty %}<p>No records visible.</p>{% endfor %}
+{% endblock %}

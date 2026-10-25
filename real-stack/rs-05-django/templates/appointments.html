@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Appointments{% endblock %}
+{% block content %}
+<h1>Appointments</h1>
+<table><tr><th>Date</th><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th><th></th></tr>
+{% for a in appointments %}<tr><td>{{ a.date }}</td><td>{{ a.time }}</td><td>{{ a.patient.get_full_name }}</td><td>Dr. {{ a.doctor.get_full_name }}</td><td>{{ a.reason }}</td><td>{{ a.status }}</td>
+<td>{% if a.status == 'scheduled' %}<form method="post" action="/appointments/{{ a.id }}/cancel/"><button>Cancel</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="7">No appointments.</td></tr>{% endfor %}
+</table>
+<p class="muted">Cancellation posts straight to the appointment endpoint — the clinic's mobile app uses the same one.</p>
+{% endblock %}

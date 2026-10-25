@@ -1,0 +1,5 @@
+HexaClinic — Imaging request (fictional)
+Patient: Leo Weber (guardian: Jonas Weber)
+Study: Chest X-ray, two views
+Clinical question: persistent cough, 3 weeks
+Requested by: Dr. Priya Nair

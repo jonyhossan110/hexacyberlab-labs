@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Hei, {{ portal_user.get_full_name|default:portal_user.username }}</h1>
+<p class="muted">Signed in as {{ portal_user.email }} · role: {{ role }}</p>
+<h2>{% if role == 'patient' %}Your upcoming appointments{% else %}Clinic appointments{% endif %}</h2>
+<table><tr><th>Date</th><th>Time</th><th>{% if role == 'patient' %}Doctor{% else %}Patient{% endif %}</th><th>Reason</th><th>Status</th></tr>
+{% for a in appointments %}<tr><td>{{ a.date }}</td><td>{{ a.time }}</td><td>{% if role == 'patient' %}Dr. {{ a.doctor.get_full_name }}{% else %}{{ a.patient.get_full_name }}{% endif %}</td><td>{{ a.reason }}</td><td>{{ a.status }}</td></tr>{% empty %}<tr><td colspan="5">No appointments.</td></tr>{% endfor %}
+</table>
+<h2>{% if role == 'patient' %}Your recent records{% else %}Recent records{% endif %}</h2>
+{% for r in records %}<div class="review"><a href="/records/{{ r.id }}/"><b>{{ r.title }}</b></a><p class="muted">{{ r.patient.get_full_name }} · Dr. {{ r.doctor.get_full_name }} · {{ r.created_at|date:"Y-m-d" }}</p></div>{% empty %}<p>No records yet.</p>{% endfor %}
+<p><a href="/records/search/">Search records</a> · <a href="/records/import/">Import a record from another clinic</a></p>
+{% endblock %}

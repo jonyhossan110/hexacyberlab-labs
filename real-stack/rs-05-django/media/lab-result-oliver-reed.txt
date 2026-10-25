@@ -1,0 +1,7 @@
+HexaClinic — Laboratory result (fictional)
+Patient: Oliver Reed
+Panel: Lipid profile + fasting glucose
+LDL cholesterol: 3.1 mmol/L (high)
+HDL cholesterol: 1.1 mmol/L
+Fasting glucose: 5.4 mmol/L
+Note: repeat panel in 3 months.
