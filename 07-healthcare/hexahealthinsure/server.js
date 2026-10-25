@@ -604,7 +604,9 @@ const server = http.createServer(async (req, res) => {
     /* ---------- everything below needs a session (except the platform routes) ---------- */
     const user = currentUser(req);
     const publicApi = pathname === '/debug' || pathname === '/api/claims';
-    if (!user && !publicApi) { redirect(res, '/login'); return; }
+    /* completion pages stay reachable without a login: the key and certificate must not be locked behind an app session */
+    const completionRoute = pathname === '/complete' || pathname === '/certificate' || pathname === '/setname';
+    if (!user && !publicApi && !completionRoute) { redirect(res, '/login'); return; }
     const er = effectiveRole(req, user);
 
     if (pathname === '/' && method === 'GET') {
@@ -979,7 +981,7 @@ const server = http.createServer(async (req, res) => {
       inner += '<h3>Your completion key</h3><p>Use this key to unlock LAB ' + (LAB_NUMBER + 1) + ':</p>' +
         '<div style="background:#1d1d28;color:#8f8;border-radius:8px;padding:14px;font-family:monospace;font-size:17px;text-align:center">' + esc(completionKey()) + '</div>';
       inner += '<h3>Certificate</h3><form method="POST" action="/setname">Your name for the certificate<br>' +
-        '<input name="testerName" value="' + esc(state.testerName || user.name) + '" style="padding:8px;width:60%"> <button>Save &amp; view certificate</button></form>' +
+        '<input name="testerName" value="' + esc(state.testerName || (user ? user.name : '')) + '" style="padding:8px;width:60%"> <button>Save &amp; view certificate</button></form>' +
         '<p><a href="/certificate">Open the certificate</a></p>';
       send(res, 200, page(user, 'Completion summary', inner));
       return;
@@ -989,7 +991,7 @@ const server = http.createServer(async (req, res) => {
         send(res, 200, page(user, 'Certificate', '<h2>Certificate locked</h2><p>Complete 100% of the tests first — you are at ' + Math.floor(doneCount() / TESTS.length * 100) + '%.</p>'));
         return;
       }
-      const name = state.testerName || user.name;
+      const name = state.testerName || (user ? user.name : 'Tester');
       const date = state.completedAt ? state.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
       const cert = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ' + LAB_NUMBER + '</title>' +
         '<style>@media print{body{background:#fff}}</style></head><body style="margin:0;background:#14141d;font-family:Georgia,serif">' +
