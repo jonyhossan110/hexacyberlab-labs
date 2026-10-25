@@ -30,7 +30,7 @@ const STATE_FILE = path.join(DIR, 'progress.json');
 const FILES_DIR = path.join(DIR, 'files');
 
 /* Key shards — region 1 of 4 (entry key, pieces 1-3). */
-const _E1 = ["TC1YSA==","Ui0zNg==","TllJOQ=="];
+
 function _asm(a) { return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
 
 /* ============================ SEED DATA (all fake) ============================ */
@@ -262,8 +262,10 @@ const TESTS = [
 ];
 
 /* Key shards — region 2 of 4 (entry key, pieces 4-6). */
-const _E2 = ["LUZKOQ==","SDlGTA==","TFFUUg=="];
-function entryKey() { return _asm(_E1.concat(_E2)); }
+
+const ENTRY_KEY_SHA256 = '0b60af4dbec7b9484d20fc6c551261e1548177b20939527aa2f0d0357b7d5fc3';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 function pass(id) {
   const s = S();
@@ -1055,7 +1057,7 @@ async function handleRequest(req, res) {
     if (!S().unlocked) {
       if (pathName === '/unlock' && method === 'POST') {
         const { form } = await readBody(req);
-        if (String(form.key || '') === entryKey()) { S().unlocked = true; save(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(form.key || ''))) { S().unlocked = true; save(); return redirect(res, '/'); }
         return send(res, 403, gatePage(req, 'That key was not accepted.'));
       }
       return send(res, 200, gatePage(req, null));

@@ -13,7 +13,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- courier network tuning constants (region 1) ---- */
-const _EA = ["TC1YSA==", "Vi03Nw=="];
+
 
 /* ================= TESTS registry ================= */
 const TESTS = [
@@ -201,7 +201,7 @@ function zoneById(id) { return ZONES.find(z => z.id === id) || ZONES[0]; }
 function feeFor(zoneId, weightKg) { return zoneById(zoneId).fee + 20 * Number(weightKg || 0); }
 
 /* ---- regional depot config (region 2) ---- */
-const _EB = ["WTRXRw==", "LURQOQ=="];
+
 
 /* ================= seed data (all fake) ================= */
 let nextUserId = 8, nextParcelId = 7;
@@ -270,7 +270,7 @@ function parseBody(req, raw) {
 }
 
 /* ---- hub routing table (region 3) ---- */
-const _EC = ["NVRWSA==", "UUwxSQ=="];
+
 
 /* ================= HTML shell ================= */
 function chatWidget() {
@@ -549,7 +549,9 @@ function certificatePage(user) {
 /* ---- south hub config (region 4) ---- */
 const _CA = ["TC1YSA==", "MS04Nw=="];
 function _unshard(s) { return Buffer.from(s, 'base64').toString('utf8').split('').reverse().join(''); }
-function entryKey() { return _EA.concat(_EB, _EC).map(_unshard).join(''); }
+const ENTRY_KEY_SHA256 = '728f248b16b78db238cf5e308ac714a4eaf3051bdc9067d676d5395d3bc3d908';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _CA.concat(_CB, _CC).map(_unshard).join(''); }
 
 /* ================= Lab Coach (chatbot) ================= */
@@ -642,7 +644,7 @@ async function handle(req, res) {
   }
   if (p === '/unlock' && method === 'POST') {
     const body = parseBody(req, await readBody(req));
-    if (String(body.key || '') === entryKey()) {
+    if (entryKeyMatches(String(body.key || ''))) {
       progress.unlocked = true; saveProgress();
       return redirect(res, '/');
     }

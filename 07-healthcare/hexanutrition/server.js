@@ -15,7 +15,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material, part 1 of 2 (encoded shards only — see assembler below) ---- */
-const _kA = ["TC1YSA==", "Qy04Ng==", "U1RPNg=="];
+
 const _kC = ["TC1YSA==", "UC05Ng==", "T1dWMw=="];
 
 /* ============================== SEED DATA (all fake) ============================== */
@@ -225,10 +225,12 @@ const TESTS = [
 ];
 
 /* ---- key material, part 2 of 2 (scattered far from part 1 on purpose) ---- */
-const _kB = ["LTJOVw==", "M01DSQ==", "VkM5WA=="];
+
 const _kD = ["LVhFOA==", "VkZGVg==", "Tk41Rw=="];
 function _unshard(a) { return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _unshard(_kA.concat(_kB)); }
+const ENTRY_KEY_SHA256 = '92df4cb20dbf25933ba31cd660d9a445dbbf98a8a33db2457b5242d202231828';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_kC.concat(_kD)); }
 
 /* ============================== PROGRESS ENGINE ============================== */
@@ -498,7 +500,7 @@ const server = http.createServer(async (req, res) => {
     if (!state.unlocked) {
       if (pathname === '/unlock' && method === 'POST') {
         const body = await readBody(req);
-        if (String(body.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(body.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
         return send(res, 403, 'Invalid key — access denied.');
       }
       return send(res, 200, gatePage());

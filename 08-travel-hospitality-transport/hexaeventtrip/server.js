@@ -18,7 +18,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material, fragment set A (never a whole key in this file) ---- */
-const _kfA = ['TC1YSA==', 'SS05Nw==', 'SFdFVg=='];
+
 const _kfC = ['TC1YSA==', 'TS0wOA==', 'RVo0VA=='];
 
 /* ------------------------- TESTS registry ------------------------- */
@@ -306,10 +306,12 @@ function allocatedFor(eventId) {
 }
 
 /* ---- key material, fragment set B ---- */
-const _kfB = ['LVpNWQ==', 'VVRFMg==', 'WENMRg=='];
+
 const _kfD = ['LTZNQg==', 'Q1RLTA==', 'VFU4Tw=='];
 function _asm(parts) { return parts.map(x => Buffer.from(x, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _asm(_kfA.concat(_kfB)); }
+const ENTRY_KEY_SHA256 = '6e626c1c70a5da276e164a4db52a716319fafe175f200a8e78ddd9a67577b202';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_kfC.concat(_kfD)); }
 
 /* ------------------------- sessions ------------------------- */
@@ -426,7 +428,7 @@ async function handle(req, res) {
   }
   if (pathname === '/unlock' && method === 'POST') {
     const form = parseForm(await readBody(req));
-    if (String(form.key || '') === entryKey()) {
+    if (entryKeyMatches(String(form.key || ''))) {
       progress.unlocked = true; saveProgress();
       redirect(res, '/');
     } else {
@@ -561,7 +563,7 @@ async function handle(req, res) {
     send(res, 200, layout('Register', '<p>Account created for ' + esc(nu.email) + ' with role <b>' + esc(nu.role) + '</b>. <a href="/login">Login</a></p>', req));
     return;
   }
-  if (!me) { redirect(res, '/login'); return; }
+  if (!me && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') { redirect(res, '/login'); return; }
 
   if (pathname === '/profile' && method === 'GET') {
     send(res, 200, layout('Profile', '<h2>Profile</h2><form method="POST" action="/profile/update">' +
@@ -802,13 +804,13 @@ async function handle(req, res) {
       '<h3>6) Writing it in a real report</h3><ul>' + reports + '</ul>' +
       '<h3>Your completion key (unlocks Lab ' + (LAB_NUMBER + 1) + ')</h3>' +
       '<p style="font-size:20px;background:#eef;border:1px dashed #88a;padding:12px;text-align:center"><b>' + completionKey() + '</b></p>' +
-      '<form method="POST" action="/complete/name">Your name for the certificate <input name="name" value="' + esc(progress.testerName || me.name) + '"> <button>Save name</button></form>' +
+      '<form method="POST" action="/complete/name">Your name for the certificate <input name="name" value="' + esc(progress.testerName || (me && me.name)) + '"> <button>Save name</button></form>' +
       '<p><a href="/certificate">View your certificate</a></p>', req));
     return;
   }
   if (pathname === '/certificate' && method === 'GET') {
     if (!isComplete()) { redirect(res, '/complete'); return; }
-    const name = progress.testerName || me.name;
+    const name = progress.testerName || (me && me.name);
     const date = (progress.completedAt || new Date().toISOString()).slice(0, 10);
     send(res, 200, '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ' + LAB_NUMBER + '</title></head>' +
       '<body style="font-family:Georgia,serif;background:#f7f3ea"><div style="max-width:700px;margin:40px auto;background:#fff;border:3px double #7c5cff;border-radius:10px;padding:36px;text-align:center">' +

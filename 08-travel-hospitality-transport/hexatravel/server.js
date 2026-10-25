@@ -16,7 +16,7 @@ const FILES_DIR = path.join(DIR, 'files');
 const PROGRESS_PATH = path.join(DIR, 'progress.json');
 
 /* --- key shards, region 1 of 4 (entry, first half) --- */
-const _eA = ["TC1YSA==","Ry0xNw==","QVUxRw=="];
+
 
 /* ============================== seed data ================================ */
 const users = [
@@ -245,7 +245,7 @@ const TESTS = [
 ];
 
 /* --- key shards, region 2 of 4 (entry, second half) --- */
-const _eB = ["LTg1RQ==","VFc0SQ==","SjkyVQ=="];
+
 
 const TOTAL = TESTS.length;
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
@@ -259,7 +259,9 @@ const _cA = ["TC1YSA==","Mi0yNw==","RFE0UA=="];
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = 'fad4c921466c18e35292fca31c4a182f45b4555ec58edf974dd77bcdfe1fd0f7';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_cA.concat(_cB)); }
 
 /* ============================ progress =================================== */
@@ -813,7 +815,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/progress' && req.method === 'GET') return sendJson(res, 200, progressData());
     if (url.pathname === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(b.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage());
     }
     if (!state.unlocked) return send(res, 200, gatePage());

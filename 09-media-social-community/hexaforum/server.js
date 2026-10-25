@@ -19,7 +19,7 @@ const PROGRESS_FILE = path.join(ROOT, 'progress.json');
 const LOGO_FILE = path.join(ROOT, 'logo.png');
 
 // --- key shard region A (entry key, first half) ---
-const _EA = ["LVhI","RS0yOEw=","VzhVWA=="];
+
 
 // ---------------------------------------------------------------------------
 // Seed data (all fake, in-memory)
@@ -251,9 +251,11 @@ const SQLI_RE = /('\s*(or|and)\s*'?\d+'?\s*=\s*'?\d+)|('\s*(or|and)\s+[^=]*=[^=]
 function resetTokenFor(u) { return 'HF' + u.id + '-' + (u.id * 137 + 42); }
 
 // --- key shard region B (entry key, second half) ---
-const _EB = ["SEMtOVdO","V0lUQVU=","Uw=="];
+
 function assembleKey(parts) { return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return assembleKey(_EA.concat(_EB)); }
+const ENTRY_KEY_SHA256 = '5eb4e5a011d38c67c2410eb2d3aa26b2fa4f123da72a961b57edb4f0267a75c1';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 // ---------------------------------------------------------------------------
 // Page chrome
@@ -634,10 +636,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && method === 'POST') {
       const body = parseBody(await readBody(req), req.headers['content-type']);
       const given = String(body.key || '');
-      const expected = entryKey();
-      let same = given.length === expected.length; // constant-shape comparison, no partial hints
-      for (let i = 0; i < expected.length; i++) { if (given[i] !== expected[i]) same = false; }
-      if (same) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       return send(res, 403, gatePage());
     }
     if (!progress.unlocked) return send(res, 200, gatePage());

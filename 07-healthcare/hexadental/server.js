@@ -18,7 +18,7 @@ const ROOT = __dirname;
 const RECORDS_DIR = path.join(ROOT, 'records');
 
 // --- key material, shard set alpha (see assembler far below; never literal) ---
-const _ka = ['TC1YSA==', 'OC01Ng==', 'TlpWMQ=='];
+
 
 /* ============================ seed data (all fake) ============================ */
 const CATALOG = [
@@ -296,12 +296,14 @@ TESTS.push(
 );
 
 /* --- key material, shard set beta (scattered) --- */
-const _kb = ['LTJSSA==', 'TDBWUg==', 'V0pCUw=='];
+
 const _kc = ['TC1YSA==', 'RS02Ng==', 'TTBVVg=='];
 function _un(shards) { return shards.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join(''); }
 /* --- key material, shard set gamma --- */
 const _kd = ['LTVPTw==', 'REFERQ==', 'SUJNRQ=='];
-function entryKey() { return _un(_ka.concat(_kb)); }
+const ENTRY_KEY_SHA256 = '1205965c65eab70835d9f31eb4e24ef78a8012acc6c6d4c0ddce0dff4fed510b';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _un(_kc.concat(_kd)); }
 
 /* ============================ progress engine ============================ */
@@ -600,7 +602,7 @@ function testsPage(user) {
   }
   return layout(user, 'Mission Board', body);
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   if (!isComplete()) {
     return layout(user, 'Not yet complete', '<h2>Lab not complete yet</h2><p>You have solved ' + doneCount() + '/' + TESTS.length + ' tests (' + pct() + '%). The completion summary, key and certificate unlock at 100%. See the <a href="/tests">Mission Board</a> for what is left.</p>');
   }
@@ -618,7 +620,7 @@ function completePage(user) {
   body += '<h3>Certificate</h3><form method="POST" action="/complete/name">Your name for the certificate<br><input name="name" value="' + esc(state.testerName || (user ? user.name : '')) + '" style="padding:8px;width:60%"><br><br><button style="padding:9px 20px">Save name</button></form><p><a href="/certificate">View your certificate</a></p>';
   return layout(user, 'Lab complete', body);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   if (!isComplete()) return layout(user, 'Certificate', '<h2>Certificate locked</h2><p>Complete 100% of the tests to earn the certificate. Current progress: ' + pct() + '%.</p>');
   const name = state.testerName || (user ? user.name : 'Tester');
   const when = state.completedAt ? String(state.completedAt).slice(0, 10) : new Date().toISOString().slice(0, 10);
@@ -667,7 +669,7 @@ const server = http.createServer(async (req, res) => {
       catch (e) { return send(res, 404, 'no logo'); }
     }
     if (pathname === '/unlock' && method === 'POST') {
-      if (String(body.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(body.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, 'Invalid key — this lab stays locked.');
     }
     if (pathname === '/api/chat' && method === 'POST') {
@@ -758,7 +760,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* ---- everything below needs a session ---- */
-    if (!user) return redirect(res, '/login');
+    if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
     if (pathname === '/' || pathname === '/dashboard') return send(res, 200, dashboardPage(user));
 
     if (pathname === '/profile' && method === 'GET') return send(res, 200, profilePage(user));

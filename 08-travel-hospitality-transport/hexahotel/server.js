@@ -19,7 +19,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 /* ---------- Completion-key shards (see ENGINE SPEC §7) ----------
    Each key exists ONLY as base64-of-reversed pieces, scattered in
    different regions of this file. Never write a key in plain text. */
-const _e1 = ["TC1YSA==","Mi0yNw==","RFE0UA=="];
+
 const _c1 = ["TC1YSA==","Ty0zNw==","VTNUWA=="];
 
 /* ---------------- Progress state (§4) ---------------- */
@@ -212,12 +212,14 @@ function featureStats(f) {
 }
 
 /* ---------- More key shards, scattered (see §7) ---------- */
-const _e2 = ["LVdUUA==","UUlLSA==","UjU1Rg=="];
+
 const _c2 = ["LTFWVQ==","OTJKRQ==","U0lLNw=="];
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_e1.concat(_e2)); }
+const ENTRY_KEY_SHA256 = 'a95d71de6888616a6489f19e8c33920ef8f9e64ce5d2cca566dde9ab9fc79beb';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_c1.concat(_c2)); }
 
 /* ---------------- Seed data (all fake) ---------------- */
@@ -386,7 +388,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
       const given = String(b.key || '');
-      if (given && given === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (given && entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage('That key was not accepted.'));
     }
     if (!state.unlocked) return send(res, 200, gatePage());
@@ -474,7 +476,7 @@ const server = http.createServer(async (req, res) => {
     if (!user) {
       if (p === '/' ) return send(res, 200, homePage(null, q));
       if (p === '/rooms') { if ('q' in q) { attempt('Rooms & Search'); } return send(res, 200, roomsPage(null, q)); }
-      return redirect(res, '/login');
+      if (p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
     }
 
     if (p === '/') return send(res, 200, homePage(user, q));
@@ -766,7 +768,7 @@ function testsPage(user) {
   }
   return layout(user, 'Tests', body);
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (doneCount() < TESTS.length) {
     const left = TESTS.filter(t => !state.tests[t.id]);
     return layout(user, 'Complete', '<h2>Not complete yet — ' + pct() + '%</h2><p>' + doneCount() + '/' + TESTS.length + ' tests done. Still open:</p>' + left.map(t => '<p>○ ' + esc(t.name) + ' (' + esc(t.feature) + ')</p>').join('') + '<p><a href="/tests">Open the mission board</a></p>');
@@ -783,7 +785,7 @@ function completePage(user) {
   body += '<p><a href="/certificate">View your certificate →</a></p>';
   return layout(user, 'Complete', body);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const name = state.testerName || user.name;
   const date = state.completedAt ? state.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
   return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ' + LAB_NUMBER + '</title></head><body style="background:#e9e9f2;font-family:Georgia,serif">' +

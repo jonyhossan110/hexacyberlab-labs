@@ -23,7 +23,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
  * they exist only as transformed fragments in separate regions and
  * are reassembled in memory at the single moment they are needed.
  * ------------------------------------------------------------------ */
-const _fragA = ["TC1YSA==","Ri0zOA==","UEtSNg=="];
+
 const _fragB = ["TC1YSA==","My00OA==","TlVSVQ=="];
 
 /* ------------------------- progress engine ------------------------ */
@@ -80,7 +80,9 @@ const probeSeen = { distinct: new Set(), sawExisting: false, sawMissing: false }
 function _un(frag) {
   return frag.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _un(_fragA.concat(_fragC)); }        // assembled only inside /unlock
+const ENTRY_KEY_SHA256 = 'c696b8f6bc901aa7b4f243e1815cae5542413a6eb5bbb70791f78699c413ebf1';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */        // assembled only inside /unlock
 function completionKey() { return _un(_fragB.concat(_fragD)); }   // assembled only at 100%
 
 /* ------------------------- TESTS registry ------------------------- */
@@ -311,7 +313,7 @@ function articleById(id) { return articles.find(a => a.id === Number(id)); }
 /* ------------------------------------------------------------------ *
  * Scattered configuration fragments — region 2 of 4.
  * ------------------------------------------------------------------ */
-const _fragC = ["LTdEMQ==","MVpMMA==","QkhGUQ=="];
+
 
 /* ------------------------- HTTP helpers --------------------------- */
 function esc(s) {
@@ -532,10 +534,7 @@ async function handle(req, res) {
   }
   if (p === '/unlock' && req.method === 'POST') {
     const given = String(body.key || '');
-    const real = entryKey();
-    let same = given.length === real.length;
-    for (let i = 0; i < Math.max(given.length, real.length); i++) if (given[i] !== real[i]) same = false;
-    if (same) { state.unlocked = true; saveState(); redirect(res, '/', headers); }
+    if (entryKeyMatches(given)) { state.unlocked = true; saveState(); redirect(res, '/', headers); }
     else send(res, 403, '<h1>403 — Wrong key.</h1><p>That key does not open LAB ' + LAB_NUMBER + '.</p>', headers);
     return;
   }

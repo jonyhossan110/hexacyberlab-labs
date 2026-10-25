@@ -18,7 +18,7 @@ const ROOT = __dirname;
 const PROGRESS_FILE = path.join(ROOT, 'progress.json');
 
 /* ---- key material, part 1 of 4 (sharded; assembled at runtime) ---- */
-const _kA = ['TC1YSA==', 'UC00Nw==', 'V0dSVQ=='];
+
 const _kC = ['TC1YSA==', 'TS01Nw==', 'MEFHVA=='];
 
 /* ============================= seed data ============================= */
@@ -234,7 +234,9 @@ function _unshard(parts) { return parts.map(s => [...Buffer.from(s, 'base64').to
 
 /* ---- key material, part 3 of 4 ---- */
 const _kD = ['LUdIRA==', 'RlE0Sg==', 'UE4yTg=='];
-function entryKey() { return _unshard([..._kA, ..._kB]); }
+const ENTRY_KEY_SHA256 = '897c02facc0786ff02e0bf838795ce1fb564d4941502de5d34255d528746df42';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return progress.keyRevealed ? _unshard([..._kC, ..._kD]) : null; }
 
 /* ============================== helpers ============================== */
@@ -470,7 +472,7 @@ function testsPage(user) {
   }
   return h;
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (doneCount() < TESTS.length) {
     return '<h2>Not complete yet</h2><p>' + doneCount() + '/' + TESTS.length + ' tests done (' + pct() + '%). Finish every test on the <a href="/tests">Mission Board</a> to unlock this page.</p>';
   }
@@ -488,7 +490,7 @@ function completePage(user) {
     '<p><a href="/certificate">View your certificate →</a></p>';
   return h;
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (doneCount() < TESTS.length) return '<h2>Certificate locked</h2><p>Complete 100% of the tests first (' + pct() + '% so far).</p>';
   const name = progress.testerName || (user ? user.name : 'HexaRide Tester');
   const date = progress.completedAt ? new Date(progress.completedAt).toISOString().slice(0, 10) : '';
@@ -601,8 +603,8 @@ const server = http.createServer(async (req, res) => {
     /* unlock gate */
     if (pathname === '/unlock' && req.method === 'POST') {
       const given = String(form.key || '');
-      const expected = entryKey();
-      if (given === expected) { progress.unlocked = true; saveProgress(); redirect(res, '/login'); }
+
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); redirect(res, '/login'); }
       else send(res, 403, gatePage('Wrong key — check the completion key from the previous lab.'));
       return;
     }
@@ -899,7 +901,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (pathname === '/admin' && req.method === 'GET') {
-      if (!user) { redirect(res, '/login'); return; }
+      if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate' && pathname !== '/tester-name' && pathname !== '/set-name' && pathname !== '/tester') { redirect(res, '/login'); return; }
       attempt('Admin & Platform');
       // VULNERABLE BY DESIGN: no role check at all on the admin panel.
       if (user.role !== 'admin') pass('admin-bac');
@@ -915,19 +917,16 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/tests' && req.method === 'GET') { send(res, 200, layout(req, 'Mission Board', testsPage(user), user)); return; }
     if (pathname === '/complete' && req.method === 'GET') {
-      if (!user) { redirect(res, '/login'); return; }
       send(res, 200, layout(req, 'Completion summary', completePage(user), user));
       return;
     }
     if (pathname === '/complete/name' && req.method === 'POST') {
-      if (!user) { redirect(res, '/login'); return; }
       progress.testerName = String(form.name || '').slice(0, 60);
       saveProgress();
       redirect(res, '/complete');
       return;
     }
     if (pathname === '/certificate' && req.method === 'GET') {
-      if (!user) { redirect(res, '/login'); return; }
       send(res, 200, layout(req, 'Certificate', certificatePage(user), user));
       return;
     }

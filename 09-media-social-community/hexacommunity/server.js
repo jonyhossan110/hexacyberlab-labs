@@ -19,7 +19,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const FILES_DIR = path.join(DIR, 'files');
 
 /* ---- key material A (part 1 of 2) ---- */
-const _eA = ['TC1YSA==', 'Ni0wOQ==', 'UFhBRA=='];
+
 const _cA = ['TC1YSA==', 'My0xOQ==', 'TUFGMw=='];
 function _rev(s) { return s.split('').reverse().join(''); }
 function _asm(a, b) { return a.concat(b).map(x => _rev(Buffer.from(x, 'base64').toString('utf8'))).join(''); }
@@ -361,9 +361,11 @@ function pct() { return Math.floor(totalDone() / TESTS.length * 100); }
 function resetTokenFor(u) { return 'HC' + u.id + '-' + ((u.id * 137 + 42) % 100000); }
 
 /* ---- key material B (part 2 of 2) ---- */
-const _eB = ['LTBVUw==', 'UFBTVA==', 'TEpFWg=='];
+
 const _cB = ['LVk3Tg==', 'NzlZTw==', 'WlIwSg=='];
-function entryKey() { return _asm(_eA, _eB); }
+const ENTRY_KEY_SHA256 = 'a35efb1341b84c31b65005b94acc4267cf74d49bcde6f68b7f7ed9fb350392fa';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_cA, _cB); }
 
 /* ---------------- HTTP plumbing ---------------- */
@@ -505,10 +507,7 @@ async function handle(req, res) {
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
       const given = String(b.key || '');
-      const want = entryKey();
-      let same = given.length === want.length;
-      for (let i = 0; i < want.length; i++) if (given[i] !== want[i]) same = false;
-      if (same) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end('<h1>403 — Wrong key.</h1><p>That is not the completion key from Lab ' + (LAB_NUMBER - 1) + '.</p>');
     }
@@ -962,4 +961,4 @@ const server = http.createServer((req, res) => { handle(req, res).catch(() => { 
 if (require.main === module) {
   server.listen(PORT, '127.0.0.1', () => console.log('LAB ' + LAB_NUMBER + ' — ' + LAB_NAME + ' listening on http://127.0.0.1:' + PORT));
 }
-module.exports = { TESTS, FEATURES, entryKey, completionKey };
+module.exports = { TESTS, FEATURES, completionKey };

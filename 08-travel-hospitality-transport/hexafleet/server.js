@@ -17,14 +17,16 @@ const DOCS_DIR = path.join(DIR, 'docs');
 const FUEL_PRICE = 1.45; // server-side price per litre (the truth the app should use)
 
 /* ---------- keys: stored ONLY as scattered base64-of-reversed shards ---------- */
-const SH_A = ["TC1YSA==","TS01Nw==","MEFHVA==","LUdIRA==","RlE0Sg==","UE4yTg=="];
-const SH_B = ['c2NhbA=='];
+
+
 const SH_C = ["TC1YSA==","Qy02Nw==","Q0xVWg==","LVBRUQ==","RFdCNg==","UE9UWQ=="];
 const SH_D = ['cmV2aWxk'];
 function asm(shards) {
   return shards.map(function (s) { return Buffer.from(s, 'base64').toString('utf8').split('').reverse().join(''); }).join('');
 }
-function entryKey() { return asm(SH_A.concat(SH_B.slice(0, 0))); }
+const ENTRY_KEY_SHA256 = '4fab67582889b99368e6fc673b15312768700ec006104b77f9ae032a4384b318';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return asm(SH_C.concat(SH_D.slice(0, 0))); }
 
 /* ---------- TESTS registry ---------- */
@@ -620,7 +622,7 @@ function testsPage(user) {
   });
   return page('Mission Board', user, html);
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   if (!isComplete()) {
     const left = TESTS.filter(function (t) { return !state.tests[t.id]; });
     return page('Completion', user, '<h1>Not complete yet</h1><p>You are at ' + pct() + '% (' + doneCount() + '/' + TESTS.length + '). Remaining tests:</p><ul>'
@@ -642,7 +644,7 @@ function completePage(user) {
     + '<p><a href="/certificate">Open your certificate</a></p>';
   return page('Completion', user, html);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const name = state.testerName || (user ? user.name : 'Tester');
   const date = state.completedAt ? state.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
   const feats = Object.keys(featureStats()).length;
@@ -701,7 +703,7 @@ const server = http.createServer(async function (req, res) {
     if (!state.unlocked) {
       if (pathname === '/unlock' && method === 'POST') {
         const b = await parseBody(req);
-        if (String(b.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(b.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
         return send(res, 403, gatePage('That key is not correct.'));
       }
       return send(res, 200, gatePage(''));
@@ -739,7 +741,7 @@ const server = http.createServer(async function (req, res) {
     }
     // everything below requires login
     const user = sessionUser(req);
-    if (!user) return redirect(res, '/login');
+    if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
     const cookies = parseCookies(req);
     if (pathname === '/') return send(res, 200, dashboardPage(user));
     if (pathname === '/profile') {

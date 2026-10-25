@@ -16,7 +16,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* --- scattered config fragments (reassembled at runtime where needed) --- */
-const _p1 = ["TC1YSA==", "Ty0zNw==", "VTNUWA=="];
+
 const _p2 = ["TC1YSA==", "UC00Nw==", "V0dSVQ=="];
 
 /* ============================================================================
@@ -230,7 +230,7 @@ function att(feature) {
 function attemptsOf(feature) { return progress.attempts[feature] || 0; }
 
 /* --- more scattered config fragments --- */
-const _p3 = ["LTFWVQ==", "OTJKRQ==", "U0lLNw=="];
+
 
 /* ============================================================================
    SEED DATA — all fake. In-memory only.
@@ -310,7 +310,9 @@ function enumProbe(ip, email) {
 /* --- final scattered fragments + assembler (keys exist ONLY as shards) --- */
 const _p4 = ["LVBBOA==", "SDI5Sg==", "OFBRSA=="];
 function _asm(a, b) { return a.concat(b).map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _asm(_p1, _p3); }
+const ENTRY_KEY_SHA256 = '93f4d0dbd2b7d198bc6e18e8da73e343a71bb96b319cea46e495bd3f0ca22261';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_p2, _p4); }
 
 /* ---------------- small helpers ---------------- */
@@ -701,10 +703,7 @@ const server = http.createServer(async (req, res) => {
       if (pth === '/unlock' && req.method === 'POST') {
         const body = await readBody(req);
         const given = String(body.key || '');
-        const want = entryKey();
-        let ok = given.length === want.length;
-        if (ok) { let diff = 0; for (let i = 0; i < want.length; i++) diff |= given.charCodeAt(i) ^ want.charCodeAt(i); ok = diff === 0; }
-        if (ok) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+        if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
         return send(res, 403, gatePage('That key was not accepted.'));
       }
       return send(res, 200, gatePage());

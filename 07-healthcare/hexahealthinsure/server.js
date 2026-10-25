@@ -16,7 +16,7 @@ const PROGRESS_FILE = path.join(__dirname, 'progress.json');
 const LOGO_FILE = path.join(__dirname, 'logo.png');
 
 /* --- key material, region A (shards only; assembled at runtime) --- */
-const _ekA = ['TC1YSA==', 'MC0wNw==', 'QUhFMA=='];
+
 const _ckA = ['TC1YSA==', 'Ry0xNw==', 'QVUxRw=='];
 
 function unshard(parts) {
@@ -270,9 +270,11 @@ TESTS.forEach(t => { TEST_BY_ID[t.id] = t; });
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 
 /* --- key material, region B (remaining shards) --- */
-const _ekB = ['LVpRTQ==', 'UlFKMA==', 'M1FVRA=='];
+
 const _ckB = ['LTg1RQ==', 'VFc0SQ==', 'SjkyVQ=='];
-function entryKey() { return unshard(_ekA.concat(_ekB)); }
+const ENTRY_KEY_SHA256 = '0cd2b82ed21dbccd1e11396bc096052370fcb1c493a71f823e075a336c83b3a6';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return unshard(_ckA.concat(_ckB)); }
 
 /* ------------------------------ progress engine ------------------------------ */
@@ -476,7 +478,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/unlock' && method === 'POST') {
       const body = await readBody(req);
       const given = String(body.key || '').trim();
-      if (given && given === entryKey()) {
+      if (given && entryKeyMatches(given)) {
         state.unlocked = true; saveState();
         redirect(res, '/');
       } else {

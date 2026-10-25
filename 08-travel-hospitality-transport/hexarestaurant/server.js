@@ -15,7 +15,7 @@ const PREV_LAB = 79;
 const DIR = __dirname;
 
 /* --- key material: stored ONLY as encoded shards, scattered (see §7) --- */
-const _eA = ["TC1YSA==", "TS0wOA==", "RVo0VA=="];
+
 const _cA = ["TC1YSA==", "UC0xOA==", "RkRLWg=="];
 
 /* ------------------------- progress engine ------------------------- */
@@ -203,11 +203,13 @@ function doneCount() { return TESTS.filter(t => progress.tests[t.id]).length; }
 function isComplete() { return doneCount() >= TOTAL; }
 
 /* --- more key shards, kept far from the first set (see §7) --- */
-const _eB = ["LTZNQg==", "Q1RLTA==", "VFU4Tw=="];
+
 function _asm(parts) {
   return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _asm(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = 'ec8b9ed7f3ca93edee89a67c634612a7edf0e4bdf425ec4a825daa5aefa7b308';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------------ seed data ------------------------------ */
 const users = [
@@ -589,7 +591,7 @@ async function handle(req, res) {
   }
   if (p === '/unlock' && method === 'POST') {
     const body = await readBody(req);
-    if (String(body.key || '') === entryKey()) {
+    if (entryKeyMatches(String(body.key || ''))) {
       progress.unlocked = true; saveProgress(); redirect(res, '/');
     } else { res.writeHead(403, { 'Content-Type': 'text/html' }); res.end('<h1>403 — wrong key</h1><p>That key does not open LAB ' + LAB_NUMBER + '.</p>'); }
     return;

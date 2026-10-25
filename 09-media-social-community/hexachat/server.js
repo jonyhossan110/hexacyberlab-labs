@@ -15,7 +15,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const FILES_DIR = path.join(DIR, 'files');
 
 /* --- scattered config fragments (assembled at runtime only where needed) --- */
-const _cfgA = ['TC1YSA==', 'RS05OA==', 'T1NONw=='];
+
 const _cfgC = ['TC1YSA==', 'Ni0wOQ==', 'UFhBRA=='];
 function _un(a) { return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
 
@@ -252,8 +252,10 @@ function featureStats() {
 }
 
 /* --- more scattered fragments, far from the first set --- */
-const _cfgB = ['LTY5Tw==', 'NVU0NA==', 'TTU5Wg=='];
-function entryKey() { return _un(_cfgA.concat(_cfgB)); }
+
+const ENTRY_KEY_SHA256 = '8bcf85fc3e32110f35419cb767b87a781aed774eae5ea103f6bb82be30542905';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ================= seed data (all fake) ================= */
 let nextUserId = 7, nextMsgId = 100, nextConvId = 4, nextAttId = 4;
@@ -478,7 +480,7 @@ async function handler(req, res) {
     if (p === '/unlock') {
       if (method === 'POST') {
         const b = await parseBody(req);
-        if (keyMatches(b.key, entryKey())) { state.unlocked = true; save(); return redirect(res, '/'); }
+        if (entryKeyMatches(b.key)) { state.unlocked = true; save(); return redirect(res, '/'); }
         return send(res, 403, 'Invalid key.');
       }
       return send(res, 200, gatePage());

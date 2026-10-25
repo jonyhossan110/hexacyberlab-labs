@@ -674,7 +674,7 @@ async function route(req, res) {
   const u = currentUser(req);
   if (!u) {
     if (pth.startsWith('/api/')) return handleApi(req, res, url, null, cookies);
-    return redirect(res, '/login');
+    if (pth !== '/complete' && pth !== '/complete/name' && pth !== '/certificate') return redirect(res, '/login');
   }
 
   if (pth === '/creators' && method === 'GET') {

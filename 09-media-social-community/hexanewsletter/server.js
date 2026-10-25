@@ -21,7 +21,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- presentation theme tokens (shard region 1) ---- */
-const _cfgA = ["TC1YSA==","Ui04OA=="];
+
 const THEME = { accent: '#7c5cff', accent2: '#00b3a4', ink: '#1c1c28', paper: '#f6f5fb' };
 
 /* ================= progress state ================= */
@@ -86,7 +86,7 @@ function pubById(id) { return publications.find(p => p.id === Number(id)); }
 function userById(id) { return users.find(u => u.id === Number(id)); }
 
 /* ---- mail-merge tokens (shard region 2) ---- */
-const _cfgB = ["NVE5Sw==","LUdIOQ=="];
+
 const MERGE_TAGS = ['{{name}}', '{{email}}', '{{unsubscribe_url}}'];
 
 /* ================= TESTS registry ================= */
@@ -259,11 +259,13 @@ function progressData() {
   return { lab: LAB_NAME, number: LAB_NUMBER, total: TESTS.length, done, pct: Math.floor(done * 100 / TESTS.length), features, complete: done === TESTS.length };
 }
 function _asm(parts) { return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join(''); }
-function entryKey() { return _asm(_cfgA.concat(_cfgB, _cfgC)); }
+const ENTRY_KEY_SHA256 = '4a18c1869de49c708a530980d7c0689f1d061c42f8e0a4f71557f1cff8754a6d';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_metaA.concat(_metaB, _metaC)); }
 
 /* ---- template fragments (shard region 3) ---- */
-const _cfgC = ["VzMxUw==","UjhVRw=="];
+
 const FOOTER_NOTE = 'HexaNewsletter — a deliberately vulnerable practice lab. Local use only.';
 
 const HX = '<input type="hidden" name="hx_origin" value="self">';
@@ -574,10 +576,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
       const given = String((b && b.key) || '');
-      const expected = entryKey();
-      let same = given.length === expected.length;
-      for (let i = 0; i < expected.length; i++) { if (given[i] !== expected[i]) same = false; }
-      if (same) { state.unlocked = true; save(); redirect('/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; save(); redirect('/'); }
       else html(403, gatePage('That key was not accepted.'));
       return;
     }

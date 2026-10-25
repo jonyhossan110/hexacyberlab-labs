@@ -27,12 +27,14 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
  * and base64-encoded, and the two arrays live in different regions of
  * this file. assemble() rebuilds a key at runtime, only where needed.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS = ["TC1YSA==","Qy02Nw==","Q0xVWg==","LVBRUQ==","RFdCNg==","UE9UWQ=="];
+
 const COMPLETION_SHARDS = ["TC1YSA==","Vi03Nw==","WTRXRw==","LURQOQ==","NVRWSA==","UUwxSQ=="];
 function assemble(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return assemble(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = 'efdea0f7da8c78612a22473211bf3049e19174d9dc1e3629cb581d8ceb68379c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return assemble(COMPLETION_SHARDS); }
 
 /* ============================ TESTS registry ============================ */
@@ -786,7 +788,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(b.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(gatePage().replace('</form>', '</form><p style="color:#b00">That key was not accepted.</p>'));
     }

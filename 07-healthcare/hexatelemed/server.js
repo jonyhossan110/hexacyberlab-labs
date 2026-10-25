@@ -779,7 +779,7 @@ function testsPage(user) {
   return layout('Mission Board', html, user);
 }
 
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const p = progressData();
   if (!p.complete) {
     const left = TESTS.filter(t => !state.tests[t.id]).map(t => `<li>${esc(t.name)} <small>(${esc(t.feature)})</small></li>`).join('');
@@ -805,7 +805,7 @@ function completePage(user) {
 <p><a href="/certificate">View your certificate →</a></p></div>`, user);
 }
 
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (!isComplete()) return null;
   const name = state.testerName || (user ? user.name : 'Tester');
   const date = state.completedAt ? new Date(state.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -966,7 +966,7 @@ const server = http.createServer(async (req, res) => {
       return res.end();
     }
 
-    if (!user) return needLogin();
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return needLogin();
 
     if (p === '/profile' && method === 'GET') return sendHtml(res, 200, profilePage(user, ''));
     if (p === '/profile' && method === 'POST') return handleProfile(req, res, user);

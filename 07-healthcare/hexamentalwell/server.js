@@ -23,7 +23,7 @@ const LOGO_FILE = path.join(__dirname, 'logo.png');
  * base64-of-reversed shards, scattered across this file. No plain key
  * literal appears anywhere in this lab.
  * ------------------------------------------------------------------ */
-const _ka1 = ['TC1YSA==', 'UC05Ng==', 'T1dWMw=='];
+
 const _kb1 = ['TC1YSA==', 'MC0wNw==', 'QUhFMA=='];
 
 function unshard(s) {
@@ -366,9 +366,11 @@ function csrfSuspect(req, cookies) {
 }
 
 /* ------------- key material region B (scattered shards) ------------- */
-const _ka2 = ['LVhFOA==', 'VkZGVg==', 'Tk41Rw=='];
+
 const _kb2 = ['LVpRTQ==', 'UlFKMA==', 'M1FVRA=='];
-function entryKey() { return assemble(_ka1, _ka2); }
+const ENTRY_KEY_SHA256 = 'd54dc24d8f4be009527dc8d1fcc7542b6d18984f923638f9ab18896a7a8114c5';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return assemble(_kb1, _kb2); }
 
 /* ------------------------- HTML scaffolding ------------------------- */
@@ -512,7 +514,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '') === entryKey()) {
+      if (entryKeyMatches(String(b.key || ''))) {
         state.unlocked = true; save();
         return redirect(res, '/');
       }
