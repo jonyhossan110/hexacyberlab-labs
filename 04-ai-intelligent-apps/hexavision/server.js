@@ -22,8 +22,10 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
    Key material — stored ONLY as base64-of-reversed shards, scattered across
    different regions of this file. Assembled at runtime only when needed.
    ------------------------------------------------------------------------- */
-const _EK = ["TC1YSA==", "Vi0zMw==", "OUExQg==", "LVc3Uw==", "T1IwSg==", "Uk1FQg=="];
-function entryKey() { return _EK.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
+
+const ENTRY_KEY_SHA256 = '707cbfd0cedccb7a2d16c4168be67352fa9925e3dd1c466cb742dac13c9f329e';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------- Progress engine (§4) -------------------------- */
 const TESTS = [
@@ -865,7 +867,7 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/progress') return routeProgressApi(req, res);
       if (p === '/unlock' && req.method === 'POST') {
         const b = await readBody(req);
-        if (String(b.key || '').trim() === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(b.key || '').trim())) { state.unlocked = true; saveState(); return redirect(res, '/'); }
         return send(res, 403, gatePage().replace('This lab is locked.', 'That key was not accepted. This lab is locked.'));
       }
       return send(res, 200, gatePage());
@@ -885,7 +887,7 @@ const server = http.createServer(async (req, res) => {
     if (p.startsWith('/s/')) return routeShare(req, res, decodeURIComponent(p.slice(3)));
     /* everything below needs a session */
     const user = currentUser(req);
-    if (!user) return redirect(res, '/login');
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
     if (p === '/' || p === '/dashboard') return routeDashboard(req, res);
     if (p === '/profile') return routeProfile(req, res);
     if (p === '/galleries') return routeGalleries(req, res);

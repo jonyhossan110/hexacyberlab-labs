@@ -15,7 +15,7 @@ const DATA_DIR = path.join(BASE, 'data');
 const PROGRESS_FILE = path.join(BASE, 'progress.json');
 
 /* ---- key material, region 1 of 3 (transformed shards only) ---- */
-const _eA = ['TC1YSA==', 'US02Mw==', 'MU9ZQg=='];
+
 const _cA = ['TC1YSA==', 'Ti03Mw=='];
 
 try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch (e) {}
@@ -292,11 +292,13 @@ const TESTS = [
 ];
 
 /* ---- key material, region 2 of 3 (transformed shards only) ---- */
-const _eB = ['LUpMWQ=='];
+
 const _cB = ['Q09BQw==', 'LTZUQQ=='];
 
 function unshard(parts) { return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return unshard([].concat(_eA, _eB, _eC)); }
+const ENTRY_KEY_SHA256 = 'f524bcef0e5fb99a551374ccf10f449c87e91d0a177f87818adc19d204443d66';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return unshard([].concat(_cA, _cB, _cC)); }
 
 /* ============================ progress engine ============================ */
@@ -389,7 +391,7 @@ function registerPage(msg) {
 }
 
 /* ---- key material, region 3 of 3 (transformed shards only) ---- */
-const _eC = ['WDZNVw==', 'T0s4Sw=='];
+
 const _cC = ['NUFUMA==', 'SURBSA=='];
 
 /* ============================ chatbot ============================ */
@@ -447,7 +449,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/chat' && req.method === 'POST') { const b = parseAny(await readBody(req)); json(200, { reply: chatReply(b.message) }); return; }
     if (p === '/unlock' && req.method === 'POST') {
       const b = parseAny(await readBody(req));
-      if (String(b.key || '').trim() === entryKey()) { progress.unlocked = true; saveProgress(); redirect('/login'); }
+      if (entryKeyMatches(String(b.key || '').trim())) { progress.unlocked = true; saveProgress(); redirect('/login'); }
       else { res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8', 'Set-Cookie': ['hx_origin=hexarag; Path=/'] }); res.end(gatePage('That key was not accepted. Check the completion key from the previous lab and try again.')); }
       return;
     }
@@ -544,7 +546,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/progress') { const feats = {}; for (const f of featuresList()) { const ts = TESTS.filter(t => t.feature === f); feats[f] = { total: ts.length, done: ts.filter(t => progress.tests[t.id]).length, attempts: progress.attempts[f] || 0 }; } json(200, { lab: LAB_NAME, number: LAB_NUMBER, total: TESTS.length, done: doneCount(), pct: Math.floor(doneCount() / TESTS.length * 100), features: feats, complete: doneCount() === TESTS.length }); return; }
 
     /* ---- everything below needs a signed-in user ---- */
-    if (!user) { redirect('/login'); return; }
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') { redirect('/login'); return; }
 
     if (p === '/' || p === '/dashboard') {
       const mine = collections.filter(c => c.workspaceId === user.workspaceId);
@@ -735,14 +737,14 @@ const server = http.createServer(async (req, res) => {
       <h3>6) Writing it in a real report</h3><ul>${report}</ul>
       <h3>Your completion key (unlocks Lab ${LAB_NUMBER + 1})</h3>
       <p style="font-size:20px;background:#f5f3ff;border:1px solid #7c3aed;border-radius:8px;padding:14px"><code>${esc(completionKey())}</code></p>
-      <form method="POST" action="/complete/name"><label>Your name for the certificate<br><input name="name" value="${esc(progress.testerName || user.name)}" style="width:320px;padding:8px"></label> <button style="padding:9px 16px">Save &amp; view certificate</button></form>
+      <form method="POST" action="/complete/name"><label>Your name for the certificate<br><input name="name" value="${esc(progress.testerName || (user && user.name))}" style="width:320px;padding:8px"></label> <button style="padding:9px 16px">Save &amp; view certificate</button></form>
       <p><a href="/certificate">Go to your certificate →</a></p>`));
       return;
     }
     if (p === '/complete/name' && req.method === 'POST') { const b = parseForm(await readBody(req)); progress.testerName = String(b.name || ''); saveProgress(); redirect('/certificate'); return; }
     if (p === '/certificate') {
       if (doneCount() < TESTS.length) { send(200, layout(user, 'Certificate', '<h2>Certificate locked</h2><p>Complete 100% of the tests first.</p>')); return; }
-      const name = progress.testerName || user.name || 'HexaCyberLab Tester';
+      const name = progress.testerName || (user && (user && user.name)) || 'HexaCyberLab Tester';
       const date = progress.completedAt ? new Date(progress.completedAt).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
       send(200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title><style>@media print{button{display:none}}</style></head>
       <body style="font-family:Georgia,serif;background:#f9fafb;padding:30px"><div style="max-width:720px;margin:0 auto;background:#fff;border:3px solid #7c3aed;border-radius:14px;padding:36px;text-align:center">

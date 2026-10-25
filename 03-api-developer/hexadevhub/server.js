@@ -20,7 +20,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
 /* Key material is stored ONLY as encoded shards, scattered through this
  * file and reassembled at runtime. No key ever appears as a plain literal
  * anywhere in this folder. (Shard set A — entry gate, part 1.) */
-const _ka = ['TC1YSA==', 'NS0yMg=='];
+
 
 // ---------------------------------------------------------------------------
 // TESTS registry — the heart of the lab system.
@@ -178,7 +178,7 @@ const TESTS = [
 ];
 
 /* (Shard set B — entry gate, part 2.) */
-const _kb = ['Q1daRg==', 'LU9TVg=='];
+
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 
 // ---------------------------------------------------------------------------
@@ -225,10 +225,12 @@ function featureStats() {
 }
 
 /* (Shard set C — entry gate, part 3 + completion seal, part 1.) */
-const _kc = ['SzRCQg==', 'V1dFWA=='];
+
 const _kd = ['TC1YSA==', 'Ti0zMg=='];
 function _un(shards) { return shards.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join(''); }
-function entryKey() { return _un([..._ka, ..._kb, ..._kc]); }
+const ENTRY_KEY_SHA256 = 'cb61fdd933b56217f8abef1f8c73517ed89c2d5d38efc21f6322997e981010ad';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 /* (Shard set D — completion seal, part 2.) */
 const _ke = ['UkZIRA==', 'LUgzNA=='];
 const _kf = ['WERSRA==', 'QUhRSw=='];
@@ -814,10 +816,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && method === 'POST') {
       const given = String(body.key || '');
-      const want = entryKey();
-      let diff = given.length ^ want.length;
-      for (let i = 0; i < Math.max(given.length, want.length); i++) diff |= (given.charCodeAt(i) || 0) ^ (want.charCodeAt(i) || 0);
-      if (diff === 0) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage(req).replace('This lab is locked.', 'That key was not accepted. This lab is locked.'));
     }
     if (p === '/api/progress') {

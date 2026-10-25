@@ -22,11 +22,13 @@ const PROGRESS_FILE = path.join(ROOT, 'progress.json');
    Each shard is base64 of a reversed piece of the key. The assembler
    below reconstructs a key at runtime; the plain value never appears
    in this file, in the docs, or in any response before its reveal. */
-const ENTRY_SHARDS = ["TC1YSA==","NC02Mg==","NzJCNQ==","LVhYQg==","WFhRVg==","NDU5WQ=="];
+
 function assembleKey(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return assembleKey(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = '957e48a5b416288be084a5be655a53b4d1b35f8fb3e7e19fa4935f5dd5a16253';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* =====================================================================
    TESTS REGISTRY (ENGINE SPEC §3) — 26 scored tests, 8 features.
@@ -393,7 +395,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/chat' && method === 'POST') { const form = await readBody(req); return chat(res, String(form.message || '')); }
     if (p === '/unlock' && method === 'POST') {
       const form = await readBody(req);
-      if (String(form.key || '') === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/login'); }
+      if (entryKeyMatches(String(form.key || ''))) { progress.unlocked = true; saveProgress(); return redirect(res, '/login'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(gatePage('That key was not accepted.'));
     }
@@ -545,7 +547,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     const user = currentUser(req);
-    if (!user) return redirect(res, '/login');
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
 
     /* ---------- dashboard (platform-headers flips here) ---------- */
     if (p === '/' || p === '/dashboard') {
@@ -818,7 +820,7 @@ const server = http.createServer(async (req, res) => {
       <h2>Your completion key for Lab ${LAB_NUMBER + 1}</h2>
       <p style="font-size:20px"><code>${esc(key)}</code></p>
       <form method="POST" action="/tester-name"><input type="hidden" name="hx_marker" value="ok">
-      <label>Your name for the certificate <input name="name" size="30" value="${esc(progress.testerName || user.name)}"></label>
+      <label>Your name for the certificate <input name="name" size="30" value="${esc(progress.testerName || (user && user.name))}"></label>
       <button>Save name</button></form>
       <p><a href="/certificate">View your certificate →</a></p>`));
     }
@@ -830,7 +832,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/certificate' && method === 'GET') {
       if (!isComplete()) return redirect(res, '/complete');
-      const name = progress.testerName || user.name;
+      const name = progress.testerName || (user && user.name);
       const date = progress.completedAt ? progress.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
       return send(res, 200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
       <style>@media print{button{display:none}}body{font-family:Georgia,serif;background:#f1f5f9}</style></head>

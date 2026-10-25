@@ -18,7 +18,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- key material, region 1 of 4 (encoded fragments only) ---- */
-const _E1 = ["TC1YSA==","QS0yMw==","SEdRNw=="];
+
 const _C1 = ["TC1YSA==","Vi0zMw=="];
 
 /* ------------------------- TESTS registry ------------------------- */
@@ -214,9 +214,11 @@ function bump(feature) {
 loadProgress();
 
 /* ---- key material, region 2 of 4 ---- */
-const _E2 = ["LU5ITQ==","TkoyVg==","WVlWVA=="];
+
 const _rk = a => a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
-function entryKey() { return _rk(_E1.concat(_E2)); }
+const ENTRY_KEY_SHA256 = '0f9cef7e988c7e54b2001822545c35b79fb37dbadbc62cce4a0e3cfea0145ea6';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------- seeded business data ------------------------- */
 let users = [
@@ -839,7 +841,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '') === entryKey()) {
+      if (entryKeyMatches(String(b.key || ''))) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }
@@ -900,7 +902,7 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, 200, { user: apiUser.email, documents: documents.filter(d => d.ownerId === apiUser.id) });
     }
 
-    if (!user) return redirect(res, '/login');
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
 
     if (p === '/') return sendHTML(res, 200, layout(req, 'Dashboard', dashboardHTML(user)));
     if (p === '/profile') {

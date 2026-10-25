@@ -17,7 +17,7 @@ const LAB_NUMBER = 38;
 const LAB_NAME = 'HexaTranslate';
 
 /* ---- runtime tuning constants (encoded fragments, assembled on demand) ---- */
-const _EN_A = ['TC1YSA==', 'MS04Mw==', 'WExUNg=='];
+
 const _CM_A = ['TC1YSA==', 'Vy05Mw=='];
 function _asm(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
@@ -251,9 +251,11 @@ let nextReviewId = 302;
 const uploads = {}; // filename -> { ownerId, content, type }
 
 /* ---- more encoded fragments (assembled on demand) ---- */
-const _EN_B = ['LUZCNQ==', 'TUdHTA=='];
+
 const _CM_B = ['V1MwTQ=='];
-function entryKey() { return _asm(_EN_A.concat(_EN_B, _EN_C)); }
+const ENTRY_KEY_SHA256 = 'af92c2447ff6127fdfa15dc4c6842e802b5860e576e29be1a57d2ed46117377a';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_CM_A.concat(_CM_B, _CM_C)); }
 
 /* ================= TRANSLATION ENGINE (simulated, deterministic) ================= */
@@ -470,7 +472,7 @@ function chatReply(raw) {
 }
 
 /* ---- more encoded fragments (assembled on demand) ---- */
-const _EN_C = ['U0xDVw=='];
+
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -493,7 +495,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/chat' && method === 'POST') return sendJson(res, 200, { reply: chatReply(body.message) });
     if (p === '/unlock' && method === 'POST') {
       const given = String(body.key || '');
-      if (given === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('Key not accepted.');
     }
 
@@ -596,7 +598,7 @@ const server = http.createServer(async (req, res) => {
     /* ---- everything below requires a login ---- */
     if (!user) {
       if (p === '/api/users' || p === '/debug' || p === '/api/ping' || p === '/api/projects') { /* public API flaws handled below */ }
-      else return redirect(res, '/login');
+      else if (p === '/complete' || p === '/complete/name' || p === '/certificate') { /* completion pages stay public */ } else return redirect(res, '/login');
     }
 
     if (p === '/' && method === 'GET') {
@@ -847,7 +849,7 @@ const server = http.createServer(async (req, res) => {
 /* ---- more encoded fragments (assembled on demand) ---- */
 const _CM_C = ['LVBSTg==', 'MVNUTQ==', 'R0xOTQ=='];
 
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const stats = featureStats();
   const done = doneCount(), total = TESTS.length, pct = Math.floor(done * 100 / total);
   if (!isComplete()) {
@@ -876,7 +878,7 @@ function completePage(user) {
       <button>Save name & view certificate</button></form>
       <p><a href="/certificate">Open certificate</a></p></div>`);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const stats = featureStats();
   const name = progress.testerName || (user ? user.name : 'Security Tester');
   const date = progress.completedAt ? new Date(progress.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';

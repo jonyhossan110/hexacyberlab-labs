@@ -14,7 +14,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- key material: stored ONLY as base64-of-reversed shards, scattered ---- */
-const _e1 = ["TC1YSA==", "SS04Mg==", "SDhWSQ=="];
+
 const _un = a => a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 
 /* ============================== TEST REGISTRY ============================== */
@@ -402,7 +402,7 @@ const server = http.createServer(async (req, res) => {
     if (pth === '/unlock' && req.method === 'POST') {
       const b = await parseBody(req);
       const key = String(b.key || '').trim();
-      if (key && key === entryKey()) { state.unlocked = true; saveState(); res.writeHead(302, { Location: '/' }); return res.end(); }
+      if (key && entryKeyMatches(key)) { state.unlocked = true; saveState(); res.writeHead(302, { Location: '/' }); return res.end(); }
       res.writeHead(403, { 'Content-Type': 'text/html' }); return res.end('<h1>403 — That key was not accepted.</h1><p><a href="/">Back</a></p>');
     }
     if (!state.unlocked) return gatePage(res);
@@ -513,8 +513,8 @@ const server = http.createServer(async (req, res) => {
       setSession(res, nu); res.writeHead(302, { Location: '/' }); return res.end();
     }
 
-    if (!sess) { res.writeHead(302, { Location: '/login' }); return res.end(); }
-    const me = sess.user;
+    if (!sess && pth !== '/complete' && pth !== '/complete/name' && pth !== '/certificate') { res.writeHead(302, { Location: '/login' }); return res.end(); }
+    const me = sess ? sess.user : {};
 
     /* ---------- dashboard ---------- */
     if (pth === '/') {
@@ -755,7 +755,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pth === '/certificate') {
       if (doneCount() < TOTAL) { res.writeHead(302, { Location: '/complete' }); return res.end(); }
-      const name = state.testerName || me.name || 'HexaCyberLab Tester';
+      const name = state.testerName || (me && me.name) || 'HexaCyberLab Tester';
       const date = state.completedAt ? new Date(state.completedAt).toDateString() : new Date().toDateString();
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(`<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
@@ -777,8 +777,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 /* entry key halves reunite here (second half) */
-const _e2 = ["LUxMQg==", "MUhMUw==", "WDNSVg=="];
-function entryKey() { return _un([..._e1, ..._e2]); }
+
+const ENTRY_KEY_SHA256 = '744be454ff5e2bdf9fe4b018e530d337fcddd25469989ba44e5c5641b41da63c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* completion key: remaining shards live down here, far from the first half */
 const _c2 = ["LVAxSA==", "TkJSMw==", "WVA4Wg=="];

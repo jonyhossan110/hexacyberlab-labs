@@ -22,6 +22,9 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * ------------------------------------------------------------------ */
 const _eS = ['TC1YSA==', 'Qy01Mg==', 'VDNCMw==', 'LTZMRg==', 'STNJSQ==', 'Vkg1Qg=='];
 function _revB64(s){ return Buffer.from(s, 'base64').toString('utf8').split('').reverse().join(''); }
+const ENTRY_KEY_SHA256 = '19b0911be92083b8cabd718139076eb3a499215b286dac19527efaea1bfb338c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function assembleKey(shards){ return shards.map(_revB64).join(''); }
 
 /* ------------------------- Seed data ------------------------------ */
@@ -862,7 +865,7 @@ const server = http.createServer(async (req, res) => {
     if (!progress.unlocked) {
       if (p === '/unlock' && req.method === 'POST') {
         const body = parseBody(req, await readBody(req));
-        if (String(body.key || '') === assembleKey(_eS)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(body.key || ''))) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage('That key was not accepted.'));
       }
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage());

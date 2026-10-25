@@ -133,7 +133,7 @@ function progressSummary() {
  *  (fragments are base64 of reversed pieces; assembled at runtime
  *   only at the moment of verification or reveal.)
  * ------------------------------------------------------------------ */
-const _fragA = ['TC1YSA==', 'US00Mg=='];
+
 function _asm(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
@@ -245,7 +245,7 @@ const TESTS = [
 ];
 
 /* more key fragments, scattered mid-file */
-const _fragB = ['SDkzRA==', 'LTJTMg=='];
+
 
 const _cfragA = ['TC1YSA==', 'Qy01Mg=='];
 const TESTS2 = [
@@ -327,8 +327,10 @@ const TESTS2 = [
 ];
 TESTS.push(...TESTS2);
 
-const _fragC = ['V0tRMg==', 'SlVPNQ=='];
-function entryKey() { return _asm(_fragA.concat(_fragB, _fragC)); }
+
+const ENTRY_KEY_SHA256 = '1bfb0b58a5a6c79d94a8d979c19eab865752bef39929434c89bc6332418f5299';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 const XSS_RE = /<\s*script|on\w+\s*=|<\s*svg|<\s*iframe|<\s*img[^>]*onerror|javascript\s*:/i;
 const INJ_RE = /'\s*or\s*'?\d+'?\s*=\s*'?\d+|'\s*or\s*'[^']*'\s*=\s*'[^']*'|'\s*--|'\s*or\s+1\s*=\s*1|\bunion\b[\s\S]*\bselect\b/i;
@@ -860,7 +862,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      if (String(b.key || '') === entryKey()) {
+      if (entryKeyMatches(String(b.key || ''))) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

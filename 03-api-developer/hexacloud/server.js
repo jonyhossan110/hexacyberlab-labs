@@ -20,7 +20,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
  * Fragment vault A (harmless-looking config fragments; a tiny
  * assembler in region C rebuilds values at runtime when needed).
  * ------------------------------------------------------------------ */
-const _fragA1 = ['TC1YSA==', 'Ti0zMg=='];
+
 const _fragA2 = ['TC1YSA==', 'US00Mg=='];
 
 /* --------------------------- progress ------------------------------ */
@@ -337,7 +337,7 @@ function xssLike(s) {
 /* ------------------------------------------------------------------ *
  * Fragment vault B (scattered configuration fragments).
  * ------------------------------------------------------------------ */
-const _fragB1 = ['UkZIRA==', 'LUgzNA=='];
+
 const _fragB2 = ['SDkzRA==', 'LTJTMg=='];
 
 /* --------------------------- http helpers -------------------------- */
@@ -399,12 +399,14 @@ function redirect(res, to) { res.writeHead(302, { Location: to }); res.end(); }
 /* ------------------------------------------------------------------ *
  * Fragment vault C + assembler.
  * ------------------------------------------------------------------ */
-const _fragC1 = ['WERSRA==', 'QUhRSw=='];
+
 const _fragC2 = ['V0tRMg==', 'SlVPNQ=='];
 function _assemble(parts) {
   return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKeyValue() { return _assemble([].concat(_fragA1, _fragB1, _fragC1)); }
+const ENTRY_KEY_SHA256 = '96eede2c451f09ceeb788c9f8f13069405efbd5e190d51090c4ab6909226e93d';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKeyValue() { return _assemble([].concat(_fragA2, _fragB2, _fragC2)); }
 
 /* --------------------------- HTML shell ---------------------------- */
@@ -533,7 +535,7 @@ const server = http.createServer(async (req, res) => {
       if (pathname === '/unlock' && method === 'POST') {
         const b = await readBody(req);
         const given = String(b.key || '').trim();
-        if (given && given === entryKeyValue()) {
+        if (given && entryKeyMatches(given)) {
           state.unlocked = true; saveState();
           return redirect(res, '/');
         }
@@ -705,7 +707,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, r);
     }
 
-    if (!user) return redirect(res, '/login');
+    if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
 
     /* ---- dashboard ---- */
     if (pathname === '/' && method === 'GET') {
@@ -1019,7 +1021,7 @@ const server = http.createServer(async (req, res) => {
       const p = progress();
       if (!p.complete) return redirect(res, '/complete');
       const feats = [...new Set(TESTS.map(t => t.feature))];
-      const name = state.testerName || user.displayName || user.name || 'Security Tester';
+      const name = state.testerName || (user && user.displayName) || (user && user.name) || 'Security Tester';
       const date = state.completedAt ? new Date(state.completedAt).toDateString() : new Date().toDateString();
       const card = '<div class="cert"><img src="/logo.png" alt="HexaCyberLab logo"><h1>Certificate of Completion</h1>' +
         '<p>This certifies that</p><h2>' + esc(name) + '</h2>' +

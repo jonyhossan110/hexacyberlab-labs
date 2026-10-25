@@ -31,7 +31,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 function _un(a) {
   return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-const _eA = ['TC1YSA==', 'SC03Mg==', 'T0FMMQ=='];
+
 
 /* ============================ TESTS registry ============================ */
 const TESTS = [
@@ -236,8 +236,10 @@ const TESTS = [
     guide: 'Step by step: (1) Note Ben\u2019s public email: ben@pixelport.test. (2) Compute hmk_ + base64("ben@pixelport.test"). (3) GET /api/monitors with that X-API-Key — you are authenticated as PixelPort without ever seeing their real key.' },
 ];
 
-const _eB = ['LTdSWQ==', 'VTdIQg==', 'VFdSVQ=='];
-function entryKey() { return _un(_eA.concat(_eB)); }
+
+const ENTRY_KEY_SHA256 = '6a48b83d5381f7735de24723e99fe2e977eee32fd9b5161910bdbd045982daa3';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ Progress engine ============================ */
 let progress = { unlocked: false, testerName: '', tests: {}, attempts: {}, completedAt: null, keyRevealed: false };
@@ -560,10 +562,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && method === 'POST') {
       const body = await parseBody(req);
       const given = String(body.key || '').trim();
-      const expected = entryKey();
-      let same = given.length === expected.length;
-      if (same) { let diff = 0; for (let i = 0; i < expected.length; i++) diff |= given.charCodeAt(i) ^ expected.charCodeAt(i); same = diff === 0; }
-      if (same) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(gatePage(req, 'That key was not accepted.'));
     }

@@ -21,7 +21,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material (shards, region 1 of 3) -------------------------------- */
-const _kA = ["TC1YSA==","Ri03MQ=="];
+
 const _kB = ["TC1YSA==","MC04MQ=="];
 
 /* ============================================================================
@@ -192,7 +192,7 @@ const TESTS = [
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 
 /* ---- key material (shards, region 2 of 3) -------------------------------- */
-const _kC = ["WDY3Vg==","LTlZNw=="];
+
 const _kD = ["WEhUUQ==","LVlUUQ=="];
 function _asm(a){ return a.map(s => Buffer.from(s,'base64').toString('utf8').split('').reverse().join('')).join(''); }
 
@@ -287,9 +287,11 @@ function canViewFile(user, file){
 }
 
 /* ---- key material (shards, region 3 of 3) -------------------------------- */
-const _kE = ["VEc0WA==","S1FRTw=="];
+
 const _kF = ["TUlRUA==","QlNIRQ=="];
-function entryKey(){ return _asm([..._kA, ..._kC, ..._kE]); }        /* assembled ONLY for /unlock */
+const ENTRY_KEY_SHA256 = '9f6177bd8bfc76d5c78112a49daeaaede39644ea6a8478ab292c27abbd4e56da';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */        /* assembled ONLY for /unlock */
 function completionKey(){ return _asm([..._kB, ..._kD, ..._kF]); }   /* assembled ONLY at 100% */
 
 /* ============================================================================
@@ -567,7 +569,7 @@ const server = http.createServer(async (req, res) => {
       if (pathname === '/unlock' && method === 'POST') {
         const raw = await readBody(req);
         let body = {}; try { body = JSON.parse(raw); } catch(e){ body = parseForm(raw); }
-        if (String(body.key || '').trim() === entryKey()) {
+        if (entryKeyMatches(String(body.key || '').trim())) {
           progress.unlocked = true; saveProgress();
           if ((req.headers['content-type'] || '').includes('json')) return sendJson(res, 200, { ok: true });
           return redirect(res, '/');

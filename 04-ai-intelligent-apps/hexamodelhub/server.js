@@ -20,8 +20,8 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- key material, fragment set A (scattered; assembled only at runtime) ---- */
-const _ka = ["TC1YSA==", "V1Q4UQ==", "NTk2WA=="];
-const _kb = ["OC0wNA==", "LTlVMQ==", "NTg1SA=="];
+
+
 
 function _unshard(s) { return Buffer.from(s, 'base64').toString('utf8').split('').reverse().join(''); }
 function _assemble(a, b) {
@@ -29,7 +29,9 @@ function _assemble(a, b) {
   for (let i = 0; i < Math.max(a.length, b.length); i++) { if (a[i]) out.push(_unshard(a[i])); if (b[i]) out.push(_unshard(b[i])); }
   return out.join('');
 }
-function entryKey() { return _assemble(_ka, _kb); }
+const ENTRY_KEY_SHA256 = '5051c8ece8705e7ba6ebf7d2a8f0fb1dba9cb3e7129633c68037108b18350d7d';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ TESTS registry ============================ */
 const TESTS = [
@@ -391,10 +393,7 @@ const server = http.createServer(async (req, res) => {
     if (pn === '/api/chat' && method === 'POST') { const b = await parseBody(req); return jsonRes(res, 200, { reply: chatReply(b.message) }); }
     if (pn === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      const want = entryKey();
-      let ok = false;
-      try { ok = typeof b.key === 'string' && b.key.length === want.length && crypto.timingSafeEqual(Buffer.from(b.key), Buffer.from(want)); } catch (e) { ok = false; }
-      if (ok) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(b.key)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       return send(res, 403, gatePage().replace('</form>', '</form><p style="color:#f87171">That key was not accepted.</p>'));
     }
     if (!progress.unlocked) return send(res, 200, gatePage());

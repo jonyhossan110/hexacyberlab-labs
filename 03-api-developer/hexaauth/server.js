@@ -128,7 +128,7 @@ function progressSummary() {
  *  (fragments are base64 of reversed pieces; assembled at runtime
  *   only at the moment of verification or reveal.)
  * ------------------------------------------------------------------ */
-const _fragA = ['TC1YSA==', 'My05Mg=='];
+
 function _asm(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
@@ -294,8 +294,10 @@ const TESTS = [
 ];
 
 /* More key fragments live further down the file (see _fragC / _fragD). */
-const _fragB = ['Rk8wMQ==', 'LVAxSA==', 'TkJSMw==', 'WVA4Wg=='];
-function entryKey() { return _asm(_fragA.concat(_fragB)); }
+
+const ENTRY_KEY_SHA256 = '7626d30195761c03b3e022fc9378790cfb9fadee76b555f54b28479eac54935a';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ HTML helpers ============================ */
 function esc(s) {
@@ -665,7 +667,7 @@ async function handle(req, res) {
   }
   if (pathname === '/unlock' && method === 'POST') {
     const b = await readBody(req);
-    if (String(b.key || '') === entryKey()) {
+    if (entryKeyMatches(String(b.key || ''))) {
       progress.unlocked = true; saveProgress();
       return redirect(res, '/');
     }

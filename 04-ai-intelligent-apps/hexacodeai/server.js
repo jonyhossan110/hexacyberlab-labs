@@ -27,13 +27,15 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * Keys are never stored whole: each lives only as base64-of-reversed
  * shards scattered through this file and is reassembled at runtime.
  * ------------------------------------------------------------------ */
-const _ekA = ['TC1YSA==', 'Vy05Mw=='];
-const _ekB = ['V1MwTQ=='];
-const _ekC = ['LVBSTg==', 'MVNUTQ==', 'R0xOTQ=='];
+
+
+
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard([].concat(_ekA, _ekB, _ekC)); }
+const ENTRY_KEY_SHA256 = 'd490572c9cda93a699e91ab7e1a39217038f19e3acd30b90c7e343b5fed4250b';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------- progress engine ------------------------ */
 let state = { unlocked: false, testerName: '', tests: {}, attempts: {}, completedAt: null, keyRevealed: false };
@@ -668,7 +670,7 @@ function testsPage(req, res, user) {
   }
   send(res, 200, layout('Mission', user, body));
 }
-function completePage(req, res, user) {
+function completePage(req, res, user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (!isComplete()) {
     const left = TESTS.filter(t => !state.tests[t.id]);
     const body = '<h2>Completion summary</h2><p>You are at ' + doneCount() + '/' + TESTS.length + ' (' + pct() + '%). The summary, your completion key and the certificate unlock at 100%.</p>' +
@@ -688,7 +690,7 @@ function completePage(req, res, user) {
   body += '<p><a href="/certificate" style="font-size:16px">🎓 Open your certificate</a></p>';
   send(res, 200, layout('Complete', user, body));
 }
-function certificatePage(req, res, user) {
+function certificatePage(req, res, user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (!isComplete()) return redirect(res, '/complete');
   const name = state.testerName || (user ? user.name : 'HexaCyberLab Tester');
   const date = state.completedAt ? new Date(state.completedAt).toISOString().slice(0, 10) : '';
@@ -782,7 +784,7 @@ async function handle(req, res) {
     if (p === '/api/chat' && m === 'POST') return await doChat(req, res);
     if (p === '/unlock' && m === 'POST') {
       const body = await readBody(req);
-      if (String(body.key || '') === entryKey()) {
+      if (entryKeyMatches(String(body.key || ''))) {
         state.unlocked = true; saveState();
         return redirect(res, '/');
       }
@@ -837,7 +839,7 @@ async function handle(req, res) {
         const snip = snippets.find(s => s.id === Number(p.split('/')[2]));
         if (snip) return snippetPage(req, res, null, snip, true);
       }
-      return redirect(res, '/login');
+      if (p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
     }
 
     if (p === '/' || p === '/dashboard') return dashboardPage(req, res, user);

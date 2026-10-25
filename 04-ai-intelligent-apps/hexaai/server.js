@@ -363,9 +363,11 @@ function progressSummary(){
 }
 // Key material exists ONLY as encoded shards, scattered across this file (spec section 7).
 // Entry-key shards live here (region 1); completion-key shards live near the bottom of server.js (region 2).
-const ENTRY_SHARDS = ["TC1YSA==","RC0xMw==","WjgzTA==","LURRSQ==","VUZGNw==","NkpHNQ=="];
+
 function asmKey(parts){ return parts.map(s=>Buffer.from(s,'base64').toString().split('').reverse().join('')).join(''); }
-function entryKey(){ return asmKey(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = 'b95971e72a30becedb4f4e4948a0065a060f851f4c7ca949a9d6ea266722d77a';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey(){ return asmKey(COMPLETION_SHARDS); }
 // Login attack telemetry for the scored auth tests: failed-login counts persist in
 // progress.flags (brute force), probed-email sets live per source IP (enumeration).
@@ -1342,7 +1344,7 @@ const server = http.createServer(async (req,res)=>{
       catch(e){ return send(res,404,'not found','text/plain; charset=utf-8'); }
     }
     if(p === '/unlock' && m === 'POST'){
-      if(String(body.key||'') === entryKey()){ progress.unlocked = true; saveProgress(); return redirect(res,'/'); }
+      if(entryKeyMatches(String(body.key||''))){ progress.unlocked = true; saveProgress(); return redirect(res,'/'); }
       return send(res,403, gatePage('That key was not accepted.'));
     }
     if(p === '/api/progress' && m === 'GET') return sendJson(res,200, progressSummary());

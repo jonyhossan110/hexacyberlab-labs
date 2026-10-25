@@ -23,7 +23,7 @@ const LOGO_PATH = path.join(__dirname, 'logo.png');
 
 /* Key material is never stored whole — only encoded shards, scattered (§7).
    Assembler: base64-decode each shard, reverse it, join. */
-const _eA = ['TC1YSA==', 'Ri0wMw=='];
+
 const _cA = ['TC1YSA==', 'RC0xMw=='];
 const _unshard = (arr) => arr.map((s) => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 
@@ -100,7 +100,7 @@ const XSS_RE = /(<script|onerror\s*=|onload\s*=|<svg|<img|javascript:)/i;
 const SQLI_RE = /('|%27)\s*(or|and)\s+[^=]*=|'\s*--|'\s*or\s*'|union\s+select/i;
 
 /* more key shards, kept apart (§7) */
-const _eB = ['R0tINQ==', 'LURORw=='];
+
 const _cB = ['WjgzTA==', 'LURRSQ=='];
 
 /* ================= TESTS REGISTRY (§3) ================= */
@@ -290,9 +290,11 @@ function progressView() {
 loadProgress();
 
 /* more key shards, kept apart (§7) */
-const _eC = ['VFc4UA==', 'QVA4TA=='];
+
 const _cC = ['VUZGNw==', 'NkpHNQ=='];
-const entryKey = () => _unshard([..._eA, ..._eB, ..._eC]);
+const ENTRY_KEY_SHA256 = 'a3abd614cd8b6038e845f68d1874ce146748e031609eb15622b6b8c0c7e9465e';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const completionKey = () => _unshard([..._cA, ..._cB, ..._cC]);
 
 /* ================= HTTP helpers ================= */
@@ -458,7 +460,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (method === 'POST' && pathname === '/unlock') {
       const key = String(body.key || '');
-      if (key && key === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (key && entryKeyMatches(key)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       return send(res, 403, gatePage().replace('</form>', '</form><p style="color:#b91c1c">That key was not accepted.</p>'));
     }
     if (method === 'GET' && pathname === '/api/progress') return json(res, 200, progressView());

@@ -12,7 +12,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- key material: stored ONLY as encoded shards, scattered (see spec §7) ---- */
-const _e1 = ["TC1YSA==","RC00Mw==","TTdJVA=="];
+
 const _c1 = ["TC1YSA==","OS01Mw==","N1ZaSQ=="];
 function _rev(s){ return s.split('').reverse().join(''); }
 function _un(a){ return a.map(s => _rev(Buffer.from(s, 'base64').toString('utf8'))).join(''); }
@@ -251,9 +251,11 @@ function progressJSON(){
 }
 
 /* ---- scattered key material (continued) ---- */
-const _e2 = ["LVMyUA==","U1U3Nw==","TUVLTA=="];
+
 const _c2 = ["LUNBRQ==","STJWOQ==","UDdTQg=="];
-function entryKey(){ return _un(_e1.concat(_e2)); }
+const ENTRY_KEY_SHA256 = '678463d3b661375c41bdfb01ce28524402c2f2b6b2ef6b1b4f46b7b2c1238ab4';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey(){ return _un(_c1.concat(_c2)); }
 
 /* ---------------- http helpers ---------------- */
@@ -677,7 +679,7 @@ function routeSystem(req, res, url){
     html += '<h2>6. Writing it in a real report</h2><ul>' + TESTS.map(t => '<li><b>' + esc(t.report.title) + '</b> — Severity: ' + esc(t.report.severity) + ' — Fix: ' + esc(t.report.remediation) + '</li>').join('') + '</ul>';
     html += '<h2>Your completion key for Lab ' + (LAB_NUMBER + 1) + '</h2>' +
       '<p style="font-family:monospace;font-size:18px;background:#ecfdf5;border:1px solid #10b981;padding:12px">' + completionKey() + '</p>' +
-      '<form method="POST" action="/complete"><p>Your name for the certificate: <input name="testerName" size="30" value="' + esc(P.testerName || (user ? user.name : '')) + '"> <button>Save name</button></p></form>' +
+      '<form method="POST" action="/complete"><p>Your name for the certificate: <input name="testerName" size="30" value="' + esc(P.testerName || (user ? (user && user.name) : '')) + '"> <button>Save name</button></p></form>' +
       '<p><a href="/certificate">View your certificate</a></p>';
     return send(res, 200, layout(req, user, 'Completion', html));
   }
@@ -691,7 +693,7 @@ function routeSystem(req, res, url){
   if (url.pathname === '/certificate') {
     const pj = progressJSON();
     if (!pj.complete) return send(res, 200, layout(req, user, 'Certificate', '<h1>Certificate unlocks at 100%</h1><p>Current progress: ' + pj.pct + '%</p>'));
-    const name = P.testerName || (user ? user.name : 'Tester');
+    const name = P.testerName || (user ? (user && user.name) : 'Tester');
     const date = P.completedAt ? new Date(P.completedAt).toDateString() : new Date().toDateString();
     const featCount = FEATURES.length;
     return send(res, 200, '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ' + LAB_NUMBER + '</title>' +
@@ -773,7 +775,7 @@ const server = http.createServer(async (req, res) => {
     if (!P.unlocked) {
       if (url.pathname === '/unlock' && req.method === 'POST') {
         const f = parseForm(await readBody(req));
-        if ((f.key || '') === entryKey()) { P.unlocked = true; saveProgress(); return redirect(res, '/login'); }
+        if (entryKeyMatches((f.key || ''))) { P.unlocked = true; saveProgress(); return redirect(res, '/login'); }
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(gatePage(req).replace('</p>', '</p><p style="color:#f87171">That key was not accepted.</p>'));
       }
@@ -788,7 +790,7 @@ const server = http.createServer(async (req, res) => {
     if (authResult !== null && authResult !== undefined) return;
     const user = currentUser(req);
     if (!user) {
-      if (url.pathname === '/api/users' || url.pathname === '/internal/status' || url.pathname.startsWith('/shared/')) { const r = await routeApp(req, res, url); if (r !== null && r !== undefined) return; }
+      if (url.pathname === '/api/users' || url.pathname === '/internal/status' || url.pathname.startsWith('/shared/') || url.pathname === '/complete' || url.pathname === '/certificate') { const rs = routeSystem(req, res, url); if (rs !== null && rs !== undefined) { if (rs && typeof rs.then === 'function') await rs; return; } const r = await routeApp(req, res, url); if (r !== null && r !== undefined) return; if (url.pathname === '/complete' || url.pathname === '/certificate') return; }
       return redirect(res, '/login');
     }
     const sysResult = routeSystem(req, res, url);

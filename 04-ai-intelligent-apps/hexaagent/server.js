@@ -453,7 +453,7 @@ async function route(req, res){
     return send(res, 200, JSON.stringify(agents.filter(a=>a.owner===apiUser.id), null, 1), 'application/json');
   }
 
-  if (!user) return redirect(res, '/login');
+  if (!user && pth !== '/complete' && pth !== '/complete/name' && pth !== '/certificate') return redirect(res, '/login');
 
   if (pth === '/profile' && req.method === 'GET') return send(res, 200, layout(req,'Profile', `<form method="POST" action="/profile"><input type="hidden" name="hx_marker" value="1"><p>Display name: <input name="name" value="${esc(user.name)}" style="padding:8px;width:280px"></p><p>Email: ${esc(user.email)} · Role: ${esc(user.role)}</p><p>Your API key: <code>${esc(user.apiKey)}</code></p><button style="padding:8px 18px">Save profile</button></form>`));
   if (pth === '/profile' && req.method === 'POST'){
@@ -631,7 +631,7 @@ async function route(req, res){
   if (pth === '/certificate' && req.method === 'GET'){
     const p = progress();
     if (!p.complete) return send(res, 200, layout(req, 'Certificate', '<p>Finish 100% of the tests first.</p>'));
-    const name = state.testerName || user.name;
+    const name = state.testerName || (user && user.name);
     const date = state.completedAt ? new Date(state.completedAt).toDateString() : new Date().toDateString();
     return send(res, 200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title><style>@media print{body{background:#fff}}</style></head><body style="background:#f8fafc;font-family:Georgia,serif"><div style="max-width:720px;margin:40px auto;background:#fff;border:3px double #1f2937;padding:40px;text-align:center;color:#111827"><img src="/logo.png" style="height:64px"><h1>Certificate of Completion</h1><p>This certifies that</p><h2>${esc(name)}</h2><p>has completed 100% of the security tests in LAB ${LAB_NUMBER} — ${LAB_NAME} (${p.total} tests across ${FEATURE_ORDER.length} features)</p><p>Completed: ${esc(date)}</p><p style="margin-top:30px">HexaCyberLab — Built by Md. Jony Hassain, Founder</p></div></body></html>`);
   }
