@@ -593,11 +593,7 @@ const server = http.createServer(async (req, res) => {
       return redirect(res, '/', { 'Set-Cookie': ['hx_session=' + sid + '; Path=/; HttpOnly', 'hx_role=' + nu.role + '; Path=/'] });
     }
 
-    /* ---------------- everything below needs a login ---------------- */
-    if (!user) return redirect(res, '/login');
-
-    if (pathname === '/' && method === 'GET') return send(res, 200, dashboard(user));
-    if (pathname === '/tests' && method === 'GET') return send(res, 200, testsPage(user));
+    /* ---------------- completion pages: no login needed (the completion key and certificate must stay reachable even if the session is gone) ---------------- */
     if (pathname === '/complete' && method === 'GET') return send(res, 200, completePage(user));
     if (pathname === '/set-name' && method === 'POST') { state.testerName = String(body.name || '').slice(0, 80); saveState(); return redirect(res, '/complete'); }
     if (pathname === '/certificate' && method === 'GET') {
@@ -605,6 +601,12 @@ const server = http.createServer(async (req, res) => {
       if (!cert) return redirect(res, '/complete');
       return send(res, 200, cert);
     }
+
+    /* ---------------- everything below needs a login ---------------- */
+    if (!user) return redirect(res, '/login');
+
+    if (pathname === '/' && method === 'GET') return send(res, 200, dashboard(user));
+    if (pathname === '/tests' && method === 'GET') return send(res, 200, testsPage(user));
 
     /* ---------------- profile ---------------- */
     if (pathname === '/profile' && method === 'GET') {
