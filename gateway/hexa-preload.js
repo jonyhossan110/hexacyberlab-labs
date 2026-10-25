@@ -71,6 +71,13 @@ const TOOLBAR = '<div id="hexa-toolbar" style="position:fixed;left:14px;bottom:1
   '<a href="/hexa/burp" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">🧰 Burp</a>' +
   '<a target="_blank" rel="noopener" href="' + GATEWAY + '" style="color:#9fc1ff;text-decoration:none;padding:4px 9px;border-radius:20px">🎛 Dashboard</a></div>';
 
+/* On a lab's /complete page: a "Copy report (Markdown)" button. It converts the
+   rendered completion report (headings, lists, paragraphs, tables, code) into
+   clean Markdown in the browser and copies it — ready to paste into a pentest
+   report, a README, or a client email. Runs fully client-side. */
+const REPORT_UI = '<button id="hexa-copy-report" style="position:fixed;right:14px;top:14px;z-index:9999;background:#6c5cff;color:#fff;border:0;border-radius:24px;padding:10px 16px;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.35)">📋 Copy report (Markdown)</button>' +
+'<script>(function(){function txt(el){return (el.textContent||"").replace(/\\s+/g," ").trim();}function conv(node,d){var out="";node.childNodes.forEach(function(n){if(n.nodeType===3){var t=n.textContent.replace(/\\s+/g," ");if(t.trim())out+=t;}else if(n.nodeType===1){var tag=n.tagName.toLowerCase();if(tag==="script"||tag==="style"||n.id==="hexa-toolbar"||n.id==="hexa-copy-report")return;if(tag==="h1")out+="\\n\\n# "+txt(n)+"\\n";else if(tag==="h2")out+="\\n\\n## "+txt(n)+"\\n";else if(tag==="h3")out+="\\n\\n### "+txt(n)+"\\n";else if(tag==="h4")out+="\\n\\n#### "+txt(n)+"\\n";else if(tag==="li")out+="\\n- "+conv(n,d+1).replace(/\\n+/g," ").trim();else if(tag==="tr"){var cells=[];n.querySelectorAll("th,td").forEach(function(c){cells.push(txt(c));});if(cells.length)out+="\\n| "+cells.join(" | ")+" |";}else if(tag==="pre")out+="\\n\\n```\\n"+n.textContent.trim()+"\\n```\\n";else if(tag==="code")out+=" `"+txt(n)+"` ";else if(tag==="br")out+="\\n";else if(tag==="p"||tag==="div"||tag==="section"||tag==="article")out+="\\n"+conv(n,d+1)+"\\n";else out+=conv(n,d+1);}});return out;}var btn=document.getElementById("hexa-copy-report");if(btn)btn.addEventListener("click",async function(){var main=document.querySelector("main")||document.body;var md=conv(main,0).replace(/\\n{3,}/g,"\\n\\n").trim()+"\\n";try{await navigator.clipboard.writeText(md);btn.textContent="✓ Copied — paste it anywhere";}catch(e){var ta=document.createElement("textarea");ta.value=md;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");btn.textContent="✓ Copied — paste it anywhere";}catch(e2){btn.textContent="Copy failed — select the page text manually";}ta.remove();}setTimeout(function(){btn.textContent="📋 Copy report (Markdown)";},2600);});})();</' + 'script>';
+
 const origCreate = http.createServer;
 http.createServer = function (...args) {
   const handler = args.find(a => typeof a === 'function');
@@ -116,7 +123,7 @@ http.createServer = function (...args) {
         if (decided) {
           if (chunk) parts.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk)));
           let body = Buffer.concat(parts).toString('utf8');
-          if (body.includes('</body>') && !body.includes('hexa-toolbar')) body = body.replace('</body>', TOOLBAR + '</body>');
+          if (body.includes('</body>') && !body.includes('hexa-toolbar')) body = body.replace('</body>', TOOLBAR + (pathname === '/complete' ? REPORT_UI : '') + '</body>');
           try { res.removeHeader('content-length'); } catch (e) {}
           return origEnd(body, ...a);
         }
