@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T15:47:05.860Z",
+ "generated": "2026-10-25T09:01:25.761Z",
  "labs": [
   {
    "number": 1,
@@ -155,7 +155,14 @@
     "rce-injection",
     "open-redirect",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 10,
+    "Advanced": 2
+   }
   },
   {
    "number": 2,
@@ -299,7 +306,14 @@
     "brute-force",
     "path-traversal",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 3,
@@ -459,7 +473,14 @@
     "race-condition",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 1
+   }
   },
   {
    "number": 4,
@@ -596,7 +617,14 @@
     "business-logic",
     "idor",
     "csrf"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 10,
+    "Advanced": 2
+   }
   },
   {
    "number": 5,
@@ -734,7 +762,14 @@
     "csrf",
     "file-upload",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 175,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 6,
@@ -868,7 +903,14 @@
     "race-condition",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 170,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 9,
+    "Advanced": 1
+   }
   },
   {
    "number": 7,
@@ -1001,7 +1043,14 @@
     "business-logic",
     "idor",
     "csrf"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 10,
+    "Advanced": 2
+   }
   },
   {
    "number": 8,
@@ -1133,7 +1182,14 @@
     "business-logic",
     "idor",
     "csrf"
-   ]
+   ],
+   "estMinutes": 165,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 9,
@@ -1287,7 +1343,14 @@
     "idor",
     "path-traversal",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 11,
+    "Advanced": 2
+   }
   },
   {
    "number": 10,
@@ -1430,7 +1493,14 @@
     "idor",
     "business-logic",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 9,
+    "Intermediate": 12,
+    "Advanced": 3
+   }
   },
   {
    "number": 11,
@@ -1585,7 +1655,14 @@
     "business-logic",
     "ssrf",
     "prompt-injection"
-   ]
+   ],
+   "estMinutes": 235,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 8,
+    "Intermediate": 16,
+    "Advanced": 2
+   }
   },
   {
    "number": 12,
@@ -1739,7 +1816,14 @@
     "idor",
     "jwt",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 14,
+    "Advanced": 1
+   }
   },
   {
    "number": 13,
@@ -1897,7 +1981,14 @@
     "idor",
     "file-upload",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 14,
@@ -2043,7 +2134,14 @@
     "misconfiguration",
     "file-upload",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 10,
+    "Advanced": 1
+   }
   },
   {
    "number": 15,
@@ -2197,7 +2295,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 14,
+    "Advanced": 2
+   }
   },
   {
    "number": 16,
@@ -2345,7 +2450,14 @@
     "csrf",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 12,
+    "Advanced": 3
+   }
   },
   {
    "number": 17,
@@ -2496,7 +2608,14 @@
     "file-upload",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 18,
@@ -2647,7 +2766,14 @@
     "jwt",
     "api-exposure",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 19,
@@ -2801,7 +2927,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 240,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 9,
+    "Intermediate": 14,
+    "Advanced": 3
+   }
   },
   {
    "number": 20,
@@ -2947,7 +3080,14 @@
     "path-traversal",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 8,
+    "Intermediate": 14,
+    "Advanced": 2
+   }
   },
   {
    "number": 21,
@@ -3094,7 +3234,14 @@
     "graphql",
     "api-exposure",
     "ssrf"
-   ]
+   ],
+   "estMinutes": 155,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 19,
+    "Intermediate": 6,
+    "Advanced": 0
+   }
   },
   {
    "number": 22,
@@ -3242,7 +3389,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 23,
@@ -3396,7 +3550,14 @@
     "path-traversal",
     "ssrf",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 24,
@@ -3547,7 +3708,14 @@
     "xss",
     "csrf",
     "idor"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 2
+   }
   },
   {
    "number": 25,
@@ -3701,7 +3869,14 @@
     "idor",
     "path-traversal",
     "jwt"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 14,
+    "Advanced": 1
+   }
   },
   {
    "number": 26,
@@ -3856,7 +4031,14 @@
     "jwt",
     "api-exposure",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 235,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 11,
+    "Advanced": 4
+   }
   },
   {
    "number": 27,
@@ -4008,7 +4190,14 @@
     "csrf",
     "idor",
     "ssrf"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 2
+   }
   },
   {
    "number": 28,
@@ -4162,7 +4351,14 @@
     "path-traversal",
     "xxe",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 9,
+    "Intermediate": 16,
+    "Advanced": 1
+   }
   },
   {
    "number": 29,
@@ -4304,7 +4500,14 @@
     "csrf",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 30,
@@ -4451,7 +4654,14 @@
     "csrf",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 31,
@@ -4602,7 +4812,14 @@
     "idor",
     "file-upload",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 155,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 21,
+    "Intermediate": 5,
+    "Advanced": 0
+   }
   },
   {
    "number": 32,
@@ -4755,7 +4972,14 @@
     "csrf",
     "idor",
     "prompt-injection"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 33,
@@ -4909,7 +5133,14 @@
     "path-traversal",
     "ssrf",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 14,
+    "Advanced": 0
+   }
   },
   {
    "number": 34,
@@ -5058,7 +5289,14 @@
     "idor",
     "ssrf",
     "prompt-injection"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 10,
+    "Advanced": 3
+   }
   },
   {
    "number": 35,
@@ -5212,7 +5450,14 @@
     "ssrf",
     "prompt-injection",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 14,
+    "Advanced": 2
+   }
   },
   {
    "number": 36,
@@ -5390,7 +5635,14 @@
     "idor",
     "path-traversal",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 37,
@@ -5545,7 +5797,14 @@
     "ssrf",
     "api-exposure",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 14,
+    "Advanced": 1
+   }
   },
   {
    "number": 38,
@@ -5696,7 +5955,14 @@
     "jwt",
     "api-exposure",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 39,
@@ -5844,7 +6110,14 @@
     "prompt-injection",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 40,
@@ -5996,7 +6269,14 @@
     "csrf",
     "idor",
     "prompt-injection"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 41,
@@ -6179,7 +6459,14 @@
     "business-logic",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 175,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 17,
+    "Intermediate": 9,
+    "Advanced": 0
+   }
   },
   {
    "number": 42,
@@ -6327,7 +6614,14 @@
     "csrf",
     "business-logic",
     "idor"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 9,
+    "Advanced": 2
+   }
   },
   {
    "number": 43,
@@ -6482,7 +6776,14 @@
     "business-logic",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 9,
+    "Advanced": 2
+   }
   },
   {
    "number": 44,
@@ -6635,7 +6936,14 @@
     "idor",
     "path-traversal",
     "business-logic"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 45,
@@ -6785,7 +7093,14 @@
     "business-logic",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 11,
+    "Advanced": 2
+   }
   },
   {
    "number": 46,
@@ -6933,7 +7248,14 @@
     "idor",
     "file-upload",
     "jwt"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 47,
@@ -7080,7 +7402,14 @@
     "csrf",
     "idor",
     "misconfiguration"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 48,
@@ -7232,7 +7561,14 @@
     "csrf",
     "business-logic",
     "idor"
-   ]
+   ],
+   "estMinutes": 250,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 8,
+    "Intermediate": 14,
+    "Advanced": 4
+   }
   },
   {
    "number": 49,
@@ -7381,7 +7717,14 @@
     "path-traversal",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 15,
+    "Advanced": 0
+   }
   },
   {
    "number": 50,
@@ -7535,7 +7878,14 @@
     "business-logic",
     "path-traversal",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 14,
+    "Advanced": 1
+   }
   },
   {
    "number": 51,
@@ -7689,7 +8039,14 @@
     "business-logic",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 52,
@@ -7844,7 +8201,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 230,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 12,
+    "Advanced": 3
+   }
   },
   {
    "number": 53,
@@ -7997,7 +8361,14 @@
     "csrf",
     "idor",
     "business-logic"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 54,
@@ -8152,7 +8523,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 9,
+    "Intermediate": 16,
+    "Advanced": 1
+   }
   },
   {
    "number": 55,
@@ -8306,7 +8684,14 @@
     "idor",
     "file-upload",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 56,
@@ -8460,7 +8845,14 @@
     "idor",
     "path-traversal",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 57,
@@ -8614,7 +9006,14 @@
     "business-logic",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 58,
@@ -8769,7 +9168,14 @@
     "file-upload",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 59,
@@ -8922,7 +9328,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 60,
@@ -9077,7 +9490,14 @@
     "path-traversal",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 61,
@@ -9229,7 +9649,14 @@
     "csrf",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 62,
@@ -9381,7 +9808,14 @@
     "idor",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 63,
@@ -9537,7 +9971,14 @@
     "business-logic",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 64,
@@ -9736,7 +10177,14 @@
     "idor",
     "path-traversal",
     "jwt"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 65,
@@ -9891,7 +10339,14 @@
     "path-traversal",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 66,
@@ -10044,7 +10499,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 67,
@@ -10197,7 +10659,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 14,
+    "Advanced": 0
+   }
   },
   {
    "number": 68,
@@ -10350,7 +10819,14 @@
     "idor",
     "business-logic",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 69,
@@ -10502,7 +10978,14 @@
     "csrf",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 12,
+    "Advanced": 2
+   }
   },
   {
    "number": 70,
@@ -10654,7 +11137,14 @@
     "csrf",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 312,
+   "difficulty": "Mixed",
+   "diffDist": {
+    "Beginner": 0,
+    "Intermediate": 0,
+    "Advanced": 0
+   }
   },
   {
    "number": 71,
@@ -10808,7 +11298,14 @@
     "path-traversal",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 72,
@@ -10962,7 +11459,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 73,
@@ -11116,7 +11620,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 12,
+    "Advanced": 0
+   }
   },
   {
    "number": 74,
@@ -11268,7 +11779,14 @@
     "idor",
     "business-logic",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 170,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 18,
+    "Intermediate": 8,
+    "Advanced": 0
+   }
   },
   {
    "number": 75,
@@ -11423,7 +11941,14 @@
     "path-traversal",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 215,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 14,
+    "Advanced": 1
+   }
   },
   {
    "number": 76,
@@ -11576,7 +12101,14 @@
     "business-logic",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 77,
@@ -11749,7 +12281,14 @@
     "business-logic",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 78,
@@ -11901,7 +12440,14 @@
     "csrf",
     "idor",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 79,
@@ -12054,7 +12600,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 80,
@@ -12207,7 +12760,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 170,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 18,
+    "Intermediate": 8,
+    "Advanced": 0
+   }
   },
   {
    "number": 81,
@@ -12359,7 +12919,14 @@
     "xss",
     "csrf",
     "idor"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 11,
+    "Advanced": 2
+   }
   },
   {
    "number": 82,
@@ -12512,7 +13079,14 @@
     "idor",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 83,
@@ -12666,7 +13240,14 @@
     "business-logic",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 84,
@@ -12818,7 +13399,14 @@
     "idor",
     "business-logic",
     "file-upload"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 85,
@@ -12971,7 +13559,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 190,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 9,
+    "Advanced": 1
+   }
   },
   {
    "number": 86,
@@ -13133,7 +13728,14 @@
     "idor",
     "path-traversal",
     "business-logic"
-   ]
+   ],
+   "estMinutes": 205,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 12,
+    "Advanced": 1
+   }
   },
   {
    "number": 87,
@@ -13287,7 +13889,14 @@
     "business-logic",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 88,
@@ -13440,7 +14049,14 @@
     "idor",
     "jwt",
     "password-storage"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 89,
@@ -13593,7 +14209,14 @@
     "path-traversal",
     "file-upload",
     "jwt"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 90,
@@ -13746,7 +14369,14 @@
     "idor",
     "path-traversal",
     "jwt"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 91,
@@ -13899,7 +14529,14 @@
     "business-logic",
     "file-upload",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 92,
@@ -14053,7 +14690,14 @@
     "idor",
     "business-logic",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 93,
@@ -14207,7 +14851,14 @@
     "path-traversal",
     "business-logic",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 94,
@@ -14362,7 +15013,14 @@
     "path-traversal",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 14,
+    "Advanced": 0
+   }
   },
   {
    "number": 95,
@@ -14514,7 +15172,14 @@
     "xss",
     "csrf",
     "idor"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 9,
+    "Advanced": 2
+   }
   },
   {
    "number": 96,
@@ -14667,7 +15332,14 @@
     "csrf",
     "idor",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 97,
@@ -14822,7 +15494,14 @@
     "file-upload",
     "jwt",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 98,
@@ -14975,7 +15654,14 @@
     "idor",
     "path-traversal",
     "jwt"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 99,
@@ -15129,7 +15815,14 @@
     "idor",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 14,
+    "Intermediate": 11,
+    "Advanced": 1
+   }
   },
   {
    "number": 100,
@@ -15282,7 +15975,14 @@
     "idor",
     "business-logic",
     "jwt"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 101,
@@ -15436,7 +16136,14 @@
     "idor",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 180,
+   "difficulty": "Beginner",
+   "diffDist": {
+    "Beginner": 16,
+    "Intermediate": 10,
+    "Advanced": 0
+   }
   },
   {
    "number": 102,
@@ -15588,7 +16295,14 @@
     "csrf",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 2
+   }
   },
   {
    "number": 103,
@@ -15741,7 +16455,14 @@
     "business-logic",
     "idor",
     "jwt"
-   ]
+   ],
+   "estMinutes": 185,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 15,
+    "Intermediate": 11,
+    "Advanced": 0
+   }
   },
   {
    "number": 104,
@@ -15895,7 +16616,14 @@
     "business-logic",
     "api-exposure",
     "jwt"
-   ]
+   ],
+   "estMinutes": 200,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 14,
+    "Advanced": 0
+   }
   },
   {
    "number": 105,
@@ -16048,7 +16776,14 @@
     "business-logic",
     "csrf",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 106,
@@ -16200,7 +16935,14 @@
     "csrf",
     "idor",
     "business-logic"
-   ]
+   ],
+   "estMinutes": 225,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 10,
+    "Intermediate": 14,
+    "Advanced": 2
+   }
   },
   {
    "number": 107,
@@ -16354,7 +17096,14 @@
     "idor",
     "path-traversal",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 210,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 12,
+    "Intermediate": 13,
+    "Advanced": 1
+   }
   },
   {
    "number": 108,
@@ -16507,7 +17256,14 @@
     "idor",
     "path-traversal",
     "jwt"
-   ]
+   ],
+   "estMinutes": 195,
+   "difficulty": "Intermediate",
+   "diffDist": {
+    "Beginner": 13,
+    "Intermediate": 13,
+    "Advanced": 0
+   }
   },
   {
    "number": 109,
@@ -16660,7 +17416,14 @@
     "idor",
     "ssrf",
     "api-exposure"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 2
+   }
   },
   {
    "number": 110,
@@ -16812,7 +17575,14 @@
     "csrf",
     "idor",
     "path-traversal"
-   ]
+   ],
+   "estMinutes": 220,
+   "difficulty": "Advanced",
+   "diffDist": {
+    "Beginner": 11,
+    "Intermediate": 13,
+    "Advanced": 2
+   }
   }
  ]
 }

@@ -63,12 +63,21 @@ for (const cat of cats) {
       while ((m = reT.exec(src))) tests.push({ id: m[1], name: m[2], cls: classify(m[2]) });
     }
     const classes = [...new Set(tests.map(t => t.cls))];
+    // Difficulty mix + estimated completion time (guided pace: Beginner ~5 min, Intermediate ~10, Advanced ~18 per test).
+    const diffDist = { Beginner: 0, Intermediate: 0, Advanced: 0 };
+    let dm; const reDiff = /difficulty["']?\s*:\s*["'](Beginner|Intermediate|Advanced)["']/g;
+    while ((dm = reDiff.exec(src))) diffDist[dm[1]]++;
+    const dTotal = diffDist.Beginner + diffDist.Intermediate + diffDist.Advanced;
+    const estMinutes = dTotal ? Math.max(10, Math.round((diffDist.Beginner * 5 + diffDist.Intermediate * 10 + diffDist.Advanced * 18) / 5) * 5) : tests.length * 12;
+    const hardScore = dTotal ? (diffDist.Intermediate + 2 * diffDist.Advanced) / dTotal : 0;
+    const difficulty = !dTotal ? 'Mixed' : (diffDist.Beginner / dTotal >= 0.6 ? 'Beginner' : (hardScore >= 0.58 ? 'Advanced' : 'Intermediate'));
     labs.push({
       number: num ? parseInt(num, 10) : null,
       name, dir, category: cat,
       relPath: cat + '/' + dir,
       port: port ? parseInt(port, 10) : null,
       testCount: tests.length, tests, classes,
+      estMinutes, difficulty, diffDist,
     });
   }
 }
