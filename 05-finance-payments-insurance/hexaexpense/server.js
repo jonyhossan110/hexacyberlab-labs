@@ -18,8 +18,8 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material: stored ONLY as encoded fragments (region A of 4) ---- */
-const _fragA = ['TC1YSA==', 'Si0wNQ=='];
-const _fragB = ['SFhFNw=='];
+
+
 
 /* ============================== DATA ==================================== */
 const COMPANIES = [
@@ -234,14 +234,16 @@ TESTS.push(
 );
 
 /* ---- key material (region C of 4) ---- */
-const _fragC = ['LVhDRw==', 'QlRURg=='];
-const _fragD = ['MzZTOQ=='];
+
+
 const _fragE = ['TC1YSA==', 'UC0xNQ=='];
 const _fragF = ['TUdTNQ=='];
 function _unshard(parts) {
   return parts.map(p => [...Buffer.from(p, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _unshard([..._fragA, ..._fragB, ..._fragC, ..._fragD]); }
+const ENTRY_KEY_SHA256 = '60e347e1585fcbc3ee018dae1fc9b2fb370123405bace064c3cb9f23f1a2add9';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard([..._fragE, ..._fragF, 'LUhGUw==', 'WlNIMA==', 'WFlMUw==']); }
 
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
@@ -521,7 +523,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && method === 'POST') {
       const b = await readBody(req);
       const key = String(b.key || '').trim();
-      if (key && key === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (key && entryKeyMatches(key)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(gatePage('That key was not accepted.'));
     }
@@ -634,7 +636,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* everything below requires a login */
-    if (!user) return redirect(res, '/login');
+    if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
 
     /* ---------- dashboard ---------- */
     if (p === '/' && method === 'GET') {
@@ -897,7 +899,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/certificate' && method === 'GET') {
       if (!isComplete()) return redirect(res, '/complete');
-      const name = progress.testerName || user.name;
+      const name = progress.testerName || (user && user.name);
       const date = progress.completedAt ? new Date(progress.completedAt).toDateString() : new Date().toDateString();
       return send(res, 200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
       <style>body{font-family:Georgia,serif;background:#f1f5f9}.card{max-width:640px;margin:50px auto;background:#fff;border:3px double #2563eb;border-radius:14px;padding:36px;text-align:center}img{height:64px}@media print{body{background:#fff}}</style></head>

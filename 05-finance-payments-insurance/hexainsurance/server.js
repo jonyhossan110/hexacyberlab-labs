@@ -26,12 +26,14 @@ const STATE_FILE = path.join(DIR, 'progress.json');
  * appears as a plain literal anywhere in this file — it is stored as
  * base64-of-reversed pieces and assembled only inside /unlock.
  * ------------------------------------------------------------------ */
-const _E = ["TC1YSA==","Ti03NA==","TTdNSw==","LTFLRQ==","WTg5NA==","MDc2WA=="];
+
 
 function _asm(a) {
   return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _asm(_E); }
+const ENTRY_KEY_SHA256 = 'bda09c0f7f10f9e485cc9b0be53bfafc249e7d1ea334e74b2eb74f79140b7bd0';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ================================================================== *
  * SEED DATA (in-memory; resets when the server restarts — progress
@@ -1084,7 +1086,7 @@ async function route(req, res) {
   }
   if (p === '/unlock' && m === 'POST') {
     const b = await readBody(req);
-    if (String(b.key || '') === entryKey()) { st.unlocked = true; save(); return redirect(res, '/'); }
+    if (entryKeyMatches(String(b.key || ''))) { st.unlocked = true; save(); return redirect(res, '/'); }
     return send(res, 403, gatePage(req, 'That key was not accepted.'));
   }
   if (p === '/api/progress') return send(res, 200, JSON.stringify(progressInfo()), 'application/json');

@@ -258,7 +258,9 @@ function featureStats() {
 /* ---- key assembly (fragments scattered through this file) ---- */
 const THEME_C = ['VUVXQw==', 'QUJROQ=='];
 function assembleKey(parts) { return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return assembleKey(THEME_A.slice(0, 1).concat(THEME_B.slice(0, 1), THEME_C.slice(0, 1), THEME_D, THEME_E, THEME_F)); }
+const ENTRY_KEY_SHA256 = '6f170dccabb77cc8b0e8b6edf279b3174f6dc2dbf065e653f6c9ab3bbf6821e9';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return assembleKey(THEME_A.slice(0, 1).concat(THEME_B.slice(1, 2), THEME_C.slice(1, 2), THEME_G, THEME_H, THEME_I)); }
 
 /* ============================ HELPERS ============================ */
@@ -334,7 +336,7 @@ function legacyQueryLogin(email, password) {
 }
 
 /* ============================ UI ============================ */
-const THEME_D = ['LTUyNQ=='];
+
 function progressBar() {
   const done = doneCount(), total = TESTS.length, pct = Math.floor(done / total * 100);
   return '<div style="background:#0d1430;border-bottom:1px solid #26305a;padding:8px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">' +
@@ -394,7 +396,7 @@ function dashboardPage(req, u) {
     '<div class="card"><h3>Linked accounts</h3><table>' + rows + '</table></div>' +
     '<div class="card"><h3>Recent activity</h3><table>' + tx + '</table></div>');
 }
-const THEME_E = ['UlNHNg=='];
+
 function profileSettingsPage(req, u, msg) {
   const sess = sessionOf(req);
   return layout(req, 'Profile settings', '<div class="card" style="max-width:560px"><h2>Profile settings</h2>' +
@@ -428,7 +430,7 @@ function accountDetailPage(req, u, a) {
     '<p class="muted">Statements are generated for the account holder and stored under /statements/.</p></div>');
 }
 
-const THEME_F = ['SFZVUQ=='];
+
 function cardsPage(req, u) {
   const mine = cards.filter(c => c.owner === u.id);
   return layout(req, 'Cards', '<div class="card"><h2>Your virtual cards</h2><p class="muted">Platform maximum virtual-card limit: $5,000.</p><table><tr><th>Card</th><th>Number</th><th>Limit</th><th></th></tr>' +
@@ -627,7 +629,7 @@ const server = http.createServer(async (req, res) => {
     if (!state.unlocked) {
       if (p === '/unlock' && method === 'POST') {
         const body = await readBody(req);
-        if (String(body.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/login'); }
+        if (entryKeyMatches(String(body.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/login'); }
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage(req, 'That key was not accepted.'));
       }
       return send(res, 200, gatePage(req));
@@ -709,7 +711,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/users') { attempt('Platform & API'); pass('api-users-dump'); return send(res, 200, JSON.stringify(users.map(u => ({ id: u.id, name: u.name, email: u.email, password: u.password, role: u.role, tier: u.tier }))), 'application/json'); }
 
     const sess = sessionOf(req); const me = currentUser(req);
-    if (!me) { if (p.startsWith('/api/')) return send(res, 401, JSON.stringify({ error: 'login required' }), 'application/json'); return redirect(res, '/login'); }
+    if (!me && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') { if (p.startsWith('/api/')) return send(res, 401, JSON.stringify({ error: 'login required' }), 'application/json'); return redirect(res, '/login'); }
 
     /* ---- key-authenticated API ---- */
     if (p === '/api/accounts') {

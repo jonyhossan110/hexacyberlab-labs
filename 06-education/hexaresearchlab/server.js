@@ -18,7 +18,7 @@ const FILES_DIR = path.join(DIR, 'files');
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* --- completion/entry key material, region 1 of 3 (sharded, encoded) --- */
-const _EA = ["TC1YSA==","Ti0wNg=="];
+
 const _CA = ["TC1YSA==","Qy0xNg=="];
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
@@ -397,9 +397,11 @@ const enumProbes = new Map();     // email -> exists(bool)
 const issuedResetTokens = new Set();
 
 /* --- key material, region 2 of 3 (sharded, encoded) --- */
-const _EB = ["UFJWVg==","LVdMSg=="];
+
 const _CB = ["WTRRWQ==","LVFYOQ=="];
-function entryKey() { return _unshard([..._EA, ..._EB, ..._EC]); }
+const ENTRY_KEY_SHA256 = 'f76470d39d2585275a837aaef9cbcfc59a2626100bb38b563612e9398483bcb1';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* =============================== helpers =============================== */
 const XSS_PAT = /<script|onerror\s*=|onload\s*=|<svg|<img/i;
@@ -501,7 +503,7 @@ function gatePage() {
 async function handleUnlock(req, res) {
   const body = await readBody(req);
   const key = String((body.form && body.form.key) || (body.json && body.json.key) || '');
-  if (key && key === entryKey()) {
+  if (key && entryKeyMatches(key)) {
     state.unlocked = true;
     saveState();
     return redirect(res, '/');
@@ -925,7 +927,7 @@ function handleApiDebug(req, res) {
 }
 
 /* --- key material, region 3 of 3 (sharded, encoded) --- */
-const _EC = ["QVgxMA==","TkVRTA=="];
+
 const _CC = ["SVczMw==","SUg5MA=="];
 function completionKey() { return _unshard([..._CA, ..._CB, ..._CC]); }
 
@@ -1096,7 +1098,7 @@ const server = http.createServer(async (req, res) => {
 
     // Everything below requires a session.
     const session = getSession(req);
-    if (!session) return redirect(res, '/login');
+    if (!session && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
 
     if (pathname === '/logout') return handleLogout(req, res, session);
     if (pathname === '/') return send(res, 200, dashboardPage(session));

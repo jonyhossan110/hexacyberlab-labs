@@ -22,14 +22,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
 /* Entry-key shards (region 1 of 2). Pieces are base64-of-reversed     */
 /* fragments; the assembler below rebuilds a key only at verify time.  */
 /* ------------------------------------------------------------------ */
-const ENTRY_SHARDS = [
-  'TC1YSA==',
-  'US0yNg==',
-  'V1dEUg==',
-  'LVhRRw==',
-  'M0RTVA==',
-  'UUxZQQ=='
-];
+
 
 function assembleKey(shards) {
   return shards
@@ -627,7 +620,9 @@ const COMPLETION_SHARDS = [
   'TFFUUg=='
 ];
 function completionKey() { return assembleKey(COMPLETION_SHARDS); }
-function entryKey() { return assembleKey(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = '764ace74a461cdb6fe4a71c3012092c68231ac3a1a38663d80c61cf4e2d6241f';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------------------------------------------------ */
 /* Lab Coach chatbot                                                   */
@@ -1078,7 +1073,7 @@ function testsPage(user) {
   return layout('Mission Board', user, html);
 }
 
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const p = progressSummary();
   const stats = featureStats();
   if (!p.complete) {
@@ -1111,7 +1106,7 @@ function completePage(user) {
     <p><a href="/certificate">Open your certificate</a></p>`);
 }
 
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const p = progressSummary();
   if (!p.complete) return redirectPage(user, '/complete');
   const stats = featureStats();
@@ -1173,7 +1168,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/unlock' && req.method === 'POST') {
       const form = parseForm(await readBody(req));
-      if (String(form.key || '') === entryKey()) {
+      if (entryKeyMatches(String(form.key || ''))) {
         state.unlocked = true;
         saveState();
         return redirect(res, '/login');
@@ -1231,7 +1226,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* ----- everything below requires a session ----- */
-    if (!user) return redirect(res, '/login');
+    if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
 
     if (pathname === '/' && req.method === 'GET') return send(res, 200, dashboard(user), 'text/html', htmlHeaders);
     if (pathname === '/profile' && req.method === 'GET') return send(res, 200, profilePage(user), 'text/html', htmlHeaders);

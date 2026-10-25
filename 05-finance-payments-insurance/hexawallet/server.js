@@ -26,7 +26,7 @@ const WEB_TRANSFER_LIMIT = 500; // per-transfer limit enforced by the web UI flo
  * below). Keys are never stored as plain literals anywhere; they are
  * reconstructed at runtime from transformed fragments only.
  * ------------------------------------------------------------------ */
-const _ka = ['TC1YSA==', 'Ny0yNA==', 'RkJDWg=='];
+
 const _kc = ['TC1YSA==', 'SS0zNA==', 'U05BTQ=='];
 
 /* ============================ TESTS registry ============================ */
@@ -177,12 +177,14 @@ const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 const TEST_BY_ID = Object.fromEntries(TESTS.map(t => [t.id, t]));
 
 /* More key material lives further down the file (shard set B). */
-const _kb = ['LUJTQQ==', 'Nk5XTw==', 'UkVLSg=='];
+
 const _kd = ['LVlVUg==', 'OFJGRg==', 'TVREUQ=='];
 function _asm(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _asm(_ka.concat(_kb)); }
+const ENTRY_KEY_SHA256 = 'b8ebd5a2bccf068bd316db622e62fb948bf0e89bb4795aee65ea5255cdc44f92';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_kc.concat(_kd)); }
 
 module.exports = { TESTS, FEATURES };
@@ -725,7 +727,7 @@ const server = http.createServer(async (req, res) => {
     if (pathName === '/api/chat' && req.method === 'POST') { const b = await readBody(req); return sendJson(res, 200, { reply: chatReply(b.message) }); }
     if (pathName === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '').trim() === entryKey()) { P.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(b.key || '').trim())) { P.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end('<!doctype html><body style="font-family:system-ui;padding:30px"><h1>Key not accepted</h1><p>That is not the completion key from Lab ' + (LAB_NUMBER - 1) + '.</p><p><a href="/">Back</a></p></body>');
     }

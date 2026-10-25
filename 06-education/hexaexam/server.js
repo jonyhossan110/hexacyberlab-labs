@@ -27,11 +27,13 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
  * anywhere in this file. The completion key shards live in a separate
  * region further below (region 2 of 2).
  * ------------------------------------------------------------------ */
-const _eS = ["TC1YSA==","Ni0zNQ==","NVpJRg==","LVkzRg==","WjMyVw==","WFVDQQ=="];
+
 function _asm(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _asm(_eS); }
+const ENTRY_KEY_SHA256 = '0a46ecdcf4c64d19fa246cc25592fbf90027a57cb7cd8e33de96e16ee4060bee';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------- progress state ------------------------- */
 let state = { unlocked: false, testerName: '', tests: {}, attempts: {}, completedAt: null, keyRevealed: false };
@@ -493,7 +495,7 @@ const server = http.createServer(async (req, res) => {
     if (!state.unlocked) {
       if (pathname === '/unlock' && method === 'POST') {
         const body = parseBody(await readBody(req), req) || {};
-        if (String(body.key || '') === entryKey()) {
+        if (entryKeyMatches(String(body.key || ''))) {
           state.unlocked = true; saveState();
           redirect(res, '/login');
         } else {

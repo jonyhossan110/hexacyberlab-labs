@@ -22,14 +22,16 @@ const STATE_FILE = path.join(ROOT, 'progress.json');
  * Each shard is base64(reverse(piece)); the assembler below rebuilds
  * a key at runtime, only at the moment it is legitimately needed.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS_A = ["TC1YSA==","UC0xNQ==","TUdTNQ=="];
+
 const COMP_SHARDS_A = ["TC1YSA==","Ry0yNQ==","MU4xNg=="];
-const ENTRY_SHARDS_B = ["LUhGUw==","WlNIMA==","WFlMUw=="];
+
 const COMP_SHARDS_B = ["LVFNSA==","UkI5Vw==","SU02UQ=="];
 function unshard(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return unshard(ENTRY_SHARDS_A.concat(ENTRY_SHARDS_B)); }
+const ENTRY_KEY_SHA256 = 'e716a05e2d4cd34887dde0f207c833610574030684b48e96354d86090757ec96';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return unshard(COMP_SHARDS_A.concat(COMP_SHARDS_B)); }
 
 /* ------------------------------ state ------------------------------ */
@@ -885,7 +887,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathName === '/unlock' && method === 'POST') {
       const f = parseForm(await readBody(req));
-      if ((f.key || '') === entryKey()) { const st = loadState(); st.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches((f.key || ''))) { const st = loadState(); st.unlocked = true; saveState(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end('<h2>403 — wrong key.</h2><p><a href="/">Back</a></p>');
     }

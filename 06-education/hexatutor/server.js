@@ -17,11 +17,13 @@ const PROGRESS_FILE = path.join(__dirname, 'progress.json');
 const LOGO_FILE = path.join(__dirname, 'logo.png');
 
 /* --- entry key material: encoded shards only, never a plain literal ------- */
-const _eShards = ["TC1YSA==", "RC00NQ==", "UzdaRA==", "LUpVWA==", "UURNQQ==", "S0JMVQ=="];
+
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_eShards); }
+const ENTRY_KEY_SHA256 = 'c93174a9cf701cc742a12ad65775bfe3db9b4891b1a06d965e70901087aa2ae0';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ TESTS registry ============================== */
 const TESTS = [
@@ -538,7 +540,7 @@ async function route(req, res) {
   }
   if (p === '/unlock' && method === 'POST') {
     const body = parseForm(await readBody(req));
-    if (String(body.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+    if (entryKeyMatches(String(body.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
     res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('Wrong key.');
   }
   if (p === '/api/chat' && method === 'POST') {

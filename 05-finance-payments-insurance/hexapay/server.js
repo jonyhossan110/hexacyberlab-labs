@@ -22,11 +22,13 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * One assembler rebuilds a key at runtime, only at its reveal moment:
  * the entry key inside /unlock, the completion key at 100%.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS = ["TC1YSA==","My0xNA==","NDBMMQ==","LUhBNg==","M0k0NA==","RlNPSA=="];
+
 function unshard(a) {
   return a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return unshard(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = '174e21ca33e534987c50d5ecd5b2e222d6da32b9026d0a9f868b7c0919338325';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ TESTS REGISTRY ============================ */
 const TESTS = [
@@ -638,10 +640,7 @@ async function handleReset(req, res) {
 async function handleUnlock(req, res) {
   const b = await readBody(req);
   const key = String(b.key || '');
-  const real = entryKey();
-  let same = key.length === real.length;
-  if (same) { let diff = 0; for (let i = 0; i < real.length; i++) diff |= key.charCodeAt(i) ^ real.charCodeAt(i); same = diff === 0; }
-  if (!same) return send(res, 403, gatePage('That key was not accepted. Check the completion key from Lab ' + (LAB_NUMBER - 1) + ' and try again.'));
+  if (!entryKeyMatches(key)) return send(res, 403, gatePage('That key was not accepted. Check the completion key from Lab ' + (LAB_NUMBER - 1) + ' and try again.'));
   state.unlocked = true;
   saveState();
   redirect(res, '/login');
@@ -1034,7 +1033,7 @@ function testsPage(req, res, sess) {
   }
   send(res, 200, layout('Mission', sess, html));
 }
-function completePage(req, res, sess) {
+function completePage(req, res, sess) { if (!sess) sess = { user: { name: 'Security Tester', email: '', id: 0 } };
   if (!isComplete()) {
     const left = TESTS.filter(t => !state.tests[t.id]).map(t => '<li>' + esc(t.name) + ' <span class="muted">(' + esc(t.feature) + ')</span></li>').join('');
     return send(res, 200, layout('Not yet', sess, `<h2>Lab not complete yet — ${pct()}%</h2><p>Still open:</p><ul>${left}</ul><p><a href="/tests">Back to the mission list</a></p>`));
@@ -1063,7 +1062,7 @@ async function handleTester(req, res) {
   saveState();
   redirect(res, '/complete');
 }
-function certificatePage(req, res, sess) {
+function certificatePage(req, res, sess) { if (!sess) sess = { user: { name: 'Security Tester', email: '', id: 0 } };
   if (!isComplete()) return redirect(res, '/complete');
   const name = state.testerName || (sess ? sess.user.name : 'HexaCyberLab Tester');
   const when = state.completedAt ? new Date(state.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -1128,8 +1127,8 @@ const server = http.createServer(async (req, res) => {
       return checkoutPage(req, res, mm[1]);
     }
 
-    const sess = requireLogin(req, res);
-    if (!sess) return;
+    const sess = (p === '/complete' || p === '/complete/name' || p === '/certificate' || p === '/tester' || p === '/tester-name' || p === '/set-name') ? sessionOf(req) : requireLogin(req, res);
+    if (!sess && p !== '/complete' && p !== '/complete/name' && p !== '/certificate' && p !== '/tester' && p !== '/tester-name' && p !== '/set-name') return;
     if (p === '/dashboard' && m === 'GET') return dashboardPage(req, res, sess);
     if (p === '/links' && m === 'GET') return linksPage(req, res, sess);
     if (p === '/links/create' && m === 'POST') return await handleLinkCreate(req, res, sess);

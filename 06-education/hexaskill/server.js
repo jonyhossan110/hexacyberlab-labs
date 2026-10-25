@@ -25,7 +25,7 @@ const PREV_LAB = 57;
  * completion key pieces live in a separate region near the bottom).  *
  * Each shard is base64( reverse( piece ) ). The assembler reverses.  *
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS = ["TC1YSA==","RC04NQ==","R1M4Tw==","LURRVg==","Sk9XMQ==","NTlBWA=="];
+/* entry shards removed — entry key is verified by hash only */
 const COMPLETION_SHARDS = ["TC1YSA==","UC05NQ==","MFNQWg==","LUwyVw==","NTcxOA==","VkpZOA=="];
 
 function assembleKey(shards) {
@@ -34,13 +34,12 @@ function assembleKey(shards) {
   }).join('');
 }
 /* The entry key is assembled only inside /unlock verification. */
+const ENTRY_KEY_SHA256 = 'c1021cde069fe904cecfacb0f8defb175c724d7f3c901b787acda661377c4d05';
 function entryKeyMatches(candidate) {
   if (typeof candidate !== 'string') return false;
-  const real = assembleKey(ENTRY_SHARDS);
-  if (candidate.length !== real.length) return false;
-  let diff = 0;
-  for (let i = 0; i < real.length; i++) diff |= candidate.charCodeAt(i) ^ real.charCodeAt(i);
-  return diff === 0;
+  const c = require('node:crypto');
+  const h = c.createHash('sha256').update(candidate).digest('hex');
+  try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; }
 }
 /* The completion key is assembled only at 100% (debrief / certificate / coach). */
 function completionKey() { return assembleKey(COMPLETION_SHARDS); }

@@ -278,6 +278,9 @@ const XSS_RE = /(<script|<svg|<img|<iframe|<body|on\w+\s*=|javascript:)/i;
 const SQLI_RE = /'\s*(or|and)\s+('?\w+'?\s*=\s*'?\w+'?)/i;
 function hasXss(s) { return typeof s === 'string' && XSS_RE.test(s); }
 
+const ENTRY_KEY_SHA256 = '53e52532abd1a71b08c4fbf01a51b757e8c95075019ae05b7c4664a0bc876203';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function assembleKey(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
@@ -698,7 +701,7 @@ async function route(req, res) {
   }
   if (p === '/unlock' && method === 'POST') {
     const body = await parseBody(req);
-    if (String(body.key || '') === assembleKey(ENTRY_SHARDS)) {
+    if (entryKeyMatches(String(body.key || ''))) {
       progress.unlocked = true; saveProgress();
       return redirect(res, '/');
     }

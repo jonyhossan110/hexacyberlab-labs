@@ -13,7 +13,7 @@ const DIR = __dirname;
 const STATE_FILE = path.join(DIR, 'progress.json');
 
 /* ---- entry key material: stored only as encoded fragments (region A) ---- */
-const _E1 = ["TC1YSA==", "VC01NA=="];
+
 const _u = a => a.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 
 /* ================= TESTS registry ================= */
@@ -161,7 +161,7 @@ const TESTS = [
 ];
 
 /* entry-key fragments, region B */
-const _E2 = ["QUJROQ==", "LVRPUQ=="];
+
 
 /* ================= progress state ================= */
 let S = { unlocked: false, testerName: '', tests: {}, attempts: {}, completedAt: null, keyRevealed: false };
@@ -188,10 +188,12 @@ function pass(id) {
   if (doneCount() === totalTests()) { S.completedAt = new Date().toISOString(); S.keyRevealed = true; }
   saveState();
 }
-function entryKey() { return _u([].concat(_E1, _E2, _E3)); }
+const ENTRY_KEY_SHA256 = '51d6e50ebada5eda47a0052f547bfa04324bc0754284f819cf612cec053c2f99';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* entry-key fragments, region C */
-const _E3 = ["Q0xRMw==", "SlNHVQ=="];
+
 /* completion-key fragments, region A (mid-file) */
 const _C1 = ["TC1YSA==", "Wi02NA=="];
 const _C2 = ["RlpWTg==", "LVBWTA=="];
@@ -562,7 +564,7 @@ function testsPage(user) {
   }
   return layout(user, 'Mission — LAB ' + LAB_NO + ' ' + LAB_NAME, html);
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (doneCount() < totalTests()) {
     const left = TESTS.filter(t => !S.tests[t.id]).map(t => `<li>${esc(t.name)} (${esc(t.feature)})</li>`).join('');
     return layout(user, 'Completion', `<div class="card"><p>You are at <b>${pct()}%</b> (${doneCount()}/${totalTests()}). The completion summary, your key and the certificate unlock at 100%.</p><p>Still open:</p><ul>${left}</ul></div>`);
@@ -586,7 +588,7 @@ function completePage(user) {
   <form method="POST" action="/complete/name"><input name="name" size="30" placeholder="Your name for the certificate" value="${esc(S.testerName || '')}"><button>Save name</button></form>
   <p><a href="/certificate">View your certificate</a></p></div>`);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   if (doneCount() < totalTests()) return layout(user, 'Certificate', `<div class="card"><p>The certificate unlocks at 100% (you are at ${pct()}%).</p></div>`);
   const name = S.testerName || (user ? user.name : 'HexaCyberLab Tester');
   const date = S.completedAt ? new Date(S.completedAt).toDateString() : new Date().toDateString();
@@ -670,7 +672,7 @@ const server = http.createServer(async (req, res) => {
     if (!S.unlocked) {
       if (p === '/unlock' && method === 'POST') {
         const b = await readBody(req);
-        if (String(b.key || '').trim() === entryKey()) { S.unlocked = true; saveState(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(b.key || '').trim())) { S.unlocked = true; saveState(); return redirect(res, '/'); }
         res.writeHead(403, { 'Content-Type': 'text/html' });
         return res.end(gatePage().replace('</form>', '</form><p style="color:#f87171">That key was not accepted.</p>'));
       }
@@ -728,6 +730,9 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, { investor: t.id, email: t.email, cash: t.balance, holdings: holdings[t.id] || {}, portfolioValue: portfolioValue(t.id) });
     }
 
+    if (p === '/complete' && method === 'GET') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(completePage(user)); }
+    if (p === '/complete/name' && method === 'POST') { const b = await readBody(req); S.testerName = String(b.name || ''); saveState(); return redirect(res, '/complete'); }
+    if (p === '/certificate' && method === 'GET') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(certificatePage(user)); }
     if (!user) return needLogin();
 
     if (p === '/market') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(marketPage(user)); }
@@ -831,9 +836,6 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, users.map(x => ({ id: x.id, name: x.name, email: x.email, password: x.password, role: x.role, balance: x.balance })));
     }
 
-    if (p === '/complete' && method === 'GET') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(completePage(user)); }
-    if (p === '/complete/name' && method === 'POST') { const b = await readBody(req); S.testerName = String(b.name || ''); saveState(); return redirect(res, '/complete'); }
-    if (p === '/certificate' && method === 'GET') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(certificatePage(user)); }
 
     res.writeHead(404, { 'Content-Type': 'text/html' });
     res.end(layout(user, 'Not found', '<div class="card">Page not found.</div>'));

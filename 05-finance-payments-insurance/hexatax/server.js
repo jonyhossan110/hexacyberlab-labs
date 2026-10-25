@@ -24,11 +24,13 @@ const DOCS_DIR = path.join(ROOT, 'docs');
 const PROGRESS_FILE = path.join(ROOT, 'progress.json');
 
 /* ---- key material, region 1 of 2 (entry key shards; assembled on demand) - */
-const _eS = ['TC1YSA==', 'Vi05NA==', 'WUZSTA==', 'LVNOUQ==', 'WUYxUQ==', 'M1NBRA=='];
+
 function _unshard(parts) {
   return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_eS); }
+const ENTRY_KEY_SHA256 = 'ff193cf26bb5193b1c542663178e117d2dcf4c377d54bd7d85efa6143d185c4f';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================================================================
    TESTS REGISTRY — one entry per scored vulnerability test.
@@ -706,7 +708,7 @@ function testsPage(sess) {
   return shell('Mission / Tests', sess, html);
 }
 
-function completePage(sess) {
+function completePage(sess) { if (!sess) sess = { user: { name: 'Security Tester', email: '', id: 0 } };
   if (!isComplete()) {
     const left = TESTS.filter(t => !state.tests[t.id]);
     return shell('Completion', sess, `<div class="card"><h2>Not complete yet — ${doneCount()}/${TESTS.length} tests (${pct()}%)</h2>
@@ -732,7 +734,7 @@ function completePage(sess) {
   return shell('Completion', sess, body);
 }
 
-function certificatePage(sess) {
+function certificatePage(sess) { if (!sess) sess = { user: { name: 'Security Tester', email: '', id: 0 } };
   if (!isComplete()) return null;
   const name = state.testerName || sess.user.name || 'HexaTax Tester';
   const date = state.completedAt ? new Date(state.completedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
@@ -1120,7 +1122,7 @@ async function handler(req, res) {
     }
     if (p === '/unlock' && method === 'POST') {
       const body = await readBody(req);
-      if (String(body.key || '').trim() === entryKey()) {
+      if (entryKeyMatches(String(body.key || '').trim())) {
         state.unlocked = true; saveState(); redirect(res, '/');
       } else {
         res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -1242,8 +1244,8 @@ async function handler(req, res) {
     }
 
     /* ------------------------------ everything below needs a session ------------------------------ */
-    const sess = requireLogin(req, res);
-    if (!sess) return;
+    const sess = (p === '/complete' || p === '/complete/name' || p === '/certificate' || p === '/tester' || p === '/tester-name' || p === '/set-name') ? sessionUser(req) : requireLogin(req, res);
+    if (!sess && p !== '/complete' && p !== '/complete/name' && p !== '/certificate' && p !== '/tester' && p !== '/tester-name' && p !== '/set-name') return;
 
     if (p === '/' && method === 'GET') { sendHtml(res, dashboardPage(sess)); return; }
 

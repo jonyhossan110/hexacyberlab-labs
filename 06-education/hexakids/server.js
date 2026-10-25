@@ -26,11 +26,10 @@ const LOGO_FILE = path.join(__dirname, 'logo.png');
  *  The entry key exists ONLY as encoded shards; it is assembled at
  *  runtime inside the /unlock verification and never stored whole.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS = ["MDdKMg==","UkQ0SQ==","LVM2Tw==","WUQxWA==","TC03NQ==","TC1YSA=="];
-function assembleEntryKey() {
-  const rev = ENTRY_SHARDS.map((s) => Buffer.from(s, 'base64').toString('utf8')).join('');
-  return rev.split('').reverse().join('');
-}
+
+const ENTRY_KEY_SHA256 = '0081d03f8c92c1b1d3099b67461dd565a4d6b1dd21fed3ce418dbd2317638ac9';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ SEED DATA ============================ *
  *  Everything below is fake demo data for adult security testers.    */
@@ -531,11 +530,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/unlock' && method === 'POST') {
       const { fields } = await readBody(req);
       const entered = String(fields.key || '');
-      const expected = assembleEntryKey();
-      // constant-shape comparison: exact match only, no hints about position
-      let ok = entered.length === expected.length;
-      if (ok) { let diff = 0; for (let i = 0; i < expected.length; i++) diff |= entered.charCodeAt(i) ^ expected.charCodeAt(i); ok = diff === 0; }
-      if (ok) { progress.unlocked = true; saveProgress(); redirect(res, '/'); }
+      if (entryKeyMatches(entered)) { progress.unlocked = true; saveProgress(); redirect(res, '/'); }
       else send(res, 403, 'Invalid key.', 'text/plain');
       return;
     }
@@ -685,7 +680,7 @@ const server = http.createServer(async (req, res) => {
       send(res, 401, JSON.stringify({ error: 'unauthorised' }), 'application/json');
       return;
     }
-    if (!me) { redirect(res, '/login'); return; }
+    if (!me && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') { redirect(res, '/login'); return; }
     const role = effectiveRole(req, me);
 
     /* ================= DASHBOARD ================= */
@@ -983,7 +978,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/certificate' && method === 'GET') {
       if (!isComplete()) { redirect(res, '/complete'); return; }
-      const name = progress.testerName || me.name;
+      const name = progress.testerName || (me && me.name);
       const date = progress.completedAt ? new Date(progress.completedAt).toISOString().slice(0, 10) : '';
       send(res, 200, `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
       <style>@media print{body{background:#fff}} .card{max-width:720px;margin:40px auto;background:#fff;border:3px solid #7c5cff;border-radius:16px;padding:36px;text-align:center;font-family:Georgia,serif}</style></head>

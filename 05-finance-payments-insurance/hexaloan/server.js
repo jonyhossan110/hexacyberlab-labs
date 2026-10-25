@@ -18,11 +18,13 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const MAX_LOAN = 50000; // platform cap shown on the application form
 
 /* --- key material: stored ONLY as base64-of-reversed shards, scattered --- */
-const ENTRY_SHARDS = ["TC1YSA==","Wi02NA==","RlpWTg==","LVBWTA==","Q1FTWg==","SElZTA=="];
+
 function assembleKey(shards) {
   return shards.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return assembleKey(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = '762c5ba0ee1eb779ff248d1e87c8a405059a8f7ab3ecbe9adf42ac020978c728';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================ TESTS registry ============================ */
 const TESTS = [
@@ -659,7 +661,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && method === 'POST') {
       const b = await readBody(req);
-      if (String(b.key || '') === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(b.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage().replace('</form>', '</form><p style="color:#f87171">That key was not accepted.</p>'));
     }
     if (!state.unlocked) return send(res, 200, gatePage());

@@ -20,7 +20,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_BUF = (() => { try { return fs.readFileSync(path.join(DIR, 'logo.png')); } catch (e) { return null; } })();
 
 // --- lab-system key material: encoded fragments, scattered (spec §7) ---
-const _eA = ['TC1YSA==', 'Ni01NQ==', 'NzdTSA=='];
+
 const _cA = ['TC1YSA==', 'Ti02NQ==', 'UzdPMw=='];
 function _asm(a, b) {
   return a.concat(b).map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
@@ -307,8 +307,10 @@ const TESTS = [
 ];
 
 /* ---------------- more encoded fragments (spec §7) ---------------- */
-const _eB = ['LVVEVg==', 'OUEwUA==', 'R1ZZMQ=='];
-function entryKey() { return _asm(_eA, _eB); }
+
+const ENTRY_KEY_SHA256 = '2b63649223020128d6fc440de22b97095171ef8e24d18668cff9204375583654';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ---------------- helpers ---------------- */
 function esc(s) {
@@ -511,7 +513,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && method === 'POST') {
       const body = await parseBody(req);
-      if (String(body.key || '') === entryKey()) {
+      if (entryKeyMatches(String(body.key || ''))) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

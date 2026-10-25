@@ -22,7 +22,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * Key material lives ONLY as encoded fragments, scattered through    *
  * this file and reassembled in memory at the moment of use.          *
  * ------------------------------------------------------------------ */
-const _eA = ['TC1YSA==', 'Ry0yNQ==', 'MU4xNg=='];
+
 const _cA = ['TC1YSA==', 'Ni0zNQ==', 'NVpJRg=='];
 function _un(a) {
   return a.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
@@ -302,9 +302,11 @@ const TESTS = [
 ];
 
 /* --------- remaining key fragments (see note at top of file) --------- */
-const _eB = ['LVFNSA==', 'UkI5Vw==', 'SU02UQ=='];
+
 const _cB = ['LVkzRg==', 'WjMyVw==', 'WFVDQQ=='];
-function entryKey() { return _un(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = '8760f42c673a48932562433884b87e1b2c02b25b5073143296649138b2a2b97d';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _un(_cA.concat(_cB)); }
 
 /* ============================ helpers ============================ */
@@ -515,7 +517,7 @@ const server = http.createServer(async (req, res) => {
 
     if (p === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      if ((b.key || '').trim() === entryKey()) {
+      if (entryKeyMatches((b.key || '').trim())) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

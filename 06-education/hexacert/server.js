@@ -19,7 +19,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* --- scattered shard region 1 --- */
-const _e1 = ['TC1YSA==', 'UC05NQ=='];
+
 
 /* ============================ SEED DATA (all fake) ============================ */
 let users = [
@@ -88,7 +88,7 @@ function pass(id) {
 function attempt(feature) { state.attempts[feature] = (state.attempts[feature] || 0) + 1; saveState(); }
 
 /* --- scattered shard region 3 --- */
-const _e2 = ['MFNQWg==', 'LUwyVw=='];
+
 
 /* ============================ TESTS REGISTRY ============================ */
 const FEATURES = ['Login & Authentication', 'Registration & Profile', 'Exam Booking', 'Exam Taking & Results', 'Certificates & Verification', 'Vouchers & Partners', 'Renewals', 'Admin Panel', 'Platform & API'];
@@ -248,11 +248,13 @@ const _c2 = ['UFJWVg==', 'LVdMSg=='];
 
 /* ============================ KEY ASSEMBLY ============================ */
 function _asm(parts) { return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join(''); }
-function entryKey() { return _asm([..._e1, ..._e2, ..._e3]); }
+const ENTRY_KEY_SHA256 = '099f95dd88ac459e85da4f12a274ab00bea2f5d23a5fbec58cefe334e612ff2c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm([..._c1, ..._c2, ..._c3]); }
 
 /* --- scattered shard region 5 --- */
-const _e3 = ['NTcxOA==', 'VkpZOA=='];
+
 
 /* ============================ HELPERS ============================ */
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -440,7 +442,7 @@ async function handle(req, res) {
   if (pathname === '/unlock' && req.method === 'POST') {
     const body = new URLSearchParams(await readBody(req));
     const key = (body.get('key') || '').trim();
-    if (key && key === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+    if (key && entryKeyMatches(key)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
     res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(gatePage('That key is not correct.'));
   }

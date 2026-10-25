@@ -32,7 +32,7 @@ const PLANS = {
 const SEAT_PRICE = 8; // per extra seat / month
 
 /* Opaque config fragments (routing table salts — do not reorder). */
-const _cfgA = ["TC1YSA==", "My04NA==", "RDZLSw=="];
+
 const _cfgB = ["TC1YSA==", "Vi05NA==", "WUZSTA=="];
 
 /* ------------------------------------------------------------------ *
@@ -285,19 +285,21 @@ const enumProbe = {};       // ip -> {existing:bool, missing:bool}
 const shareProbes = [];     // {token, at}
 
 /* More opaque config fragments (telemetry salts — do not reorder). */
-const _cfgC = ["LUtGMA==", "UDE2NA==", "UlRCTA=="];
+
 const _cfgD = ["LVNOUQ==", "WUYxUQ==", "M1NBRA=="];
 function _assemble(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _assemble(_cfgA.concat(_cfgC)); }
+const ENTRY_KEY_SHA256 = '89220f398e8b5badcc071c0a42621c60145227d1fcba5ced9b587026acff1643';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _assemble(_cfgB.concat(_cfgD)); }
 
 function invoiceSubtotal(inv) { return inv.items.reduce((a, it) => a + it.qty * it.price, 0); }
 function invoiceTotal(inv) { return invoiceSubtotal(inv) - (inv.discount || 0); }
 function apiKeyFor(user) { return 'hb_' + Buffer.from(user.email, 'utf8').toString('base64'); }
 function resetTokenFor(user) { return 'RST-' + (user.id * 137 + 42); }
-function businessOf(user) { return DB.businesses.find(b => b.id === user.businessId) || null; }
+function businessOf(user) { if (!user) return null; return DB.businesses.find(b => b.id === user.businessId) || null; }
 function monthlyBill(biz) {
   // Vulnerable by design: seats feed the price directly, so a negative seat
   // count drags the monthly bill below zero (test sub-seats).
@@ -489,7 +491,7 @@ async function route(req, res) {
     if (p === '/unlock' && method === 'POST') {
       const b = await readBody(req);
       const given = String(b.key || '');
-      if (given === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html' }); return res.end(gatePage('That key was not accepted.'));
     }
     if (p === '/api/chat' && method === 'POST') { const b = await readBody(req); return sendJson(res, 200, { reply: chatReply(b.message) }); }
@@ -613,7 +615,7 @@ async function route(req, res) {
     return redirect(res, '/');
   }
 
-  if (!user) return redirect(res, '/login');
+  if (!user && p !== '/complete' && p !== '/complete/name' && p !== '/certificate' && p !== '/tester-name' && p !== '/set-name' && p !== '/tester') return redirect(res, '/login');
   const biz = businessOf(user);
 
   /* ---- Dashboard ---- */
@@ -912,7 +914,7 @@ async function route(req, res) {
     '<h2>5. What this means for a real client</h2>' + TESTS.map(t => '<p><b>' + esc(t.name) + ':</b> ' + esc(t.impact) + '</p>').join('') +
     '<h2>6. Writing it in a real report</h2>' + TESTS.map(t => '<p><b>' + esc(t.report.title) + '</b> — Severity: ' + esc(t.report.severity) + ' — Fix: ' + esc(t.report.remediation) + '</p>').join('') +
     '<h2>Your completion key for Lab ' + (LAB_NUMBER + 1) + '</h2><p><code style="font-size:18px">' + completionKey() + '</code></p>' +
-    '<form method="POST" action="/tester-name"><label>Your name for the certificate<br><input name="name" size="30" value="' + esc(progress.testerName || user.name) + '"></label> <button type="submit">Save name</button></form>' +
+    '<form method="POST" action="/tester-name"><label>Your name for the certificate<br><input name="name" size="30" value="' + esc(progress.testerName || (user && user.name)) + '"></label> <button type="submit">Save name</button></form>' +
     '<p><a class="btn" href="/certificate">View your certificate</a></p></div>';
     return html(res, layout(user, 'Complete', body));
   }
@@ -924,7 +926,7 @@ async function route(req, res) {
   }
   if (p === '/certificate' && method === 'GET') {
     if (doneCount() < TESTS.length) return redirect(res, '/complete');
-    const name = progress.testerName || user.name;
+    const name = progress.testerName || (user && user.name);
     const date = progress.completedAt ? progress.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
     const cert = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Certificate — LAB ' + LAB_NUMBER + '</title><style>body{font-family:Georgia,serif;background:#f4f1ea;display:flex;justify-content:center;padding:40px}.card{background:#fff;border:3px double #8a6d3b;border-radius:6px;padding:44px 54px;text-align:center;max-width:640px}img{height:64px}h1{color:#24304d;margin:10px 0}.nm{font-size:26px;color:#24304d;border-bottom:1px solid #ccc;display:inline-block;padding:0 22px 4px}@media print{body{background:#fff}}</style></head><body>' +
     '<div class="card"><img src="/logo.png" alt="HexaCyberLab"><h1>Certificate of Completion</h1><p>This certifies that</p><p class="nm">' + esc(name) + '</p>' +

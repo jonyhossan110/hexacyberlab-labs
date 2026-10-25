@@ -36,7 +36,7 @@ const FEE_PER_DAY = 0.5;         // late fee per day
  * Key shards, region 1 of 6 (entry key, pieces 1-2).                  *
  * Each shard is the base64 of a reversed slice of the key.           *
  * ------------------------------------------------------------------ */
-const _e1 = ['QVJDMQ==', 'RDFTTA=='];
+
 
 /* ================================================================== *
  * TESTS REGISTRY — one entry per scored vulnerability test.          *
@@ -382,7 +382,7 @@ const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 /* ------------------------------------------------------------------ *
  * Key shards, region 2 of 6 (entry key, pieces 3-4).                  *
  * ------------------------------------------------------------------ */
-const _e2 = ['LTAxRQ==', 'UzdPMw=='];
+
 
 /* ================================================================== *
  * SEED DATA (all fake)                                                *
@@ -436,7 +436,7 @@ const enumProbes = new Map(); // email -> timestamp of probe (login / forgot-pas
 /* ------------------------------------------------------------------ *
  * Key shards, region 3 of 6 (entry key, pieces 5-6).                  *
  * ------------------------------------------------------------------ */
-const _e3 = ['Ti02NQ==', 'TC1YSA=='];
+
 
 /* ================================================================== *
  * PROGRESS ENGINE + PERSISTENCE                                       *
@@ -493,7 +493,9 @@ const _c1 = ['MDdKMg==', 'UkQ0SQ=='];
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8')).join('').split('').reverse().join('');
 }
-function entryKey() { return _unshard([].concat(_e1, _e2, _e3)); }
+const ENTRY_KEY_SHA256 = '6413a9ac47365b520733f14a4fe3747c53f7be48093f7929a4807a8050c5f9f2';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() {
   if (!progress.keyRevealed) return null; // the lab itself has not earned it yet
   return _unshard([].concat(_c1, _c2, _c3));
@@ -803,7 +805,7 @@ function testsPage(req, user) {
   }
   return layout(req, 'Mission Board', html);
 }
-function completePage(req, user) {
+function completePage(req, user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const p = progressJSON();
   if (!isComplete()) {
     const left = TESTS.filter(t => !progress.tests[t.id]);
@@ -834,7 +836,7 @@ function completePage(req, user) {
 <form method="POST" action="/tester-name"><p>Your name for the certificate: <input name="name" value="${esc(progress.testerName)}" size="30"> <button>Save name</button></p></form>
 <p><a class="btn" href="/certificate">View my certificate</a></p>`);
 }
-function certificatePage(req, user) {
+function certificatePage(req, user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   if (!isComplete()) return null;
   const name = progress.testerName || (user ? user.name : 'Guest Tester');
   const date = progress.completedAt ? progress.completedAt.slice(0, 10) : dstr(Date.now());
@@ -964,10 +966,7 @@ const server = http.createServer(async (req, res) => {
     if (pathName === '/unlock' && method === 'POST') {
       const { fields } = await readBody(req);
       const given = String(fields.key || '');
-      const expected = entryKey();
-      let same = given.length === expected.length;
-      if (same) { let diff = 0; for (let i = 0; i < expected.length; i++) diff |= given.charCodeAt(i) ^ expected.charCodeAt(i); same = diff === 0; }
-      if (!same) return send(res, 403, '403 — that key does not unlock this lab.', 'text/plain');
+      if (!entryKeyMatches(given)) return send(res, 403, '403 — that key does not unlock this lab.', 'text/plain');
       progress.unlocked = true; saveProgress();
       return redirect(res, '/');
     }
@@ -1087,7 +1086,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* --- everything below needs a login --- */
-    if (!user) return redirect(res, '/login');
+    if (!user && pathName !== '/complete' && pathName !== '/complete/name' && pathName !== '/certificate') return redirect(res, '/login');
 
     if (pathName === '/profile' && method === 'POST') {
       const { fields } = await readBody(req);
