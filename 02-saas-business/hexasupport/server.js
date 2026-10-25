@@ -18,7 +18,7 @@ const PROGRESS_FILE = path.join(ROOT, 'progress.json');
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) {}
 
 /* ---- key shards, region 1 of 4 (transformed fragments only — never the key) ---- */
-const _eA = ["TC1YSA==","MC04MQ==","WEhUUQ=="];
+
 const _cA = ["TC1YSA==","VS05MQ==","VFc0Qw=="];
 
 /* ================= progress engine ================= */
@@ -110,7 +110,7 @@ const ipState = new Map();  // ip -> { known:bool, unknown:bool, forgot:Set, fai
 function stateFor(ip) { if (!ipState.has(ip)) ipState.set(ip, { known: false, unknown: false, forgot: new Set(), fails: {} }); return ipState.get(ip); }
 
 /* ---- key shards, region 2 of 4 ---- */
-const _eB = ["LVlUUQ==","TUlRUA==","QlNIRQ=="];
+
 
 /* ================= TESTS registry ================= */
 const FEATURES = ['Login & Authentication', 'Registration & Profile', 'Tickets', 'Search & Canned Responses', 'Attachments', 'Admin Panel', 'API & Platform'];
@@ -270,7 +270,9 @@ const TESTS = [
 /* ---- key shards, region 3 of 4 ---- */
 const _cB = ["LUI1Qw==","UFNKNw==","OTdQRA=="];
 function _asm(parts) { return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _asm(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = 'a4dffa264a0368aa765ca804e580a692e77a4990850c3c75557341020b620258';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_cA.concat(_cB)); }
 
 /* ================= UI shell ================= */
@@ -782,7 +784,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/logo.png') { res.writeHead(200, { 'Content-Type': 'image/png' }); return res.end(fs.readFileSync(path.join(ROOT, 'logo.png'))); }
     if (pathname === '/unlock' && req.method === 'POST') {
       const b = await parseBody(req);
-      if (String(b.key || '').trim() === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(String(b.key || '').trim())) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage(true));
     }
     if (pathname === '/api/chat' && req.method === 'POST') { const b = await parseBody(req); res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ reply: chatReply(b.message) })); }
@@ -796,7 +798,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/logout') return doLogout(req, res);
     if (pathname === '/api/tickets') return apiTickets(req, res, req.headers['x-api-key'] || url.searchParams.get('key') || '');
     if (pathname === '/api/customers') return apiCustomers(req, res);
-    if (!req.user) return redirect(res, '/login');
+    if (!req.user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') return redirect(res, '/login');
     if (pathname === '/' || pathname === '/dashboard') return pageDashboard(req, res);
     if (pathname === '/profile') return req.method === 'POST' ? doProfile(req, res) : pageProfile(req, res);
     if (pathname === '/tickets') return req.method === 'POST' ? doNewTicket(req, res) : pageTickets(req, res);

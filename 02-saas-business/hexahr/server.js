@@ -25,13 +25,15 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * Key material — region A (entry key, earned by completing Lab 13).
  * Stored ONLY as encoded fragments; assembled at unlock time (§7).
  * ------------------------------------------------------------------ */
-const _eA = ['TC1YSA==', 'RS00MQ=='];
-const _eB = ['SjFNSA==', 'LU45OQ=='];
-const _eC = ['TzZaMw==', 'RFUyRA=='];
+
+
+
 function _revJoin(parts) {
   return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _revJoin([..._eA, ..._eB, ..._eC]); }
+const ENTRY_KEY_SHA256 = '1665dd67b4565d603d6f214e679b0c4bd5077102b04c0b86f7a8569b940dd311';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------------------------------------------------ *
  * Seed data — people (login account + employee record in one).
@@ -896,7 +898,7 @@ function handleTests(req, res, q) {
   sendHtml(res, 200, layout(req, '🎯 Mission — Security Tests', html));
 }
 function handleComplete(req, res) {
-  const sess = requireLogin(req, res); if (!sess) return;
+  const sess = getSession(req);
   const s = progressSummary();
   if (!s.complete) {
     const left = TESTS.filter(t => !progress.tests[t.id]);
@@ -922,7 +924,7 @@ function handleComplete(req, res) {
     <p><a class="btn" href="/certificate">🎓 View your certificate</a></p></div>`));
 }
 async function handleCompleteName(req, res) {
-  const sess = requireLogin(req, res); if (!sess) return;
+  const sess = getSession(req);
   const body = await parseBody(req);
   if (body.testerName) { progress.testerName = String(body.testerName).slice(0, 60); saveProgress(); }
   redirect(res, '/complete');
@@ -958,7 +960,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/unlock' && method === 'POST') {
       const body = await parseBody(req);
-      if (String(body.key || '') === entryKey()) {
+      if (entryKeyMatches(String(body.key || ''))) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

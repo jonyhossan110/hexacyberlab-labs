@@ -126,7 +126,9 @@ function _join(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
 /* Assembled only inside the unlock check (entry) and only at 100% (reward). */
-function entryKey() { return _join([..._cfgA, ..._cfgC, ..._cfgE]); }
+const ENTRY_KEY_SHA256 = '9f5ce14c826d9a75efc161eb21e13e0cf02ac33dca89d3a4836b397666418982';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function rewardKey() { return _join([_cfgA[0], ..._cfgB, ..._cfgD, ..._cfgF]); }
 
 function loadState() {
@@ -387,7 +389,7 @@ function chatReply(rawMsg) {
 
 /* ============================== HELPERS ============================== */
 
-const _cfgC = ['UTkzSw==', 'LVVHNg=='];
+
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -909,7 +911,7 @@ function partCard(p, user) {
   <a class="btn grey" href="/part?id=${p.id}">Details</a></div>`;
 }
 
-const _cfgE = ['OTM0Rw==', 'REpIQg=='];
+
 
 async function handleAuthed(req, res, next) {
   const url = new URL(req.url, `http://${req.headers.host}`);
@@ -1213,13 +1215,7 @@ async function handleUnlock(req, res) {
   if (req.method === 'POST') {
     const f = await readBody(req);
     const given = (f.get('key') || '').trim();
-    const want = entryKey();
-    let ok = false;
-    try {
-      const gb = Buffer.from(given), wb = Buffer.from(want);
-      ok = gb.length === wb.length && crypto.timingSafeEqual(gb, wb);
-    } catch (e) { ok = false; }
-    if (ok) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+    if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
     return send(res, 403, gatePage('Invalid key — check the key from the previous lab\u2019s completion page and try again.'));
   }
   return send(res, 200, gatePage(''));

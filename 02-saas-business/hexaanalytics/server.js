@@ -22,7 +22,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material, fragment set A (scattered; assembled only at runtime) ---- */
-const _ka = ["TC1YSA==","WTZWMQ==","QTBJRw=="];
+
 
 /* ============================== seed data ============================== */
 const accounts = [
@@ -330,7 +330,7 @@ const TESTS = [
 ];
 
 /* ---- key material, fragment sets B and C (scattered regions) ---- */
-const _kb = ["Uy02MQ==","LTVNTQ==","VUEwVw=="];
+
 const _kc = ["TC1YSA==","WDY3Vg==","VEc0WA=="];
 function _unshard(s) { return Buffer.from(s, 'base64').toString('utf8').split('').reverse().join(''); }
 function _assemble(a, b) {
@@ -338,7 +338,9 @@ function _assemble(a, b) {
   for (let i = 0; i < Math.max(a.length, b.length); i++) { if (a[i]) out.push(_unshard(a[i])); if (b[i]) out.push(_unshard(b[i])); }
   return out.join('');
 }
-function entryKey() { return _assemble(_ka, _kb); }
+const ENTRY_KEY_SHA256 = '34b6486dc0c351eb684e95f744d327c3eb949a6ff2d4a7c53548fca7069d1815';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const _kd = ["Ri03MQ==","LTlZNw==","S1FRTw=="];
 function completionKey() { return _assemble(_kc, _kd); }
 
@@ -440,10 +442,7 @@ const server = http.createServer(async (req, res) => {
     if (pn === '/api/chat' && method === 'POST') { const b = await parseBody(req); return jsonRes(res, 200, { reply: chatReply(b.message) }); }
     if (pn === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      const want = entryKey();
-      let ok = false;
-      try { ok = typeof b.key === 'string' && b.key.length === want.length && crypto.timingSafeEqual(Buffer.from(b.key), Buffer.from(want)); } catch (e) { ok = false; }
-      if (ok) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+      if (entryKeyMatches(b.key)) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
       return send(res, 403, gatePage(true));
     }
     if (!progress.unlocked) return send(res, 200, gatePage(false));
@@ -563,7 +562,7 @@ const server = http.createServer(async (req, res) => {
       return jsonRes(res, 200, { account: acct, datasets: datasets.filter(d => d.accountId === acct).map(d => ({ id: d.id, name: d.name, rows: d.rows.length })) });
     }
 
-    if (!sess) return redirect(res, '/login');
+    if (!sess && pn !== '/complete' && pn !== '/complete/name' && pn !== '/certificate') return redirect(res, '/login');
     const me = storedUser(sess);
 
     /* ---------- home ---------- */

@@ -22,7 +22,7 @@ const LOGO_PATH = path.join(__dirname, 'logo.png');
 
 /* Key material is never stored whole — only encoded shards, scattered (§7).
    Assembler: base64-decode each shard, reverse it, join. */
-const _kA = ['MEwtWEg=', 'NUIzLTc='];
+
 const _cA = ['MEwtWEg=', 'M0s4LTg='];
 const _unshard = (arr) => arr.map((s) => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 
@@ -387,12 +387,14 @@ function redirect(res, to, headers = {}) {
 }
 function stars(n) { return '<span class="stars">' + '★'.repeat(n) + '☆'.repeat(5 - n) + '</span>'; }
 
-const _kB = ['VEtUNzg='];
+
 const _cB = ['VUc2UTk='];
 
-const _kC = ['MkVUNi0=', 'RTlWUQ=='];
+
 const _cC = ['OTM0Ry0=', 'REpIQg=='];
-const entryKey = () => _unshard([..._kA, ..._kB, ..._kC]);
+const ENTRY_KEY_SHA256 = '8a7baebd012ab3317eef9f5a90e9828096cbc2bc1be07e715bb5c9147046bf0c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const completionKey = () => _unshard([..._cA, ..._cB, ..._cC]);
 
 /* ---------------- Chatbot ---------------- */
@@ -491,10 +493,7 @@ const server = http.createServer(async (req, res) => {
     if (method === 'POST' && path === '/unlock') {
       const body = await readBody(req);
       const given = String(body.key || '').trim();
-      const want = entryKey();
-      let same = given.length === want.length;
-      for (let i = 0; i < want.length; i++) if (given[i] !== want[i]) same = false;
-      if (same) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage(true));
     }
     if (method === 'GET' && path === '/api/progress') {

@@ -84,7 +84,7 @@ const uploads = new Map();  // filename -> { contentType, data: Buffer }
 /* ====================== LAB SYSTEM — KEY SHARDS (A) ======================
    The lab keys are NEVER stored as plain literals. Each key exists only as
    encoded shards scattered through this file and assembled at runtime.     */
-const _e1 = ['TC1YSA==', 'RS01MA==', 'QjVQRg=='];
+
 const _c1 = ['TC1YSA==', 'Ni02MA==', 'OFhENQ=='];
 const _unshard = (s) => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('');
 
@@ -280,9 +280,11 @@ const TESTS = [
 ];
 
 /* ====================== LAB SYSTEM — KEY SHARDS (B) ====================== */
-const _e2 = ['LUozVw==', 'Q05FNQ==', 'N1NQSg=='];
+
 const _c2 = ['LUhGUw==', 'U0hYVw==', 'N0I3VQ=='];
-function entryKey() { return _e1.concat(_e2).map(_unshard).join(''); }
+const ENTRY_KEY_SHA256 = 'a8efe4887652ed000cfe716af5ade43c33a32e969534be92715b6b4f51e191f8';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _c1.concat(_c2).map(_unshard).join(''); }
 function keyEq(a, b) { // fixed-work comparison, no partial hints
   let d = a.length ^ b.length;
@@ -678,7 +680,7 @@ const server = http.createServer(async (req, res) => {
       if (req.method === 'POST' && p === '/unlock') {
         let key = form.key || '';
         if (!key && buf.length) { try { key = JSON.parse(buf.toString('utf8')).key || ''; } catch {} }
-        if (keyEq(String(key).trim(), entryKey())) { P.unlocked = true; saveProgress(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(key).trim())) { P.unlocked = true; saveProgress(); return redirect(res, '/'); }
         res.writeHead(401, { 'Content-Type': 'text/html; charset=utf-8' });
         return res.end(gatePage(true));
       }

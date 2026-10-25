@@ -26,7 +26,7 @@ const LOGO_FILE = path.join(__dirname, 'logo.png');
    ------------------------------------------------------------------------- */
 function _rev(s) { return s.split('').reverse().join(''); }
 function _asm(shards) { return shards.map(s => _rev(Buffer.from(s, 'base64').toString('utf8'))).join(''); }
-const _KS_A = ['TC1YSA==','VS05MQ==','VFc0Qw=='];
+
 const _KS_B = ['TC1YSA==','Qy0wMg==','V0RUUQ=='];
 
 /* ---------------------------------------------------------------------------
@@ -284,9 +284,11 @@ const TESTS = [
 ];
 
 /* A few more shards of key material live further down the file (spec §7). */
-const _KS_C = ['LUI1Qw==','UFNKNw==','OTdQRA=='];
+
 const _KS_D = ['LURTUA==','V1lUMg==','NUtWMw=='];
-function entryKey() { return _asm(_KS_A.concat(_KS_C)); }
+const ENTRY_KEY_SHA256 = '08f5b8689577560b7e2fa43cab37589cb3bf9ae70f6d5f41dc3d4a9e3db41fb4';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_KS_B.concat(_KS_D)); }
 
 /* ---------------------------------------------------------------------------
@@ -594,7 +596,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      if (String(b.key || '').trim() === entryKey()) {
+      if (entryKeyMatches(String(b.key || '').trim())) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

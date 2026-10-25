@@ -136,7 +136,7 @@ function progressSummary() {
  *  (fragments are base64 of reversed pieces; assembled at runtime
  *   only at the moment of verification or reveal.)
  * ------------------------------------------------------------------ */
-const _fragA = ['TC1YSA==', 'US0zMQ=='];
+
 function _asm(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
@@ -332,7 +332,7 @@ const TESTS = [
 ];
 
 /* a second scatter of key fragments lives far below, near the admin routes */
-const _fragB = ['Wk45WQ==', 'LU84Rw=='];
+
 
 const XSS_RE = /<\s*script|on\w+\s*=|<\s*svg|<\s*iframe|<\s*img[^>]*onerror|javascript\s*:/i;
 const INJ_RE = /'\s*or\s*'?\d+'?\s*=\s*'?\d+|'\s*or\s*'[^']*'\s*=\s*'[^']*'|'\s*--|'\s*or\s+1\s*=\s*1|\bunion\b[\s\S]*\bselect\b/i;
@@ -435,8 +435,10 @@ function gatePage(req, err) {
 
 /* more key fragments, scattered mid-file */
 const _cfragA = ['TC1YSA==', 'RS00MQ==', 'SjFNSA=='];
-const _fragC = ['WkRUUA==', 'Mlk3Rg=='];
-function entryKey() { return _asm(_fragA.concat(_fragB, _fragC)); }
+
+const ENTRY_KEY_SHA256 = 'a21487036bf085cd52115732e4e4545bcdaa619ee52cf291191515c7484c9b22';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 function addCookie(res, str) {
   const prev = res.getHeader('Set-Cookie') || [];
@@ -839,7 +841,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      if (String(b.key || '') === entryKey()) {
+      if (entryKeyMatches(String(b.key || ''))) {
         progress.unlocked = true; saveProgress();
         return redirect(res, '/');
       }

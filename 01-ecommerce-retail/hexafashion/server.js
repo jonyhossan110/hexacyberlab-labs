@@ -460,12 +460,14 @@ function progressSummary() {
 /* completion key only once the lab is 100% complete.                  */
 /* ------------------------------------------------------------------ */
 
-const _entryShards1 = ['MEwtWEg=', 'TTU3LTI='];
+
 const _complShards1 = ['MEwtWEg=', 'RFQ5LTM='];
 function _unshard(parts) {
   return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_entryShards1.concat(_entryShards2)); }
+const ENTRY_KEY_SHA256 = '9a89a61d7aff1388fdd1440babd91fa42e10ca93f9e73937241d736b8d5fb066';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_complShards1.concat(_complShards2)); }
 
 /* ------------------------------------------------------------------ */
@@ -658,7 +660,7 @@ function chatReply(raw) {
 
 /* Further key fragments — the assembler in the lab-system section
  * joins these with the ones defined earlier. */
-const _entryShards2 = ['ODg1Rk0=', 'VEpYQi0=', 'UVZXRA=='];
+
 const _complShards2 = ['WkhWQ1Y=', 'OEtOVS0=', 'S1ZKTQ=='];
 
 /* ------------------------------------------------------------------ */
@@ -705,7 +707,7 @@ async function route(req, res) {
     if ((req.headers['content-type'] || '').includes('application/json')) {
       try { key = String(JSON.parse(raw.toString('utf8')).key || ''); } catch (e) { key = ''; }
     } else key = String(parseUrlEncoded(raw).key || '');
-    if (key.trim() === entryKey()) {
+    if (entryKeyMatches(key.trim())) {
       progress.unlocked = true;
       saveProgress();
       return redirect(res, '/');

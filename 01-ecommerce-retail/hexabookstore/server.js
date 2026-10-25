@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3017;
  * each key exists only as encoded shards scattered across the
  * code and is assembled at runtime at its reveal moment (§7).
  * ================================================================ */
-const KEY_SHARDS_E1 = ['TC1YSA==', 'WS05MA=='];
+
 const KEY_SHARDS_C1 = ['TC1YSA==', 'VS0wMQ=='];
 
 /* ------------------------------------------------------------------ data */
@@ -358,7 +358,9 @@ function progressInfo() {
 function unshard(a, b, c) {
   return a.concat(b, c).map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return unshard(KEY_SHARDS_E1, KEY_SHARDS_E2, KEY_SHARDS_E3); }
+const ENTRY_KEY_SHA256 = 'ffe786c4dcd5e2ba8b36e9f4cf7c43f4d9d89d4d5939883a0e16f10d448e678c';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return unshard(KEY_SHARDS_C1, KEY_SHARDS_C2, KEY_SHARDS_C3); }
 
 const XSS_RE = /<\s*script|<\s*svg|<\s*img[^>]*\son\w+\s*=|\son\w+\s*=|javascript\s*:/i;
@@ -574,7 +576,7 @@ function pageReset(req, token, err) {
     '<button>Reset password</button></form>');
 }
 
-const KEY_SHARDS_E2 = ['NVc1Qw==', 'LUNGVw=='];
+
 
 /* ------------------------------------------------------------- catalogue */
 function bookCard(b) {
@@ -910,7 +912,7 @@ function chatReply(raw) {
   return 'I can help with this lab: ask me about its features and test counts, your progress, what to try next, or (after 3 tries on a feature) how a test is done. The /tests page also has hints for every test. I only know LAB ' + LAB_NUMBER + ' — I can\'t invent vulnerabilities that aren\'t in it.';
 }
 
-const KEY_SHARDS_E3 = ['U0tKNw==', 'M0hSUg=='];
+
 
 /* ----------------------------------------------------------------- router */
 const server = http.createServer(async (req, res) => {
@@ -946,7 +948,7 @@ const server = http.createServer(async (req, res) => {
     if (path === '/unlock' && method === 'POST') {
       const given = String(form.key || '').trim();
       // Exact match only; no hint about which part is wrong.
-      if (given && given === entryKey()) {
+      if (given && entryKeyMatches(given)) {
         state.unlocked = true; saveState();
         return redirect(res, '/');
       }
@@ -956,11 +958,10 @@ const server = http.createServer(async (req, res) => {
       return sendHtml(res, 200, gatePage(url.searchParams.get('err')));
     }
     if (path === '/tests' && method === 'GET') {
-      if (!sess) return redirect(res, '/login');
+      if (!sess && path !== '/complete' && path !== '/complete/name' && path !== '/certificate' && path !== '/tester-name' && path !== '/set-name' && path !== '/tester') return redirect(res, '/login');
       return sendHtml(res, 200, pageTests(req));
     }
     if (path === '/complete' && method === 'GET') {
-      if (!sess) return redirect(res, '/login');
       return sendHtml(res, 200, pageComplete(req, sess));
     }
     if (path === '/certificate' && method === 'GET') {
@@ -969,7 +970,6 @@ const server = http.createServer(async (req, res) => {
       return res.end(pageCertificate(req, sess));
     }
     if (path === '/tester-name' && method === 'POST') {
-      if (!sess) return redirect(res, '/login');
       state.testerName = String(form.name || '').trim().slice(0, 60);
       saveState();
       return redirect(res, '/certificate');

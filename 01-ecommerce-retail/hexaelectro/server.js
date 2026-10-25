@@ -19,7 +19,7 @@ const LAB_NAME = 'HexaElectro';
 const LAB_NUMBER = 3;
 
 /* static asset digests (build metadata) */
-const _kA = 'MEwtWEg=';
+
 
 /* ----------------------------- seed data ----------------------------- */
 const users = [
@@ -88,7 +88,7 @@ const _xD = 'RVhDRS0=';
 
 const coupons = { ELECTRO10: 10, WELCOME15: 15 }; // code -> percent off
 
-const _kB = 'RFQ5LTM=';
+
 
 const sessions = new Map(); // sid -> userId
 const carts = new Map();    // userId -> [{productId, qty}]
@@ -386,7 +386,9 @@ function attemptFor(m, p) {
 function _assemble(shards) {
   return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _assemble([_kA, _kB, _kC, _kD, _kE]); }
+const ENTRY_KEY_SHA256 = 'cd51590c9e28beaf81290542dba0765d2f22aa577ef92eccb0448fd7b7fbee78';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _assemble([_xA, _xB, _xC, _xD, _xE]); }
 
 /* ----------------------------- helpers ----------------------------- */
@@ -791,7 +793,7 @@ function orderPage(req, res, id) {
     <p class="mut">Keep your serial numbers — you need them in the <a href="/warranty">Warranty Centre</a>.</p>`));
 }
 
-const _kC = 'WkhWQ1Y=';
+
 
 /* ----------------------------- trade-in ----------------------------- */
 const GRADE_VALUES = { A: 300, B: 180, C: 90, D: 30 }; /* the server's own valuation table */
@@ -1031,7 +1033,7 @@ function apiExport(req, res) {
   res.end(JSON.stringify({ customers: data }, null, 2));
 }
 
-const _kD = 'OEtOVS0=';
+
 
 /* ----------------------------- admin ----------------------------- */
 function adminGate(req, res) {
@@ -1080,7 +1082,7 @@ function adminClaims(req, res) {
   send(res, 200, layout(req, 'Admin Claims', `<h1>Warranty Claims (Admin)</h1><table><tr><th>Claim</th><th>Serial</th><th>Customer</th><th>Issue</th><th>Status</th></tr>${rows}</table>`));
 }
 
-const _kE = 'S1ZKTQ==';
+
 
 /* ----------------------------- lab gate (Labs 2–10 start locked) ----------------------------- */
 function gatePage(req, res, msg, code) {
@@ -1104,11 +1106,7 @@ ${msg ? `<p class="bad">${esc(msg)}</p>` : ''}
 async function unlockPost(req, res) {
   const b = await readBody(req);
   const given = String((b && b.key) || '').trim();
-  const expected = entryKey();
-  let diff = given.length ^ expected.length;
-  const len = Math.max(given.length, expected.length);
-  for (let i = 0; i < len; i++) diff |= (given.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-  if (diff === 0) {
+  if (entryKeyMatches(given)) {
     state.unlocked = true;
     saveState();
     return redirect(res, '/');

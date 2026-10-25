@@ -455,9 +455,11 @@ function progressSummary(){
 }
 // Key material exists ONLY as encoded shards, scattered across this file (spec section 7).
 // Entry-key shards live here (region 1); completion-key shards live near the bottom of server.js (region 2).
-const ENTRY_SHARDS = ["QU0tWEg=", "LVJFVFM=", "WFdKVzY=", "VC1XOE4=", "RzY1NTY=", "UDI="];
+
 function asmKey(parts){ return parts.map(s=>Buffer.from(s,'base64').toString().split('').reverse().join('')).join(''); }
-function entryKey(){ return asmKey(ENTRY_SHARDS); }
+const ENTRY_KEY_SHA256 = '8792f1255f78fceefefbdb289e8ca56ba085cf458cf470125afc16b1dacca9ed';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey(){ return asmKey(COMPLETION_SHARDS); }
 // CSRF proof model: the app issues an hx_tok marker cookie at login; a state-changing POST
 // arriving with a foreign Origin, or without that marker, did not come from the app's own pages.
@@ -777,7 +779,7 @@ const server = http.createServer(async (req,res)=>{
     }
     if(p === '/unlock' && req.method==='POST'){
       const b = await parseBody(req);
-      if(String(b.key||'') === entryKey()){ progress.unlocked = true; saveProgress(); return redirect(res,'/'); }
+      if(entryKeyMatches(String(b.key||''))){ progress.unlocked = true; saveProgress(); return redirect(res,'/'); }
       return send(res,403,gatePage('That key was not accepted.'));
     }
     if(p === '/api/progress') return send(res,200,JSON.stringify(progressSummary()),'application/json');

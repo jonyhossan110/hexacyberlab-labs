@@ -1,4 +1,8 @@
 node_modules/
 progress.json
+progress.json.sig
+progress.json.tampered-*
+gateway/.progress-secret
+gateway/.integrity-v1
 *.db
 *.db-journal

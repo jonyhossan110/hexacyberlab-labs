@@ -24,7 +24,7 @@ const ASSETS_DIR = path.join(__dirname, 'assets');
 
 /* Key material is never stored whole — only encoded shards, scattered (§7).
    Assembler: base64-decode each shard, reverse it, join. */
-const _kA = ['MkwtWEg=', 'VFFDLTA='];
+
 const _cA = ['MkwtWEg=', 'N0RPLTE='];
 const _unshard = (arr) => arr.map((s) => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 
@@ -394,7 +394,7 @@ function redirect(res, to, headers = {}) {
   res.end();
 }
 
-const _kB = ['RFNQV0Q='];
+
 const _cB = ['NDFBS1c='];
 
 /* ---------------- Chatbot ---------------- */
@@ -470,9 +470,11 @@ function chatWidget() {
 </div>${CHAT_JS}`;
 }
 
-const _kC = ['V1lUMi0=', 'NUtWMw=='];
+
 const _cC = ['UFFQRi0=', 'UDZYMg=='];
-const entryKey = () => _unshard([..._kA, ..._kB, ..._kC]);
+const ENTRY_KEY_SHA256 = '205ef713b663bedc9ddd2c1d483aba215e7db0ec3d47e49579436e001bc4f1a6';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const completionKey = () => _unshard([..._cA, ..._cB, ..._cC]);
 
 /* ---------------- Server & routes ---------------- */
@@ -496,10 +498,7 @@ const server = http.createServer(async (req, res) => {
     if (method === 'POST' && path === '/unlock') {
       const body = await readBody(req);
       const given = String(body.key || '').trim();
-      const want = entryKey();
-      let same = given.length === want.length;
-      for (let i = 0; i < want.length; i++) if (given[i] !== want[i]) same = false;
-      if (same) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, gatePage(true));
     }
     if (method === 'GET' && path === '/api/progress') {

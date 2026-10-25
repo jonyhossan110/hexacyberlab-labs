@@ -21,10 +21,12 @@ const LOGO_PATH = path.join(__dirname, 'logo.png');
 
 /* ---- key material: encoded fragments only, scattered through this file and
         assembled at the moment of use (entry: /unlock; completion: 100%). ---- */
-const _eA = ['TC1YSA==', 'NC0yMQ=='];
+
 const _cA = ['TC1YSA=='];
 function _un(fr) { return fr.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _un([..._eA, ..._eB, ..._eC]); }
+const ENTRY_KEY_SHA256 = '7335567fb3fc79c5fd59ca38df69db113142ed466f624dd38845f50d5f544759';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _un([..._cA, ..._cB, ..._cC]); }
 
 /* ============================== seed data ============================== */
@@ -307,7 +309,7 @@ const TESTS = [
 ];
 
 /* more encoded key fragments (see note at the top of this file) */
-const _eB = ['V1A5OA==', 'LUs0VQ=='];
+
 const _cB = ['US0zMQ==', 'Wk45WQ=='];
 
 /* ============================== progress engine ============================== */
@@ -729,7 +731,7 @@ function certificatePage() {
 }
 
 /* more encoded key fragments (see note at the top of this file) */
-const _eC = ['MzRJMw==', 'WDgwSA=='];
+
 const _cC = ['LU84Rw==', 'WkRUUA==', 'Mlk3Rg=='];
 
 /* ============================== HTTP plumbing ============================== */
@@ -997,7 +999,7 @@ async function route(req, res) {
 
   if (p === '/unlock' && m === 'POST') {
     const b = await parseBody(req);
-    if (String(b.key || '').trim() === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(req, res, '/'); }
+    if (entryKeyMatches(String(b.key || '').trim())) { progress.unlocked = true; saveProgress(); return redirect(req, res, '/'); }
     res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage(true));
   }
   if (!progress.unlocked) {

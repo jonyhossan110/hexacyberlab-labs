@@ -398,7 +398,9 @@ function _unshard(list) {
   return list.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
 /* Fragment sets are scattered: _shA (helpers), _shB (registry), _shC (above), _shD (routes). */
-function entryKey() { return _unshard([_shA[0], _shB[0], _shC[0], _shD[0], _shC[2], _shD[2]]); }
+const ENTRY_KEY_SHA256 = '70a2e927372f63b00f81d70226a112aaedef1b3d3cfa02251dc9977074c2ace8';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard([_shA[0], _shB[1], _shC[1], _shD[1], _shC[3], _shD[3]]); }
 
 /* Detection patterns shared by several hooks. */
@@ -742,7 +744,7 @@ async function route(req, res) {
     if (path === '/unlock' && method === 'POST') {
       const body = await readBody(req);
       const given = String(body.key || '').trim();
-      if (given && given === entryKey()) {
+      if (given && entryKeyMatches(given)) {
         state.unlocked = true; saveState();
         return redirect(res, '/');
       }

@@ -74,7 +74,7 @@ function seed() {
 let DB = seed();
 
 /* display fragments (assembled at runtime where needed) */
-const _p1 = 'MEwtWEg=';
+
 const _p2 = 'VEtUNzg=';
 
 /* ============================== LAB PROGRESS ENGINE ============================== */
@@ -108,7 +108,7 @@ function featureStats() {
 }
 
 /* more display fragments */
-const _p5 = 'N0I3VQ==';
+
 const _p6 = 'NUIzLTc=';
 
 /* ============================== FEATURES ============================== */
@@ -293,7 +293,7 @@ function isCrossSite(req) {
 }
 
 /* more display fragments */
-const _p3 = 'SEZTOFg=';
+
 const _p4 = 'RTlWUQ==';
 
 /* --- detection support state (in-memory; progress itself persists) --- */
@@ -341,7 +341,9 @@ function money(n) { return '$' + Number(n || 0).toFixed(2); }
 /* key assemblers — the pieces live scattered through this file and are only
  * combined at the moment they are legitimately needed. */
 function _asm(parts) { return parts.map(x => Buffer.from(x, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _asm([_p1, _p7, _p3, _p9, _p5]); }
+const ENTRY_KEY_SHA256 = '771c86ac8c4e21e79de15caf5adc5bfd0b8739d5815c39e0e79c67babdb569c7';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm([_p10, _p6, _p2, _p8, _p4]); }
 
 /* ============================== PAGE LAYOUT ============================== */
@@ -478,7 +480,7 @@ function chatReply(rawMsg) {
 }
 
 /* further display fragments */
-const _p7 = 'RDU2LTY=';
+
 const _p8 = 'MkVUNi0=';
 
 /* ============================== ROUTES ============================== */
@@ -497,7 +499,7 @@ async function route(req, res) {
   if (p === '/unlock' && m === 'POST') {
     const b = await readBody(req);
     const given = String(b.key || '').trim();
-    if (given && given === entryKey()) { PROG.unlocked = true; saveProg(); return redirect(res, '/'); }
+    if (given && entryKeyMatches(given)) { PROG.unlocked = true; saveProg(); return redirect(res, '/'); }
     return send(res, gatePage('That key did not work. Keys come from completing the previous lab.'));
   }
   if (p === '/api/progress' && m === 'GET') {
@@ -977,7 +979,7 @@ async function route(req, res) {
 }
 
 /* trailing display fragments */
-const _p9 = 'U0hYVy0=';
+
 const _p10 = 'MEwtWEg=';
 
 http.createServer((req, res) => {

@@ -91,10 +91,12 @@ let resetTokens = new Map(); // token -> { uid, fp } (requester fingerprint)
 /* Key material lives ONLY as encoded shards scattered through this file (spec §7).
    Each shard is base64 of a reversed fragment; a small assembler rebuilds a key at
    runtime, only at the moment the spec allows it to exist. */
-const _eA = ["MUwtWEg=", "WUtVLTA="];
+
 const _cA = ["QU0tWEg=", "LVJFVFM=", "WFdKVzY="];
 function _asm(parts) { return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _asm([..._eA, ..._eB]); }
+const ENTRY_KEY_SHA256 = 'a2d36cadc28648b7c49ed8f583b4afb8f83e1cf114befd9deb70e0830e060a99';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm([..._cA, ..._cB]); }
 
 /* ---- Progress state (persisted to progress.json — spec §4) ---- */
@@ -572,7 +574,7 @@ button,.btn{background:#0b6bcb;color:#fff;border:0;padding:9px 16px;border-radiu
 </style></head><body><header><h1>⬢ HexaWholesale</h1><p>B2B wholesale ordering — bulk pricing, purchase orders, company credit.</p></header>${progressStrip()}${nav}<main>${body}</main>
 <footer class="small" style="text-align:center;padding:18px">HexaWholesale practice lab — intentionally vulnerable, local only, synthetic data.<br>HexaCyberLab — Built by Md. Jony Hassain, Founder.</footer>${chatWidget()}</body></html>`;
 }
-const _eB = ["Q1MyS0c=", "MlU1SC0=", "R0FCVA=="];
+
 function send(res, code, html, headers = {}) {
   const h = { 'Content-Type': 'text/html; charset=utf-8', ...headers };
   // The app's own pages always carry this benign marker cookie (used by the lab's CSRF detection).
@@ -607,10 +609,7 @@ const server = http.createServer(async (req, res) => {
       if (path === '/api/chat' && req.method === 'POST') return handleChat(res, body);
       if (path === '/unlock' && req.method === 'POST') {
         const given = String(body.key || '');
-        const want = entryKey();
-        let same = given.length === want.length;
-        if (same) { let diff = 0; for (let i = 0; i < want.length; i++) diff |= given.charCodeAt(i) ^ want.charCodeAt(i); same = diff === 0; }
-        if (same) { PROG.unlocked = true; saveProgress(); return redirect(res, '/'); }
+        if (entryKeyMatches(given)) { PROG.unlocked = true; saveProgress(); return redirect(res, '/'); }
         return send(res, 200, gatePage(true));
       }
       return send(res, 200, gatePage(false));
