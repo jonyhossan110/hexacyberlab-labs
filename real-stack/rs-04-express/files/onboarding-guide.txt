@@ -1,0 +1,7 @@
+HexaDesk — New Agent Onboarding Guide
+====================================
+1. Log in and open your workspace dashboard.
+2. Work tickets oldest-first; VIP project tickets jump the queue.
+3. Use link previews to attach status pages to tickets.
+4. Redeem WELCOME50 once for your starter credits.
+Questions: ask in the #support-ops channel.

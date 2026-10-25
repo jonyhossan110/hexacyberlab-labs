@@ -1,0 +1,9 @@
+{
+  "name": "hexadesk-rs04",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RS-04 HexaDesk — a deliberately vulnerable Express helpdesk SaaS (HexaCyberLab Real Stack lab). Localhost training use only.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.21.2" }
+}
