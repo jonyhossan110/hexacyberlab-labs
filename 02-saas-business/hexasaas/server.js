@@ -570,14 +570,14 @@ function completePage(sess){
   <p>Lab ${LAB_NUMBER+1} starts locked. Paste this key there to open it:</p>
   <p class="mono" style="font-size:18px;background:#eef2ff;padding:12px;border-radius:8px">${completionKey()}</p>
   <h2>Your certificate</h2>
-  <form method="POST" action="/complete-name"><label>Name for the certificate <input name="name" value="${esc(progress.testerName || sess.user.name)}"></label> <button class="btn">Save name</button></form>
+  <form method="POST" action="/complete-name"><label>Name for the certificate <input name="name" value="${esc(progress.testerName || (sess && sess.user ? sess.user.name : ''))}"></label> <button class="btn">Save name</button></form>
   <p><a class="btn" href="/certificate">🏆 View your certificate</a></p>`);
 }
 function certificatePage(sess){
   if(!isComplete()){
     return layout(sess,'Certificate',`<h1>🏆 Certificate</h1><p>Certificates unlock at 100%. You are at ${pctDone()}%.</p><p><a class="btn" href="/tests">Continue the mission</a></p>`);
   }
-  const name = progress.testerName || sess.user.name || 'Tester';
+  const name = progress.testerName || (sess && sess.user ? sess.user.name : '') || 'Tester';
   const date = progress.completedAt ? String(progress.completedAt).slice(0,10) : '';
   const fcount = FEATURES.filter(f=>TESTS.some(t=>t.feature===f)).length;
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER} ${LAB_NAME}</title>
@@ -1127,6 +1127,12 @@ const server = http.createServer(async (req,res)=>{
       return res.end(out);
     }
 
+    // ================= LAB SYSTEM completion pages (no login needed: the completion key and certificate must stay reachable even if the app session is gone) =================
+    const guestSess = sessionOf(req);
+    if(p === '/complete' && req.method==='GET') return send(res,200,completePage(guestSess));
+    if(p === '/complete-name' && req.method==='POST'){ const b = await parseBody(req); progress.testerName = String(b.name||'').slice(0,60); saveProgress(); return redirect(res,'/complete'); }
+    if(p === '/certificate' && req.method==='GET') return send(res,200,certificatePage(guestSess));
+
     // ================= Authenticated app =================
     const sess = requireLogin(req,res);
     if(!sess) return;
@@ -1134,9 +1140,6 @@ const server = http.createServer(async (req,res)=>{
 
     // ================= LAB SYSTEM pages =================
     if(p === '/tests' && req.method==='GET') return send(res,200,testsPage(sess,q));
-    if(p === '/complete' && req.method==='GET') return send(res,200,completePage(sess));
-    if(p === '/complete-name' && req.method==='POST'){ const b = await parseBody(req); progress.testerName = String(b.name||'').slice(0,60); saveProgress(); return redirect(res,'/complete'); }
-    if(p === '/certificate' && req.method==='GET') return send(res,200,certificatePage(sess));
 
     // ----- Dashboard -----
     if(p === '/dashboard' && req.method==='GET'){
