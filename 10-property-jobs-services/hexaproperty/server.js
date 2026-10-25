@@ -19,7 +19,7 @@ const PROGRESS_PATH = path.join(__dirname, 'progress.json');
 const LOGO_PATH = path.join(__dirname, 'logo.png');
 
 // --- key shard region A (entry key, first half) ---
-const _eA = ["TC1YSA==","My0xOQ==","TUFGMw=="];
+
 
 // ---------- small helpers ----------
 function esc(s) {
@@ -281,12 +281,14 @@ TESTS.push(
 );
 
 // --- key shard region B (entry key, second half) ---
-const _eB = ["LVk3Tg==","NzlZTw==","WlIwSg=="];
+
 function _asm(a, b) {
   return a.concat(b).map(x => [...Buffer.from(x, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-// NOTE: entryKey() is called from exactly one place — the /unlock handler (§7).
-function entryKey() { return _asm(_eA, _eB); }
+// NOTE: entryKey_() is called from exactly one place — the /unlock handler (§7).
+const ENTRY_KEY_SHA256 = 'de4dcb661ea80ca094f62cc78b6d46518553318a5a41625e5dda2bf8642ebd34';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 // ---------- seed data (all fake, in-memory) ----------
 const users = [
@@ -608,7 +610,7 @@ function testsPage(user) {
   });
   return layout(user, 'Mission Board', html);
 }
-function completePage(user, msg) {
+function completePage(user, msg) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const p = progressObj();
   if (!p.complete) {
     const left = TESTS.filter(t => !state.tests[t.id]);
@@ -636,7 +638,7 @@ ${TESTS.map(t => `<tr><td>${esc(t.report.title)}</td><td>${esc(t.report.severity
 <p><a class="btn alt" href="/certificate">View your certificate</a></p></div>`;
   return layout(user, 'Lab complete', html);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Security Tester', email: '', id: 0 };
   const p = progressObj();
   if (!p.complete) return layout(user, 'Certificate', '<div class="card"><h1>No certificate yet</h1><p>Certificates are issued at 100%. Current progress: ' + p.pct + '%.</p></div>');
   const feats = Object.keys(p.features).length;
@@ -721,10 +723,7 @@ const server = http.createServer(async (req, res) => {
     if (pathName === '/unlock' && method === 'POST') {
       const body = await readBody(req);
       const given = String(body.key || '');
-      const expected = entryKey();
-      let same = given.length === expected.length;
-      for (let i = 0; i < expected.length; i++) { if (given[i] !== expected[i]) same = false; }
-      if (same) { state.unlocked = true; save(); redirect(res, '/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; save(); redirect(res, '/'); }
       else send(res, 403, gatePage('That key was not accepted.'));
       return;
     }
@@ -879,8 +878,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ---- everything below requires a session ----
-    const user = requireLogin(req, res);
-    if (!user) return;
+    const user = (pathName === '/complete' || pathName === '/complete/name' || pathName === '/certificate') ? currentUser(req) : requireLogin(req, res);
+    if (!user && pathName !== '/complete' && pathName !== '/complete/name' && pathName !== '/certificate') return;
 
     if (pathName === '/profile' && method === 'GET') {
       send(res, 200, layout(user, 'Profile', `<div class="card"><h1>Your profile</h1>

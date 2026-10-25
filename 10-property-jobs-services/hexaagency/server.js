@@ -17,7 +17,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ------- scattered key material, region 1 of 6 (do not reorder) ------- */
-const _e1 = ['TC1YSA=='];
+
 const _c1 = ['TC1YSA=='];
 
 /* ------------------------------ state ------------------------------ */
@@ -86,7 +86,7 @@ function probeEnum(req, email) {
 }
 
 /* ------- scattered key material, region 2 of 6 (do not reorder) ------- */
-const _e2 = ['Wi02OQ=='];
+
 const _c2 = ['VS03OQ=='];
 
 /* ------------------------------ TESTS registry ------------------------------ */
@@ -235,7 +235,7 @@ TESTS.push(
 );
 
 /* ------- scattered key material, region 3 of 6 (do not reorder) ------- */
-const _e3 = ['RklaNQ=='];
+
 const _c3 = ['NlQ0OA=='];
 
 /* ------------------------------ progress engine ------------------------------ */
@@ -333,11 +333,13 @@ function evalQuery(query, row) {
 function hasXss(s) { return /<script|onerror=|onload=|<svg|<img[^>]*on/i.test(String(s || '')); }
 
 /* ------- scattered key material, region 4 of 6 (do not reorder) ------- */
-const _e4 = ['LTdFNw=='];
+
 const _c4 = ['LU82VA=='];
 
 function unshard(parts) { return parts.map(p => [...Buffer.from(p, 'base64').toString('utf8')].reverse().join('')).join(''); }
-function entryKey() { return unshard([..._e1, ..._e2, ..._e3, ..._e4, ..._e5, ..._e6]); }
+const ENTRY_KEY_SHA256 = '4deb639824e384d8554eec7c06ac5f145301dcae0a28ac46622759164c344348';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return unshard([..._c1, ..._c2, ..._c3, ..._c4, ..._c5, ..._c6]); }
 
 /* ------------------------------ layout ------------------------------ */
@@ -416,7 +418,7 @@ async function handle(req, res) {
       const raw = await readBody(req);
       let key = '';
       try { key = (JSON.parse(raw) || {}).key || ''; } catch (e) { key = parseForm(raw).key || ''; }
-      if (String(key).trim() === entryKey()) {
+      if (entryKeyMatches(String(key).trim())) {
         state.unlocked = true; saveState();
         redirect(res, '/');
       } else { res.writeHead(403, { 'Content-Type': 'text/html' }); res.end(gatePage()); }
@@ -516,8 +518,8 @@ async function handle(req, res) {
   }
 
   const sess = sessionOf(req);
-  if (!sess) return redirect(res, '/login');
-  const me = users.find(x => x.id === sess.userId) || users[0];
+  if (!sess && p !== '/complete' && p !== '/complete/name' && p !== '/certificate' && p !== '/tester-name' && p !== '/set-name' && p !== '/tester') return redirect(res, '/login');
+  const me = sess ? (users.find(x => x.id === sess.userId) || users[0]) : { name: 'Security Tester', email: '', id: 0 };
   const cookies = parseCookies(req);
 
   /* ---------- home ---------- */
@@ -760,7 +762,7 @@ ${users.map(x => `<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${esc(x.email)}
 <h3>Your completion key for Lab ${LAB_NUMBER + 1}</h3>
 <p style="font-size:20px"><code>${key}</code></p>
 <form method="POST" action="/set-name"><label>Your name for the certificate</label>
-<input name="testerName" value="${esc(state.testerName || me.name)}"><p><button>Save name</button></p></form>
+<input name="testerName" value="${esc(state.testerName || (me && me.name))}"><p><button>Save name</button></p></form>
 <p><a class="btn" href="/certificate">View your certificate</a></p></div>`;
     return page(res, 200, header('Complete') + body + footer());
   }
@@ -771,7 +773,7 @@ ${users.map(x => `<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${esc(x.email)}
   }
   if (p === '/certificate') {
     if (!isComplete()) return redirect(res, '/complete');
-    const name = state.testerName || me.name;
+    const name = state.testerName || (me && me.name);
     const date = state.completedAt ? new Date(state.completedAt).toDateString() : new Date().toDateString();
     return page(res, 200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
 <style>body{font-family:Georgia,serif;background:#eef1f6}.cert{max-width:680px;margin:40px auto;background:#fff;border:3px solid #2456d6;border-radius:14px;padding:36px;text-align:center}
@@ -787,7 +789,7 @@ ${users.map(x => `<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${esc(x.email)}
 }
 
 /* ------- scattered key material, region 5 of 6 (do not reorder) ------- */
-const _e5 = ['V0o2VA=='];
+
 const _c5 = ['OUhBMw=='];
 
 /* ------------------------------ Lab Coach ------------------------------ */
@@ -830,7 +832,7 @@ function coachReply(rawMsg) {
 }
 
 /* ------- scattered key material, region 6 of 6 (do not reorder) ------- */
-const _e6 = ['Q1FVVQ=='];
+
 const _c6 = ['UTM1Vw=='];
 
 /* ------------------------------ doc generation ------------------------------ */

@@ -21,7 +21,7 @@ const PREMIUM_PRICE = 12;
 /* ------------------------------------------------------------------ *
  * Fragment vault A (do not reorganise — fragments are load-bearing). *
  * ------------------------------------------------------------------ */
-const _vaultA1 = ['TC1YSA==', 'SS01OA==', 'SkpBSg=='];
+
 const _vaultA2 = ['TC1YSA==', 'VC02OA==', 'U1U2MA=='];
 
 function _unshard(parts) {
@@ -252,10 +252,12 @@ const TESTS = [
 /* ------------------------------------------------------------------ *
  * Fragment vault B (separate region by design).                      *
  * ------------------------------------------------------------------ */
-const _vaultB1 = ['LTRGWg==', 'UUZEMA==', 'V1k3Mw=='];
+
 const _vaultB2 = ['LThXNQ==', 'M0EyWQ==', 'N1hTNA=='];
 
-function entryKey() { return _unshard(_vaultA1.concat(_vaultB1)); }
+const ENTRY_KEY_SHA256 = 'adfd3789e8a1cbffb1cb3ba7a4f31c69124f30e0e7e9f4687f40c90583b4a116';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_vaultA2.concat(_vaultB2)); }
 
 /* ------------------------------ Progress engine ------------------------------ */
@@ -650,7 +652,7 @@ async function handle(req, res) {
   if (p === '/unlock' && req.method === 'POST') {
     const body = await readBody(req);
     const given = String(body.key || '').trim();
-    if (given && given === entryKey()) {
+    if (given && entryKeyMatches(given)) {
       state.unlocked = true; saveState();
       redirect(res, '/');
     } else {

@@ -20,7 +20,7 @@ const STATE_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material: stored ONLY as base64-of-reversed shards, scattered ---- */
-const _eA = ['TC1YSA==', 'LTEwMQ==', 'MTE0Ug==', 'S0VLTQ=='];
+
 const _cA = ['TC1YSA==', 'LTIwMQ==', 'RE83UQ==', 'MzI4MQ=='];
 function _unshard(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
@@ -344,9 +344,11 @@ function recordEnum(email) {
 function resetTokenFor(u) { return 'IOT' + u.id + '-' + (u.id * 149 + 37); }
 
 /* --------- more key material (second region, far from the first) --------- */
-const _eB = ['U0hNLQ==', 'SlhISw==', 'Mg=='];
+
 const _cB = ['NlA1LQ==', 'VERUTQ==', 'Tw=='];
-function entryKey() { return _unshard(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = 'a99498e42e79cdf90224824ffed97b793d79e830628c8ee01ef8d7e8333e1c3d';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_cA.concat(_cB)); }
 
 /* ------------------------------ http helpers ------------------------------ */
@@ -560,7 +562,7 @@ const server = http.createServer(async (req, res) => {
     if (pth === '/unlock' && method === 'POST') {
       const body = await readBody(req);
       const given = String(body.key || '');
-      if (given && given === entryKey()) {
+      if (given && entryKeyMatches(given)) {
         state.unlocked = true; save();
         return redirect(res, '/');
       }
@@ -685,7 +687,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     /* --------------------------- authenticated app --------------------------- */
-    if (!user) return redirect(res, '/login');
+    if (!user && pth !== '/complete' && pth !== '/complete/name' && pth !== '/certificate') return redirect(res, '/login');
 
     if (pth === '/' && method === 'GET') return send(res, 200, dashboardPage(user));
     if (pth === '/profile' && method === 'GET') {
@@ -921,7 +923,7 @@ const server = http.createServer(async (req, res) => {
       <h2>Your completion key</h2>
       <p style="font-size:20px;background:#101418;border:1px dashed #22c55e;padding:12px;border-radius:8px"><b>${esc(completionKey())}</b></p>
       <p>Paste this key into the next lab to unlock it.</p>
-      <form method="post" action="/complete"><p>Tester name for your certificate: <input name="testerName" value="${esc(state.testerName || user.name)}" style="padding:9px;background:#101418;color:#e8eef4;border:1px solid #2b3542;border-radius:6px"> <button style="padding:9px 16px;background:#2563eb;color:#fff;border:0;border-radius:6px;cursor:pointer">Save name</button></p></form>
+      <form method="post" action="/complete"><p>Tester name for your certificate: <input name="testerName" value="${esc(state.testerName || (user && user.name))}" style="padding:9px;background:#101418;color:#e8eef4;border:1px solid #2b3542;border-radius:6px"> <button style="padding:9px 16px;background:#2563eb;color:#fff;border:0;border-radius:6px;cursor:pointer">Save name</button></p></form>
       <p><a style="color:#7dd3fc" href="/certificate">View your certificate</a></p>`));
     }
     if (pth === '/complete' && method === 'POST') {
@@ -932,7 +934,7 @@ const server = http.createServer(async (req, res) => {
     if (pth === '/certificate' && method === 'GET') {
       const p = progressObj();
       if (!p.complete) return redirect(res, '/complete');
-      const name = state.testerName || user.name;
+      const name = state.testerName || (user && user.name);
       const date = state.completedAt ? state.completedAt.slice(0, 10) : new Date().toISOString().slice(0, 10);
       return send(res, 200, `<!doctype html><html><head><meta charset="utf-8"><title>Certificate — LAB ${LAB_NUMBER}</title>
       <style>@media print { body { background:#fff } } .card { max-width:720px; margin:40px auto; background:#ffffff; color:#111827; border:3px solid #2563eb; border-radius:14px; padding:36px; font-family:Georgia,serif; text-align:center } h1 { margin:8px 0 } .name { font-size:28px; font-weight:bold; margin:14px 0 }</style></head>

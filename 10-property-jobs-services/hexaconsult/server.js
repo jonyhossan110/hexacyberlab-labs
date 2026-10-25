@@ -16,7 +16,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const FILES_DIR = path.join(DIR, 'files');
 
 /* ---------- key material: stored ONLY as base64-of-reversed shards, scattered ---------- */
-const _eA = ["TC1YSA==","Ny04OQ=="];
+
 const _cA = ["TC1YSA==","QS05OQ=="];
 
 function _unshard(a) {
@@ -37,7 +37,7 @@ function saveState() {
 }
 loadState();
 
-const _eB = ["UEw0UA==","LTVJRg=="];
+
 const _cB = ["T0o4RQ==","LTE4MQ=="];
 
 /* ---------- TESTS registry ---------- */
@@ -186,9 +186,11 @@ const TESTS2 = [
 ];
 TESTS.push(...TESTS2);
 
-const _eC = ["SzBQQw==","WUk0WQ=="];
+
 const _cC = ["MUgxSg==","UlhJMA=="];
-function entryKey() { return _unshard(_eA.concat(_eB, _eC)); }
+const ENTRY_KEY_SHA256 = '9bf7942758b0dbfc798463a349087721bd171ac987bbce5cab0c4f1fbb19d865';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_cA.concat(_cB, _cC)); }
 
 /* ---------- seed data (all fake) ---------- */
@@ -811,7 +813,7 @@ function certificatePage(req, res, user) {
 async function handleUnlock(req, res) {
   const b = await readBody(req);
   const given = String((b && b.key) || '');
-  if (given && given === entryKey()) {
+  if (given && entryKeyMatches(given)) {
     state.unlocked = true; saveState();
     return redirect(res, '/');
   }

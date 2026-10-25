@@ -24,7 +24,7 @@ const PREMIUM_PRICE = 12; // USD / month — the server-side price truth
  * as plain text. They live only as transformed fragments, scattered *
  * across the file and reassembled at runtime when needed.           *
  * ------------------------------------------------------------------ */
-const _kA1 = ["TC1YSA==","My00OA==","TlVSVQ=="];
+
 const _kA2 = ["TC1YSA==","SS01OA==","SkpBSg=="];
 
 /* ============================ Progress engine ============================ */
@@ -256,12 +256,14 @@ const TESTS = [
 /* ------------------------------------------------------------------ *
  * Key material (part 2 of 2) + runtime assembler.                    *
  * ------------------------------------------------------------------ */
-const _kB1 = ["LU5BVA==","NTJNMA==","VkVBTw=="];
+
 const _kB2 = ["LTRGWg==","UUZEMA==","V1k3Mw=="];
 function _unshard(parts) {
   return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_kA1.concat(_kB1)); }
+const ENTRY_KEY_SHA256 = '070d5e25b6604a529b9e1ab69e9425f786ddc7039fd58d5c50bb21c48c94fde5';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _unshard(_kA2.concat(_kB2)); }
 
 /* ============================ HTTP helpers ============================ */
@@ -762,7 +764,7 @@ function debugHandler(req, res) {
 async function unlockHandler(req, res) {
   const b = await readBody(req);
   const given = String(b.key || '');
-  if (given && given === entryKey()) {
+  if (given && entryKeyMatches(given)) {
     P.unlocked = true; save();
     return redirectTo(req, res, '/');
   }

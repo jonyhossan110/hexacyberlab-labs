@@ -24,10 +24,10 @@ const PREMIUM_PRICE = 49;
  * base64-of-reversed pieces scattered here; it is assembled at runtime
  * inside /unlock verification and is never stored or printed whole.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS = ["TC1YSA==","LTAwMQ==","Q1E1Mw==","V1hCQQ==","U0NNLQ==","TVVLMw==","SQ=="];
-function assembleEntryKey() {
-  return ENTRY_SHARDS.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
-}
+
+const ENTRY_KEY_SHA256 = '5200e1da273acf36f3ef503704e6d500a4d8ad7ab6409fa4ca925f4116fddf29';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------- progress state ------------------------- */
 let state = { unlocked: false, testerName: '', tests: {}, attempts: {}, completedAt: null, keyRevealed: false };
@@ -535,7 +535,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/unlock' && method === 'POST') {
       const b = await readBody(req);
       const given = String((b && b.key) || '');
-      if (given && given === assembleEntryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (given && entryKeyMatches(given)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, 'Invalid key.');
     }
     // Platform API — deliberately reachable without a session

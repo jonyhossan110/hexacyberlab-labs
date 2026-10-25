@@ -15,7 +15,7 @@ const DIR = __dirname;
 const STATE_FILE = path.join(DIR, 'progress.json');
 
 // ---- key material, segment A (shards are base64 of reversed pieces) ----
-const _eA = ["TC1YSA==", "LTUwMQ=="];
+
 const _cA = ["TC1YSA==", "LTYwMQ=="];
 function _un(s) { return [...Buffer.from(s, 'base64').toString('utf8')].reverse().join(''); }
 
@@ -84,7 +84,7 @@ let nextId = { user: 7, order: 2, invoice: 2, lot: 5, maint: 2, subsidy: 2 };
 const sessions = new Map(); // sid -> userId
 
 // ---- key material, segment B ----
-const _eB = ["MlA1NQ==", "VVFZRg=="];
+
 const _cB = ["S1FIRw==", "OFNaUw=="];
 
 // ---------------- helpers ----------------
@@ -360,9 +360,11 @@ const FEATURE_KEYS = {
 };
 
 // ---- key material, segment C ----
-const _eC = ["QVZPLQ==", "RzNTRQ==", "WA=="];
+
 const _cC = ["OEI5LQ==", "S05DTg==", "Qw=="];
-function entryKey() { return [..._eA, ..._eB, ..._eC].map(_un).join(''); }
+const ENTRY_KEY_SHA256 = '977f301e0d557c0acc51c0e82f45af6bad738a1df63f2b541aa953e78d7356a3';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return [..._cA, ..._cB, ..._cC].map(_un).join(''); }
 function keyEquals(given, expected) {
   const a = Buffer.from(String(given || '')), b = Buffer.from(String(expected || ''));
@@ -476,7 +478,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pth === '/unlock' && method === 'POST') {
       const b = await parseBody(req);
-      if (keyEquals(b.key, entryKey())) { state.unlocked = true; save(); return redirect(res, '/'); }
+      if (entryKeyMatches(b.key)) { state.unlocked = true; save(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(gatePage('That key was not accepted.'));
     }

@@ -17,7 +17,7 @@ const PREV_LAB = 108;
 const DIR = __dirname;
 
 // --- key material, region A (shards; assembled at runtime, never stored whole) ---
-const _e0 = "TC1YSA==";
+
 const _c0 = "TC1YSA==";
 
 // ---------------------------------------------------------------- seed data
@@ -36,7 +36,7 @@ const workspaces = [
 ];
 
 // --- key material, region B ---
-const _e1 = "LTkwMQ==";
+
 const _c1 = "LTAxMQ==";
 
 const workflows = [
@@ -79,7 +79,7 @@ try {
 function save() { try { fs.writeFileSync(PROGRESS_FILE, JSON.stringify(state, null, 2)); } catch (e) {} }
 
 // --- key material, region C ---
-const _e2 = "NVQyODI=";
+
 const _c2 = "QUlLV1Q=";
 
 // ------------------------------------------------------------- TESTS registry
@@ -234,7 +234,7 @@ const TESTS = [
 ];
 
 // --- key material, region D ---
-const _e3 = "LUMzNw==";
+
 const _c3 = "LVlGSA==";
 
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
@@ -259,11 +259,13 @@ function isComplete() { return doneCount() === TESTS.length; }
 // key assemblers (entry key assembled only for unlock verification;
 // completion key assembled only once the lab is complete)
 function _asm(parts) { return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join(''); }
-function entryKey() { return _asm([_e0, _e1, _e2, _e3, _e4, _e5]); }
+const ENTRY_KEY_SHA256 = 'f2683fdc400e8c4ec7304ff623503276ceb829bd7749560853421e16af9dbc36';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm([_c0, _c1, _c2, _c3, _c4, _c5]); }
 
 // --- key material, region E ---
-const _e4 = "SU4zVw==";
+
 const _c4 = "S0ZKNQ==";
 
 // ------------------------------------------------------------- mini SQL eval
@@ -336,7 +338,7 @@ function progressJSON() {
 }
 
 // --- key material, region F ---
-const _e5 = "MVBFOQ==";
+
 const _c5 = "UDBKNg==";
 
 // ------------------------------------------------------------- UI rendering
@@ -498,7 +500,7 @@ async function handle(req, res) {
   if (p === '/unlock' && req.method === 'POST') {
     const b = await readBody(req);
     const key = String(b.key || '');
-    if (key && key === entryKey()) { state.unlocked = true; save(); return redirect(res, '/'); }
+    if (key && entryKeyMatches(key)) { state.unlocked = true; save(); return redirect(res, '/'); }
     return send(res, 403, 'Invalid key.');
   }
   if (p === '/api/chat' && req.method === 'POST') {

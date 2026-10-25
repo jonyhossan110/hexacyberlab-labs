@@ -20,7 +20,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
 function _asm(parts) {
   return parts.map(p => Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-const _EA = ["MUwtWEg=","WDMtMzA=","OTEzUUY="];
+
 
 /* ------------------------- TESTS registry ------------------------- */
 const TESTS = [
@@ -223,8 +223,10 @@ function attempt(feature) { state.attempts[feature] = (state.attempts[feature] |
 function doneCount() { return Object.keys(state.tests).length; }
 function pct() { return Math.floor(doneCount() * 100 / TOTAL); }
 function isComplete() { return doneCount() >= TOTAL; }
-const _EB = ["OURLLU0=","M041N0Y=",""];
-function entryKey() { return _asm(_EA.concat(_EB)); }
+
+const ENTRY_KEY_SHA256 = 'c1def86b769393148fe2a948fc79f160adaf61de44de0fc543c1a51a6a54fc43';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* --------------------------- Sessions ----------------------------- */
 const sessions = new Map();
@@ -682,7 +684,7 @@ async function route(req, res) {
     if (p === '/api/chat' && m === 'POST') { await handleChat(req, res); return; }
     if (p === '/unlock' && m === 'POST') {
       const f = parseForm(await readBody(req));
-      if (String(f.key || '') === entryKey()) { state.unlocked = true; saveState(); redirect(res, '/'); }
+      if (entryKeyMatches(String(f.key || ''))) { state.unlocked = true; saveState(); redirect(res, '/'); }
       else send(res, 403, gatePage().replace('</body>', '<p style="color:#b91c1c">Incorrect key.</p></body>'));
       return;
     }

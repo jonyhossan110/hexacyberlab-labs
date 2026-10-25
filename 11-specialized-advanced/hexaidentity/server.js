@@ -28,7 +28,7 @@ const FILES_DIR = path.join(ROOT, 'files');
  * are scattered across separate regions of this file. A small
  * assembler rebuilds a key only at the moment it is needed.
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS_A = ["MUwtWEg=","OC04MA==","MDFUQw=="];
+
 
 /* ================================================================== *
  * TESTS registry — one entry per scored vulnerability test.
@@ -219,12 +219,14 @@ for (const t of TESTS) TEST_BY_ID[t.id] = t;
 /* ------------------------------------------------------------------ *
  * Key material — shard region 2 of 4 (entry key, second half).
  * ------------------------------------------------------------------ */
-const ENTRY_SHARDS_B = ["LThYWg==","NlczMw==","M1lNSA=="];
+
 
 function assembleKey(a, b) {
   return a.concat(b).map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function assembleEntryKey() { return assembleKey(ENTRY_SHARDS_A, ENTRY_SHARDS_B); }
+const ENTRY_KEY_SHA256 = '477ec46b88f2883450af2ee6d6218f0a26151a8675b92618f2ef9565bb040fce';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ================================================================== *
  * Progress state (persisted in progress.json — generated state).
@@ -658,10 +660,7 @@ async function handle(req, res) {
   if (p === '/unlock' && method === 'POST') {
     const body = parseBody(req, await readBody(req));
     const given = String(body.key || '');
-    const expected = assembleEntryKey();
-    let same = given.length === expected.length;
-    for (let i = 0; i < expected.length; i++) if (given[i] !== expected[i]) same = false;
-    if (same) { state.unlocked = true; save(); return redirect(res, '/'); }
+    if (entryKeyMatches(given)) { state.unlocked = true; save(); return redirect(res, '/'); }
     res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(gatePage().replace('</h2>', '</h2><p style="color:#b42318">That key was not accepted.</p>'));
   }

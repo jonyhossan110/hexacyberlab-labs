@@ -21,7 +21,7 @@ const LOGO_FILE = path.join(DIR, 'logo.png');
  * UI theme fragments (harmless constants used by the page renderer)  *
  * ------------------------------------------------------------------ */
 const THEME = { accent: '#7c5cff', accent2: '#2ea6ff', bg: '#0f1220', card: '#171b30', text: '#e8eaf6', muted: '#9aa3c7' };
-const _fragA = ['TC1YSA==', 'UC0xOA=='];           // renderer cache key parts (1/3)
+           // renderer cache key parts (1/3)
 const NAV_LINKS = [['/', 'Feed'], ['/search', 'Search'], ['/messages', 'Messages'], ['/groups', 'Groups'], ['/tests', 'Mission Board'], ['/complete', 'Debrief']];
 
 /* ------------------------------------------------------------------ *
@@ -84,7 +84,7 @@ const sessions = new Map();        // sid -> userId
 const issuedResetTokens = {};      // userId -> token actually issued via /forgot
 const loginFailures = {};          // email -> failed login count
 const probedEmails = new Set();    // distinct emails probed via login/forgot (enumeration detection)
-const _fragB = ['RkRLWg==', 'LTg4RA=='];           // renderer cache key parts (2/3)
+           // renderer cache key parts (2/3)
 
 function userById(id) { return users.find(u => u.id === Number(id)) || null; }
 function userByEmail(email) { return users.find(u => u.email === String(email || '').toLowerCase()) || null; }
@@ -272,9 +272,11 @@ loadProgress();
  * Key material — stored ONLY as transformed shards, scattered        *
  * through this file and reassembled at runtime (§7).                 *
  * ------------------------------------------------------------------ */
-const _fragC = ['VUJKSw==', 'OVU1WQ=='];           // renderer cache key parts (3/3)
+           // renderer cache key parts (3/3)
 function _unshard(parts) { return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKey() { return _unshard([].concat(_fragA, _fragB, _fragC)); }
+const ENTRY_KEY_SHA256 = '486d394b7a972bfd38bff95d041ac8c392cfd65caecb634ccdf72f71c5e585ae';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const _fragD = ['TC1YSA==', 'RS0yOA=='];           // certificate watermark parts (1/3)
 const _fragE = ['VzhVWA==', 'LTlXTg=='];           // certificate watermark parts (2/3)
 const _fragF = ['QVVIQw==', 'U1dJVA=='];           // certificate watermark parts (3/3)
@@ -545,10 +547,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
       const given = String(b.key || '');
-      const expected = entryKey();
-      // constant-work compare, exact match, no partial hints
-      let diff = given.length ^ expected.length; for (let i = 0; i < Math.max(given.length, expected.length); i++) diff |= (given.charCodeAt(i) || 0) ^ (expected.charCodeAt(i) || 0);
-      if (diff === 0) { progress.unlocked = true; saveProgress(); redirect(res, '/'); }
+      if (entryKeyMatches(given)) { progress.unlocked = true; saveProgress(); redirect(res, '/'); }
       else send(res, 403, layout(req, 'Locked', '<div class="card"><h2>Wrong key</h2><p>That key was rejected. Keys are case-sensitive and must be pasted in full.</p><p><a href="/">Back</a></p></div>'));
       return;
     }
@@ -627,7 +626,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/debug') { attempt('Admin & Platform'); pass('platform-debug'); send(res, 200, JSON.stringify({ users, posts, follows, note: 'debug build — remove before production' }, null, 2), 'application/json'); return; }
 
     /* ---------- everything below needs a session ---------- */
-    if (!me) { redirect(res, '/login'); return; }
+    if (!me && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') { redirect(res, '/login'); return; }
 
     if (p === '/' && req.method === 'GET') { send(res, 200, feedPage(req)); return; }
     if (p === '/profile/update' && req.method === 'POST') {

@@ -9,6 +9,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawn, execFile } = require('node:child_process');
+const crypto = require('node:crypto');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = 4000;
@@ -19,6 +20,19 @@ const byPort = new Map(LABS.map(l => [l.port, l]));
 const STATE_FILE = path.join(__dirname, 'gateway-state.json');
 function readState(){ try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return {}; } }
 function writeState(patch){ const s = { ...readState(), ...patch }; try { fs.writeFileSync(STATE_FILE, JSON.stringify(s, null, 1)); } catch (e) {} return s; }
+/* Progress integrity (matches hexa-preload.js): after the gateway itself writes a
+   lab's progress.json (progress import), sign it so the lab's integrity check
+   accepts it. Secret is per-install, kept in gateway/.progress-secret. */
+function signProgressFile(labDir){
+  try {
+    const secretFile = path.join(__dirname, '.progress-secret');
+    let secret = '';
+    try { secret = fs.readFileSync(secretFile, 'utf8').trim(); } catch (e) {}
+    if (!secret || secret.length < 32) { secret = crypto.randomBytes(32).toString('hex'); try { fs.writeFileSync(secretFile, secret, { mode: 0o600 }); } catch (e) {} }
+    const data = fs.readFileSync(path.join(labDir, 'progress.json'));
+    fs.writeFileSync(path.join(labDir, 'progress.json.sig'), crypto.createHmac('sha256', secret).update(data).digest('hex'));
+  } catch (e) { /* signing is best-effort; the lab guard explains failures */ }
+}
 const children = new Map(); // port -> {proc, lines:[], clients:Set}
 let wslDistros = [];
 
@@ -281,6 +295,7 @@ const server = http.createServer((req, res) => {
             if (!lab || !prog || typeof prog !== 'object') continue;
             stopLab(lab);
             fs.writeFileSync(path.join(ROOT, rel, 'progress.json'), JSON.stringify(prog, null, 2));
+            signProgressFile(path.join(ROOT, rel));
             imported++;
           }
           return json(res, { ok: true, imported });
@@ -296,7 +311,7 @@ const server = http.createServer((req, res) => {
       try {
         const dir = path.join(ROOT, lab.relPath);
         for (const f of fs.readdirSync(dir)) {
-          if (f === 'progress.json' || f === 'state.json' || /\.(db|sqlite|sqlite3)$/i.test(f)) { fs.rmSync(path.join(dir, f), { force: true }); removed.push(f); }
+          if (f === 'progress.json' || f === 'progress.json.sig' || f === 'state.json' || /\.(db|sqlite|sqlite3)$/i.test(f)) { fs.rmSync(path.join(dir, f), { force: true }); removed.push(f); }
         }
       } catch (e) { /* lab folder unreadable — report what was removed */ }
       return json(res, { ok: true, removed });

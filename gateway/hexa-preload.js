@@ -6,6 +6,8 @@
    2. Test-pass announcements (watches progress.json for newly passed tests).
    3. A floating Hexa toolbar injected into the lab's HTML pages.
    4. /hexa/debugger, /hexa/case-study, /hexa/burp, /hexa/recent helper routes.
+   5. Progress integrity: progress.json is HMAC-signed; a hand-edited, forged or
+      overwritten progress file is moved aside at lab start and the lab starts fresh.
    If anything in here fails, the lab runs exactly as before — this file never breaks a lab. */
 const http = require('node:http');
 const fs = require('node:fs');
@@ -57,6 +59,76 @@ function checkPasses(announce) {
   lastPassed = now;
 }
 checkPasses(false);
+
+/* ---- Progress integrity (anti-cheat hardening) ----
+   progress.json is HMAC-SHA256-signed into a sidecar file (progress.json.sig)
+   using a per-install secret stored in gateway/.progress-secret (generated on
+   first run, git-ignored, never shipped). At lab start:
+   - a progress file with a valid signature is genuine — play continues;
+   - a file with NO signature whose mtime predates the first protected boot is
+     grandfathered once and signed (progress earned before this feature existed);
+   - anything else (hand-edited 100%, a bare {"unlocked":true}, an
+     upload-overwritten file, a copied file from another install) fails the
+     check: it is renamed to progress.json.tampered-<time> and the lab starts
+     fresh. While the lab runs, its own saves are re-signed as they happen. */
+const crypto = require('node:crypto');
+const SIGFILE = PROGRESS + '.sig';
+let _secret = null;
+function progressSecret() {
+  if (_secret) return _secret;
+  const f = path.join(__dirname, '.progress-secret');
+  try { _secret = fs.readFileSync(f, 'utf8').trim(); } catch (e) {}
+  if (!_secret || _secret.length < 32) {
+    _secret = crypto.randomBytes(32).toString('hex');
+    try { fs.writeFileSync(f, _secret, { mode: 0o600 }); } catch (e) { /* read-only install — in-memory secret still protects this run */ }
+  }
+  return _secret;
+}
+function guardStartTime() {
+  const f = path.join(__dirname, '.integrity-v1');
+  try { const t = fs.readFileSync(f, 'utf8').trim(); if (t) return Date.parse(t); } catch (e) {}
+  const now = new Date();
+  try { fs.writeFileSync(f, now.toISOString()); } catch (e) {}
+  return now.getTime();
+}
+function signProgress() {
+  try {
+    const data = fs.readFileSync(PROGRESS);
+    fs.writeFileSync(SIGFILE, crypto.createHmac('sha256', progressSecret()).update(data).digest('hex'));
+    return true;
+  } catch (e) { return false; }
+}
+function verifyProgress() {
+  try {
+    const data = fs.readFileSync(PROGRESS);
+    const sig = fs.readFileSync(SIGFILE, 'utf8').trim();
+    const want = crypto.createHmac('sha256', progressSecret()).update(data).digest('hex');
+    return sig.length === want.length && crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
+  } catch (e) { return false; }
+}
+(function guardProgress() {
+  let signedMtime = 0;
+  try {
+    if (fs.existsSync(PROGRESS)) {
+      const st = fs.statSync(PROGRESS);
+      if (verifyProgress()) signedMtime = st.mtimeMs;
+      else if (!fs.existsSync(SIGFILE) && st.mtimeMs <= guardStartTime()) { if (signProgress()) signedMtime = st.mtimeMs; }
+      else {
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+        fs.renameSync(PROGRESS, PROGRESS + '.tampered-' + stamp);
+        try { fs.rmSync(SIGFILE, { force: true }); } catch (e) {}
+        console.log('  ⚠ progress.json FAILED its integrity check — it did not come from the lab itself. Moved aside as progress.json.tampered-*; this lab starts fresh.');
+      }
+    } else { try { fs.rmSync(SIGFILE, { force: true }); } catch (e) {} }
+  } catch (e) { /* never break the lab */ }
+  const iv = setInterval(() => {
+    try {
+      const st = fs.statSync(PROGRESS);
+      if (st.mtimeMs !== signedMtime) { if (signProgress()) signedMtime = st.mtimeMs; }
+    } catch (e) { /* no progress file right now (e.g. after a reset) */ }
+  }, 700);
+  if (iv.unref) iv.unref();
+})();
 
 const recent = [];
 function ts() { return new Date().toTimeString().slice(0, 8); }

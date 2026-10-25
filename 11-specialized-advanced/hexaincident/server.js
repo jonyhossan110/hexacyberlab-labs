@@ -13,7 +13,7 @@ const PROGRESS_FILE = path.join(ROOT, 'progress.json');
 const FILES_DIR = path.join(ROOT, 'files');
 
 /* ---- theme fragments (cosmetic constants, scattered on purpose) ---- */
-const THEME_A = ['MUwtWEg=', 'VC0wMQ==', 'QUlLVw=='];
+
 const BRAND = { color: '#0b5fff', accent: '#7b2ff7', name: 'HexaIncident' };
 
 /* ================================================================
@@ -336,9 +336,11 @@ function canSeeIncident(u, inc) {
 }
 
 /* ---------------- key assembly (shards only; assembled at runtime) ---------------- */
-const THEME_C = ['LVlGSA==', 'S0ZKNQ==', 'UDBKNg=='];
+
 function assembleFrom(shards) { return shards.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join(''); }
-function entryKeyValue() { return assembleFrom(THEME_A.concat(THEME_C)); }
+const ENTRY_KEY_SHA256 = '840a01bf27d0aaede8673d639ea9df00aa74124d5cc6131a955fa1fa84ee78e0';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ---------------- layout ---------------- */
 function layout(req, title, content) {
@@ -613,7 +615,7 @@ const server = http.createServer(async (req, res) => {
     if (!state.unlocked) {
       if (p === '/unlock' && method === 'POST') {
         const params = await bodyParams(req);
-        if (String(params.key || '') === entryKeyValue()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+        if (entryKeyMatches(String(params.key || ''))) { state.unlocked = true; saveState(); return redirect(res, '/'); }
         res.writeHead(403, { 'Content-Type': 'text/html' }); return res.end(gatePage());
       }
       res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(gatePage());

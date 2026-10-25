@@ -25,7 +25,7 @@ const PROGRESS_PATH = path.join(ROOT, 'progress.json');
  * separate regions of this file. One assembler rebuilds a key only at
  * the moment it is needed (unlock verification / 100% reveal).
  * ------------------------------------------------------------------ */
-const _cfgA = ['TC1YSA==', 'VS03OQ==', 'NlQ0OA=='];           // entry key, pieces 1-3
+           // entry key, pieces 1-3
 const _cfgB = ['TC1YSA==', 'Ny04OQ==', 'UEw0UA=='];           // completion key, pieces 1-3
 
 /* ------------------------- Seed data (all fake) ------------------------- */
@@ -82,12 +82,14 @@ const probedEmails = new Set();  // distinct emails probed (enumeration detectio
 /* ------------------------------------------------------------------ *
  * Key material — region B (entry key, pieces 4-6).
  * ------------------------------------------------------------------ */
-const _cfgC = ['LU82VA==', 'OUhBMw==', 'UTM1Vw=='];
+
 
 function _unshard(pieces) {
   return pieces.map(p => p === '' ? '' : Buffer.from(p, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _unshard(_cfgA.concat(_cfgC)); }
+const ENTRY_KEY_SHA256 = 'd5c238e34a428ad1ea656c4f6c92abcf3b905d3aa6eceeacb046434b0be9d38b';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ------------------------------ TESTS registry ------------------------------ */
 const TESTS = [
@@ -1058,11 +1060,7 @@ async function handle(req, res) {
     }
     if (p === '/unlock' && req.method === 'POST') {
       const given = String(ctx.body.key || '');
-      const expected = entryKey();
-      // Constant-work comparison, exact match, no partial hints.
-      let diff = given.length === expected.length ? 0 : 1;
-      for (let i = 0; i < expected.length; i++) { if (given.charCodeAt(i) !== expected.charCodeAt(i)) diff = 1; }
-      if (diff === 0) { state.unlocked = true; saveState(); return ctx.redirect('/'); }
+      if (entryKeyMatches(given)) { state.unlocked = true; saveState(); return ctx.redirect('/'); }
       return ctx.send(403, gatePage(ctx));
     }
 

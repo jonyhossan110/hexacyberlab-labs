@@ -15,7 +15,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key fragments (encoded shards, scattered by design — see ENGINE SPEC §7) ---- */
-const _cfgA = ["TC1YSA==", "LTIwMQ==", "RE83UQ=="];
+
 const _cfgC = ["TC1YSA==", "LTMwMQ=="];
 
 /* ============================== SEED DATA (fake) ============================== */
@@ -285,7 +285,7 @@ const TESTS = [
 const FEATURES = [...new Set(TESTS.map(t => t.feature))];
 
 /* more key fragments, kept apart from the first group on purpose */
-const _seedX = ["MzI4MQ==", "NlA1LQ=="];
+
 const _sceneZ = ["UUZYMw==", "TTkxMw==", "OURLLQ=="];
 
 /* ============================== PROGRESS ENGINE ============================== */
@@ -318,10 +318,12 @@ function featureStats() {
 }
 
 /* ---- key assembly (remaining fragments live here, near the gate logic) ---- */
-const _gateB = ["VERUTQ==", "Tw=="];
+
 const _tailQ = ["TjU3Rg==", "Mw=="];
 const _unsh = arr => arr.map(x => [...Buffer.from(x, 'base64').toString('utf8')].reverse().join('')).join('');
-const entryKey = () => _unsh([..._cfgA, ..._seedX, ..._gateB]);
+const ENTRY_KEY_SHA256 = '89077d2e90314893988ac6b317a85bf7a93bd9bb996e13353304920e9851b187';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 const completionKey = () => isComplete() ? _unsh([..._cfgC, ..._sceneZ, ..._tailQ]) : null;
 
 /* ============================== HTTP HELPERS ============================== */
@@ -536,7 +538,7 @@ const server = http.createServer(async (req, res) => {
     if (p === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
       const given = String(b.key || '');
-      if (given && given === entryKey()) { S.unlocked = true; save(); return redirect(res, '/'); }
+      if (given && entryKeyMatches(given)) { S.unlocked = true; save(); return redirect(res, '/'); }
       res.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage(req, 'That key was not accepted.'));
     }
     if (!S.unlocked) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(gatePage(req)); }
@@ -612,7 +614,7 @@ const server = http.createServer(async (req, res) => {
 
     const u = sessionUser(req);
     if (p === '/tests') { if (!u) return redirect(res, '/login'); return send(res, 200, testsPage(req)); }
-    if (!u) return redirect(res, '/login');
+    if (!u && p !== '/complete' && p !== '/complete/name' && p !== '/certificate') return redirect(res, '/login');
 
     /* ---- profile ---- */
     if (p === '/profile' && req.method === 'GET') return send(res, 200, profilePage(req));

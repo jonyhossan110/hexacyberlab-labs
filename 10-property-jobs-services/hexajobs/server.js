@@ -23,7 +23,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
  * Key material — fragment set A (entry key, part 1 of 2).
  * Keys are never stored whole; see the assembler near the vault code.
  * ------------------------------------------------------------------ */
-const _fragA1 = ['TC1YSA==', 'Uy0zOQ==', 'WDVEUg=='];
+
 const _fragA2 = ['TC1YSA==', 'Qi00OQ==', 'RDMwSA=='];
 
 function fragJoin(parts) {
@@ -350,9 +350,11 @@ const sessions = new Map(); // sid -> userId
 const issuedReset = new Set(); // tokens actually issued via /forgot
 
 /* ---------------- key vault (fragment set B) ---------------- */
-const _fragB1 = ['LU9ZTg==', 'U1A1WQ==', 'SVlYSQ=='];
+
 const _fragB2 = ['LVZDNA==', 'U1VNQg==', 'S0VZUw=='];
-function entryKey() { return fragJoin(_fragA1.concat(_fragB1)); }
+const ENTRY_KEY_SHA256 = 'bdaf4f47957cbbc8508f79c199420b7d3e0d48768ee001c122ca9a7ee8fde694';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return fragJoin(_fragA2.concat(_fragB2)); }
 
 /* ---------------- mini string-built-SQL evaluator ----------------
@@ -718,7 +720,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathName === '/unlock' && req.method === 'POST') {
       const b = await readBody(req);
-      if (b.key && constEq(String(b.key).trim(), entryKey())) {
+      if (b.key && entryKeyMatches(String(b.key).trim())) {
         state.unlocked = true; save(); return redirect(res, '/');
       }
       return send(res, 403, layout(req, 'Wrong key', '<p>❌ That key does not unlock this lab. Keys are case-sensitive and come from completing the previous lab at 100%.</p>', { bare: true }));

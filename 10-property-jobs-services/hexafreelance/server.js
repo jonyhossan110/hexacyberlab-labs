@@ -17,7 +17,7 @@ const PROGRESS_FILE = path.join(DIR, 'progress.json');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* --- scattered credential fragments, region A (do not reassemble by hand) --- */
-const _fragA1 = ["TC1YSA==","Ti01OQ==","STBWRQ=="];
+
 const _fragA2 = ["TC1YSA==","Wi02OQ==","RklaNQ=="];
 
 /* ---------------- progress state ---------------- */
@@ -253,12 +253,14 @@ function progress() {
 }
 
 /* --- scattered credential fragments, region B --- */
-const _fragB1 = ["LVkySQ==","VTNFTA==","QlhIMw=="];
+
 const _fragB2 = ["LTdFNw==","V0o2VA==","Q1FVVQ=="];
 function _assemble(a, b) {
   return a.concat(b).map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
 }
-function entryKey() { return _assemble(_fragA1, _fragB1); }
+const ENTRY_KEY_SHA256 = 'f9d6f610e55e2f9f7a29f5742936d0d94405a42865576786fa76f6a1b1682a91';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _assemble(_fragA2, _fragB2); }
 function keyEq(given, real) {
   const g = Buffer.from(String(given || '')), r = Buffer.from(real);
@@ -499,7 +501,7 @@ function testsPage(user) {
   }
   return layout(user, 'Mission Board', html);
 }
-function completePage(user) {
+function completePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const p = progress();
   if (!p.complete) {
     const left = TESTS.filter(t => !S.tests[t.id]).map(t => `<li>${esc(t.name)} <span class="tag">${esc(t.feature)}</span></li>`).join('');
@@ -526,7 +528,7 @@ function completePage(user) {
 <input name="testerName" value="${esc(S.testerName || (user ? user.name : ''))}"><button>Save name</button></form>
 <p><a href="/certificate">View your certificate</a></p></div>`);
 }
-function certificatePage(user) {
+function certificatePage(user) { if (!user) user = { name: 'Tester', email: '', id: 0 };
   const p = progress();
   if (!p.complete) return layout(user, 'Certificate', `<div class="card"><h2>Certificate locked</h2><p>Finish 100% of the tests first (${p.pct}% so far).</p></div>`);
   const name = S.testerName || (user ? user.name : 'Tester');
@@ -606,7 +608,7 @@ const server = http.createServer(async (req, res) => {
     if (!S.unlocked) {
       if (pathname === '/unlock' && req.method === 'POST') {
         const params = bodyParams(req, await readBody(req));
-        if (keyEq(params.key, entryKey())) {
+        if (entryKeyMatches(params.key)) {
           S.unlocked = true; saveState(); redirect('/');
         } else { res.writeHead(403, { 'Content-Type': 'text/html' }); res.end(gatePage()); }
         return;
@@ -622,7 +624,7 @@ const server = http.createServer(async (req, res) => {
     /* session */
     const sid = cookies.hx_session;
     let user = sid && sessions[sid] ? userById(sessions[sid]) : null;
-    const requireLogin = () => { if (!user) { redirect('/login'); return true; } return false; };
+    const requireLogin = () => { if (!user && pathname !== '/complete' && pathname !== '/complete/name' && pathname !== '/certificate') { redirect('/login'); return true; } return false; };
     const markerOk = params => params && params.hx_marker === 'site';
 
     /* public-ish endpoints */

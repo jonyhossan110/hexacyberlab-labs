@@ -14,7 +14,7 @@ const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
 
 /* ---- scattered key material, region A (assembled only at reveal/verify time) ---- */
-const _ka = ['TC1YSA==', 'QS05OQ==', 'T0o4RQ=='];
+
 const _kc = ['MUwtWEg=', 'My0wMA==', 'QUNRNQ=='];
 function _asm(parts) {
   return parts.map(s => [...Buffer.from(s, 'base64').toString('utf8')].reverse().join('')).join('');
@@ -241,9 +241,11 @@ function pass(id) {
 function doneCount() { return TESTS.filter(t => P.tests[t.id]).length; }
 
 /* ---- scattered key material, region B ---- */
-const _kb = ['LTE4MQ==', 'MUgxSg==', 'UlhJMA=='];
+
 const _kd = ['LVdYQg==', 'M1NDTQ==', 'SU1VSw=='];
-function entryKey() { return _asm(_ka.concat(_kb)); }
+const ENTRY_KEY_SHA256 = 'c3778079cd28b10fd326e49ae190688756febbfa8ecdca023f8ad0005b3f7e3a';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 function completionKey() { return _asm(_kc.concat(_kd)); }
 
 /* ================= seed data (all fake) ================= */
@@ -698,10 +700,7 @@ const server = http.createServer(async (req, res) => {
     if (pth === '/unlock' && req.method === 'POST') {
       const b = await parseBody(req);
       const given = String(b.key || '');
-      const want = entryKey();
-      let same = given.length === want.length; // constant-ish work, exact match, no partial hints
-      for (let i = 0; i < Math.max(given.length, want.length); i++) { if (given[i] !== want[i]) same = false; }
-      if (same) { P.unlocked = true; saveProgress(); redirect(res, '/'); }
+      if (entryKeyMatches(given)) { P.unlocked = true; saveProgress(); redirect(res, '/'); }
       else send(res, 403, gatePage('That key was not accepted.'));
       return;
     }

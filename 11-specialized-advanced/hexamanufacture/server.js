@@ -13,7 +13,7 @@ const DIR = __dirname;
 const STATE_FILE = path.join(DIR, 'progress.json');
 
 // --- build constants (fragment set A) ---
-const _eA = ['TC1YSA==', 'LTQwMQ==', 'TTM2Rw==', 'UUJUOA=='];
+
 
 /* ---------------- seed data (all fake) ---------------- */
 const users = [
@@ -206,7 +206,7 @@ const TESTS = [
 const TEST_BY_ID = Object.fromEntries(TESTS.map(t => [t.id, t]));
 
 // --- build constants (fragment set B) ---
-const _eB = ['Q1gt', 'V1dW', 'NU9V'];
+
 
 /* ---------------- progress engine + persistence ---------------- */
 function defaultState() {
@@ -464,7 +464,9 @@ function testsPage(user) {
 const _cB = ['Vk8t', 'U0VB', 'WEcz'];
 const _asm = parts => parts.map(x => Buffer.from(x, 'base64').toString('utf8').split('').reverse().join('')).join('');
 // entry key assembled ONLY inside /unlock verification:
-function entryKey() { return _asm(_eA.concat(_eB)); }
+const ENTRY_KEY_SHA256 = '746eb7f4e9ca0a9d72decd7655c4a683e591379c6ca51e4c91d30f6cfea824a2';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 // completion key assembled ONLY in completion contexts (100%):
 function completionKey() { return _asm(_cA.concat(_cB)); }
 
@@ -593,7 +595,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === '/unlock' && req.method === 'POST') {
       const candidate = String(body.key || '');
-      if (candidate === entryKey()) { state.unlocked = true; saveState(); return redirect(res, '/'); }
+      if (entryKeyMatches(candidate)) { state.unlocked = true; saveState(); return redirect(res, '/'); }
       return send(res, 403, 'Invalid key. The gate stays locked.');
     }
     if (p === '/api/chat' && req.method === 'POST') {

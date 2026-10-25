@@ -21,11 +21,13 @@ const FILES_DIR = path.join(DIR, 'files');
 const LOGO_FILE = path.join(DIR, 'logo.png');
 
 /* ---- key material: stored ONLY as transformed fragments, assembled at runtime ---- */
-const _ep = ["TC1YSA==","Qi00OQ==","RDMwSA==","LVZDNA==","U1VNQg==","S0VZUw=="];
+
 function _assemble(parts) {
   return parts.map(s => Buffer.from(s, 'base64').toString('utf8').split('').reverse().join('')).join('');
 }
-function entryKey() { return _assemble(_ep); }
+const ENTRY_KEY_SHA256 = '7ed042a9abc828dc1d304914f46afeb9dfb85a10336a81c6c50104202faac3e1';
+function entryKeyMatches(given) { const c = require('node:crypto'); const h = c.createHash('sha256').update(String(given == null ? '' : given)).digest('hex'); try { return c.timingSafeEqual(Buffer.from(h), Buffer.from(ENTRY_KEY_SHA256)); } catch (e) { return h === ENTRY_KEY_SHA256; } }
+/* Entry key check is hash-only: this lab's source no longer contains its entry key. */
 
 /* ============================== SEED DATA (all fake) ============================== */
 const companies = [
@@ -874,7 +876,7 @@ async function handle(req, res) {
   if (p === '/api/chat' && method === 'POST') { const b = await readBody(req); return send(res, 200, JSON.stringify({ reply: coachReply(b.message) }), 'application/json'); }
   if (p === '/unlock' && method === 'POST') {
     const b = await readBody(req);
-    if (String(b.key || '').trim() === entryKey()) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
+    if (entryKeyMatches(String(b.key || '').trim())) { progress.unlocked = true; saveProgress(); return redirect(res, '/'); }
     return send(res, 403, gatePage());
   }
   if (!progress.unlocked) return send(res, 200, gatePage());
