@@ -1,0 +1,9 @@
+{
+  "name": "hexasocial-rs09",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RS-09 HexaSocial — a deliberately vulnerable Express + Mongo-style social app (HexaCyberLab Real Stack lab). Localhost training use only.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.21.2" }
+}
