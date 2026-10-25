@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Code Review{% endblock %}
+{% block content %}
+<h1>🔍 Code Review — second pass</h1>
+<p class="muted">On a real engagement you often get the source after (or instead of) black-box testing. Read each file, find the flaw yourself first — the note under each file confirms what was there.</p>
+{% for path, note in files %}
+{% if selected == path %}
+<h2>{{ path }}</h2>
+<div class="src"><pre>{{ code }}</pre></div>
+<p><b>What was wrong:</b> {{ note }}</p>
+{% else %}
+<div class="review"><a href="/lab/review?f={{ path | urlencode }}"><b>{{ path }}</b></a><p class="muted">{{ note }}</p></div>
+{% endif %}
+{% endfor %}
+{% endblock %}

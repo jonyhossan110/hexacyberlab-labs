@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Complete{% endblock %}
+{% block content %}
+<h1>🏁 RS-08 — {{ done_n }}/{{ total }} tests</h1>
+{% if done_n < total %}
+<p>Not complete yet. Still open:</p>
+<ul>{% for t in tests_def %}{% if not done.get(t.id) %}<li>{{ t.name }}</li>{% endif %}{% endfor %}</ul>
+<p><a href="/lab/tests">Open the test list with hints</a></p>
+{% else %}
+<div class="cert"><h2>🎓 Real Stack Milestone RS-08 — Complete</h2>
+<p>A real API, tested like a professional: token first, objects second, responses read like documents — and one finding written up.</p>
+<p>Completion code: <b>{{ code }}</b></p></div>
+<h2>Fix-the-code debrief</h2>
+{% for title, code_text in fixes %}<div class="fix"><b>{{ title }}</b><pre>{{ code_text }}</pre></div>{% endfor %}
+<h2>Business impact — what HexaFit was risking</h2>
+<p>Points are money here: they redeem for physical goods and premium months. This API let anyone forge the admin's identity with a seven-letter secret, read every member's workout history, pull password hashes out of ordinary responses, and redeem the same points twice in the same second. In business language: the rewards programme becomes a cash leak, the member database becomes a breach notification, and the retail partner walks away — not because the idea was bad, but because the API trusted everything it was told.</p>
+{% endif %}
+<h2>✍ Mini report — one professional finding</h2>
+{% if report_msg %}<p class="ok">{{ report_msg }}</p>{% endif %}
+<form method="post" class="form"><input type="hidden" name="do" value="report">
+<label>Finding title<input name="title" placeholder="e.g. JWT signed with a guessable secret allows full admin forgery" required></label>
+<label>Severity<select name="severity"><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+<label>Evidence — what you sent and what came back<textarea name="evidence" required></textarea></label>
+<label>Business impact — money, customers, trust<textarea name="impact" required></textarea></label>
+<label>Recommended fix<textarea name="fix" required></textarea></label>
+<button>Submit finding</button></form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+{% if not user %}
+<h1>Profile not found</h1>
+{% else %}
+<h1>{{ user.name }}</h1>
+{% if user.avatar_url %}<img src="{{ user.avatar_url }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%">{% endif %}
+<p>{% if user.is_premium %}⭐ Premium member · {% endif %}{{ user.points }} points</p>
+{# The bio is printed with escaping OFF: members "kept asking for links
+   in their bios", so the team marked it safe. It is not. #}
+<div class="notebody">{{ user.bio | safe }}</div>
+<h2>Recent workouts</h2>
+{% for w in workouts %}<div class="review"><b>{{ w.type }}</b> — {{ w.duration_min }} min · {{ w.calories }} kcal{% if w.distance_km %} · {{ w.distance_km }} km{% endif %} <span class="muted">{{ w.performed_on }}</span><p>{{ w.notes }}</p></div>{% endfor %}
+{% endif %}
+{% endblock %}

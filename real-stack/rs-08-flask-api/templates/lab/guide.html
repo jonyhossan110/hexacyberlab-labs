@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Real Website Guide{% endblock %}
+{% block content %}
+<h1>📖 Real Website Guide — testing a JWT REST API</h1>
+<h2>Fingerprint drill — prove what you are looking at</h2>
+<ul>
+<li><b>JSON everywhere:</b> responses carry <code>Content-Type: application/json</code> even for errors — you are testing an API, not a website. The one HTML surface (the profile page) is the companion.</li>
+<li><b>The token:</b> log in and look at the credential: three base64url segments separated by dots is a JWT. Decode the first two — header (<code>alg: HS256</code>) and claims — no tool but base64 needed. The third segment is the signature, and everything rides on its secret.</li>
+<li><b>Server header:</b> <code>Werkzeug/3.x Python/3.12</code> — a Flask dev server in production clothing.</li>
+<li><b>Error shape:</b> deliberately break a request and read the reply. Real APIs leak stack traces, paths and config in errors more often than their teams believe.</li>
+<li><b>Object ids:</b> sequential numbers in URLs (<code>/users/3/workouts</code>) are an invitation to test authorization on every object, not just authentication.</li>
+</ul>
+<h2>The API testing workflow</h2>
+<ol>
+<li><b>Map the surface:</b> the landing page's endpoint map is what the client admits to. Note every verb, every id, every writable field.</li>
+<li><b>Get a real token:</b> register or log in through Burp so every request is captured. Send the login to <b>Repeater</b> — that token is your baseline identity.</li>
+<li><b>Interrogate the token:</b> decode the claims. Ask: what does the server trust from this document? Flip <code>is_premium</code>, re-sign nothing, send it — does claim editing alone work? Then ask the harder question: what signed this, and is it guessable? An offline dictionary attack against the signature (hashcat mode 16500, or jwt_tool) answers that without touching the server again.</li>
+<li><b>Walk the objects:</b> with your low-privilege token, request other users' objects by id — workouts, profiles, exports. Authorization bugs (BOLA) are the most common critical finding in real API assessments.</li>
+<li><b>Send fields nobody offered you:</b> registration and update endpoints that bind the whole request body will accept privileged columns. Diff the documented fields against the columns the responses reveal.</li>
+<li><b>Read the responses, not the requests:</b> over-exposure hides in successful replies — full rows where three fields were needed, hashes where none were.</li>
+<li><b>Mind the server-side fetchers and the money paths:</b> any "import from URL" feature is SSRF-shaped; any check-then-act balance flow is race-shaped. For the race, Burp's parallel send (or Turbo Intruder) fires both requests inside the same pause.</li>
+<li><b>Count the failures:</b> ten bad logins with no throttle is a finding even before any password falls.</li>
+</ol>
+<h2>The professional habit</h2>
+<p>Note every flaw as: what, where, proof, impact. The Complete page will ask you to write one up properly — that write-up is what a client actually pays for.</p>
+{% endblock %}

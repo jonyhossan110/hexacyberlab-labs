@@ -1,0 +1,2 @@
+HEXAFIT internal export signing key: hexafit-export-key-2026
+Internal note: nightly exports are signed with this key. It lives at the lab root because the export job runs from there. It should never be reachable over HTTP.

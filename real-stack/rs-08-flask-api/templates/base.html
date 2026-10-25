@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>{% block title %}HexaFit{% endblock %} · HexaFit</title>
+<link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<div class="labbar"><span>⬢ <b>RS-08 · Real Stack Lab</b> — Python / Flask REST API + JWT, the way real APIs ship</span>
+<span><a href="/lab/brief">📋 Brief</a><a href="/lab/tests">🎯 Tests {{ lab_done }}/{{ lab_total }}</a><a href="/lab/guide">📖 Guide</a><a href="/lab/review">🔍 Code Review</a><a href="/lab/logs">🛡 Logs</a><a href="/lab/complete">🏁 Complete ({{ lab_pct }}%)</a></span></div>
+<header class="shop"><a class="logo" href="/">HexaFit API</a><nav>
+<a href="/">API Home</a><a href="/profile/2">Sample Profile</a>
+</nav></header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer class="foot">HexaFit Inc — a training app. Nothing here is real: every account, workout and password is fictional. The API is the product; this site is its companion.</footer>
+</body></html>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Client Brief{% endblock %}
+{% block content %}
+<h1>📋 Engagement brief — HexaFit Inc</h1>
+<p><b>Client:</b> HexaFit Inc, a (fictional) fitness-tracking startup. Their mobile apps talk to this Flask REST API: members register, log workouts, collect points and redeem them for physical rewards. Points are worth money, premium status is worth money, and the API has never been tested by anyone who didn't write it. A retail partner wants a security assessment before integrating the rewards programme. You are the assessor.</p>
+<p><b>Scope:</b> this API and its companion web profile page — every route on this host and port. The seeded accounts and your own registered account are in scope. Other ports and other labs are <b>out of scope</b>, exactly as on a real engagement.</p>
+<p><b>Working method:</b> this is an API engagement. There is almost no UI to click — drive the API with Burp Repeater or curl, capture a real login token, decode it, and build from there. The companion profile page at <code>/profile/&lt;id&gt;</code> is part of the product and in scope.</p>
+<p><b>Rules of engagement:</b> no denial of service, no deleting other members' data beyond what a test needs to prove, and everything you do is logged (see the Logs page — API calls included).</p>
+<p><b>How scoring works:</b> twelve tests are scored server-side the moment your action is detected — for example, the server notices when a token it never issued actually authenticates as admin, or when a redemption credits points the balance could not cover. Work black-box first; open the Code Review only for your second pass.</p>
+<p><b>Deliverable:</b> at 100% you will write one mini finding in professional format on the Complete page.</p>
+{% endblock %}

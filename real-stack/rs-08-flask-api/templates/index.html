@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}API{% endblock %}
+{% block content %}
+<section class="hero"><h1>Train. Track. Earn points.</h1>
+<p>HexaFit is a fitness-tracking platform: members log workouts, collect points, and redeem them for real rewards. Mobile apps talk to this REST API — JSON in, JSON out, a JWT bearer token on every call.</p></section>
+<h2>Endpoint map</h2>
+<table>
+<tr><th>Method</th><th>Path</th><th>What it does</th></tr>
+<tr><td>POST</td><td><code>/api/auth/register</code></td><td>Create an account, get a token</td></tr>
+<tr><td>POST</td><td><code>/api/auth/login</code></td><td>Exchange email + password for a JWT</td></tr>
+<tr><td>GET</td><td><code>/api/auth/me</code></td><td>Your own record</td></tr>
+<tr><td>GET</td><td><code>/api/users</code></td><td>Member directory</td></tr>
+<tr><td>GET</td><td><code>/api/users/&lt;id&gt;</code></td><td>One member's record</td></tr>
+<tr><td>GET</td><td><code>/api/users/search?name=</code></td><td>Search members by name</td></tr>
+<tr><td>PATCH</td><td><code>/api/users/me</code></td><td>Update your profile (JSON)</td></tr>
+<tr><td>POST</td><td><code>/api/users/me/avatar</code></td><td>Import an avatar from a URL <code>{"url": …}</code></td></tr>
+<tr><td>GET</td><td><code>/api/users/&lt;id&gt;/workouts</code></td><td>A member's workout history</td></tr>
+<tr><td>GET · POST</td><td><code>/api/workouts</code></td><td>List / log your workouts</td></tr>
+<tr><td>GET</td><td><code>/api/workouts/&lt;id&gt;</code></td><td>One of your workouts</td></tr>
+<tr><td>GET</td><td><code>/api/workouts/export?file=</code></td><td>Download an export file</td></tr>
+<tr><td>POST</td><td><code>/api/rewards/redeem</code></td><td>Redeem points: <code>{"item": "protein-box"}</code> (100), <code>"gym-towel"</code> (250), <code>"premium-month"</code> (1000)</td></tr>
+<tr><td>GET</td><td><code>/api/admin/stats</code></td><td>Platform statistics — admin tokens only</td></tr>
+<tr><td>GET</td><td><code>/profile/&lt;id&gt;</code></td><td>The public web profile page (companion site)</td></tr>
+</table>
+<p class="muted">Demo member: marco.ruiz@example.com / TrailRun!42 (premium, 150 points). Admin: admin@hexafit.example / AdminStride#1. See the <a href="/lab/brief">engagement brief</a> before testing.</p>
+{% endblock %}
