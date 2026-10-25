@@ -4,7 +4,7 @@
 
 # HexaCyberLab Practice Labs — The Complete 110-Lab Programme
 
-![Labs: 110](https://img.shields.io/badge/labs-110-blueviolet) ![Scored tests: 2,818](https://img.shields.io/badge/scored_tests-2,818-brightgreen) ![Categories: 11](https://img.shields.io/badge/categories-11-blue) ![Hexa Gateway](https://img.shields.io/badge/Hexa_Gateway-dashboard_%2B_tools-6c5cff) ![Chain verified](https://img.shields.io/badge/key_chain-verified-success)
+![Labs: 110](https://img.shields.io/badge/labs-110-blueviolet) ![Scored tests: 2,818](https://img.shields.io/badge/scored_tests-2,818-brightgreen) ![Categories: 11](https://img.shields.io/badge/categories-11-blue) ![Real Stack: 11 milestones](https://img.shields.io/badge/real_stack-11_milestones-0e7a5f) ![Hexa Gateway](https://img.shields.io/badge/Hexa_Gateway-dashboard_%2B_tools-6c5cff) ![Chain verified](https://img.shields.io/badge/key_chain-verified-success)
 
 **110 deliberately vulnerable business applications. 2,818 scored security tests. One unlock chain.**
 
@@ -277,6 +277,26 @@ Per-lab documentation: `README.md` (setup + test accounts), `VULNERABILITIES.md`
 ## What you will practise
 
 Broken access control & IDOR, SQL injection, XSS (stored/reflected), CSRF, authentication weaknesses (brute force, enumeration, predictable reset tokens, weak/default credentials), session & cookie tampering, mass assignment, business-logic flaws (price/quantity/approval manipulation), file upload & path traversal, insecure API design, information disclosure, and more — always inside a realistic business workflow, mapped to OWASP categories, with a Fix & Retest path for every finding.
+
+## 🎓 Real Stack Milestones (RS-01 – RS-11)
+
+Alongside the 110 core labs sits a second track: **11 milestone labs, one after every 10 core labs**, each a **real multi-file application in a real stack** — the way production software is actually built:
+
+| Milestone | After | App | Stack | Tests |
+|---|---|---|---|---|
+| RS-01 | Lab 10 | NordKart store | Plain PHP 8 · PDO/SQLite | 12 |
+| RS-02 | Lab 20 | HexaNotes | Python · Flask · Jinja2 | 12 |
+| RS-03 | Lab 30 | WanderPress | PHP · WordPress-style core + plugins | 12 |
+| RS-04 | Lab 40 | HexaDesk | Node · Express · node:sqlite | 12 |
+| RS-05 | Lab 50 | HexaClinic | Python · Django | 12 |
+| RS-06 | Lab 60 | HexaBilling | PHP · Laravel-style MVC | 12 |
+| RS-07 | Lab 70 | HexaPay | PHP · REST API · bearer tokens | 12 |
+| RS-08 | Lab 80 | HexaFit | Python · Flask REST API · JWT | 12 |
+| RS-09 | Lab 90 | HexaSocial | Node · Express · Mongo-style engine | 12 |
+| RS-10 | Lab 100 | HexaFiles | Go · net/http · SQLite | 12 |
+| RS-11 | Lab 110 | BrightTravel capstone | Legacy PHP audit | 14 |
+
+Each milestone replays its block's vulnerability classes in that stack's real idiom (PHP type juggling, Jinja SSTI, Django's `|safe`, NoSQL operator injection, Go's `text/template`…), and adds what single-file labs can't teach: a **client brief & scope**, a **Real Website Guide** (fingerprint the stack on a real site, what to test first), a **Code Review second pass**, a **blue-team log corner**, a **fix-the-code debrief**, and a **scored mini report**. The gateway dashboard shows each milestone after its category block; milestones don't touch the core chain or its 2,818 tests. **134 additional scored tests.** Runtimes: PHP 8+, Python 3, Node.js, Go — the gateway checks for each and tells you if one is missing instead of crashing.
 
 ## License
 
