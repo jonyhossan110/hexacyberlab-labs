@@ -147,7 +147,7 @@ function dashboardPage(){
   }
   const body = '<h1>⬢ HexaCyberLab — Programme Dashboard</h1>' +
     '<p class="muted">110 labs · ' + totalTests + ' scored tests · <b>' + totalDone + ' passed overall</b>. Start a lab, open it, and watch the live console: every request the server receives, everything it accepts and sends back, and every test the moment it passes. Switch labs by changing the port in the URL — each port is a different lab, exactly like a different website.</p>' +
-    '<p><a href="/terminal"><button class="go">🖥 Open Kali Terminal</button></a> <a href="/business"><button>💼 Business Skills (unlockable)</button></a> <a href="/cases"><button>📖 Real-World Case Studies</button></a></p>' +
+    '<p><a href="/terminal"><button class="go">🖥 Open Kali Terminal</button></a> <a href="/business"><button>💼 Business Skills (unlockable)</button></a> <a href="/cases"><button>📖 Real-World Case Studies</button></a> <a href="/certificates"><button>🏆 Certificates</button></a></p>' +
     contChip +
     '<div style="background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><b>🔎 Find a vulnerability to practise</b><div class="muted" style="margin:4px 0 10px">Search ' + totalTests + ' tests across all 110 labs — try “SQL injection”, “IDOR”, “SSRF”, “race condition”… (press / to jump here)</div><input id="vsearch" type="text" placeholder="Type a vulnerability, e.g. IDOR" style="width:100%;box-sizing:border-box;background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:10px 12px;font-size:15px"><div id="vresults" style="margin-top:6px"></div></div>' +
     '<div style="display:flex;gap:18px;align-items:center;background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="#333a52" stroke-width="9"/><circle id="ringFg" cx="46" cy="46" r="38" fill="none" stroke="#43e97b" stroke-width="9" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="' + (238.8 * (1 - (totalTests ? totalDone / totalTests : 0))).toFixed(1) + '" transform="rotate(-90 46 46)"/><text id="ringPct" x="46" y="51" text-anchor="middle" fill="#e8ebf4" font-size="17" font-weight="bold">' + (totalTests ? Math.floor(totalDone / totalTests * 100) : 0) + '%</text></svg><div><div style="font-size:19px"><b id="ringDone">' + totalDone + '</b> of ' + totalTests + ' tests passed across all 110 labs</div><div class="muted">Your whole programme at a glance — the ring fills as tests pass, and a lab card turns Completed at 100%.</div></div></div>' +
@@ -205,6 +205,25 @@ function businessLesson(n){
   if (!unlocked) return page('Locked', '<p><a href="/business">← Business Skills</a></p><h1>🔒 Locked</h1><p>Finish every lab in category ' + n + ' (' + esc(cat ? cat.replace(/^\d+-/, '').replace(/-/g, ' ') : '') + ') to unlock this lesson.</p>');
   return page('Lesson ' + n, '<p><a href="/business">← Business Skills</a></p>' + md(fs.readFileSync(path.join(dir, f), 'utf8')));
 }
+function certificatesPage(){
+  const earned = LABS.filter(l => progressOf(l).complete);
+  let cards = '';
+  for (const lab of LABS) {
+    const p = progressOf(lab);
+    if (p.complete) {
+      cards += '<div class="card" style="border-color:#8a6d3b;background:linear-gradient(180deg,#232033,#1d2333)"><b>🏆 LAB ' + lab.number + ' — ' + esc(lab.name) + '</b>' +
+        '<div class="muted">' + p.total + ' tests · completed 100%</div>' +
+        '<div style="margin-top:9px"><a href="/open?port=' + lab.port + '&to=/certificate" target="_blank"><button class="go">View certificate ↗</button></a></div></div>';
+    } else {
+      cards += '<div class="card" style="opacity:.75"><b>LAB ' + lab.number + ' — ' + esc(lab.name) + '</b>' +
+        '<div class="muted">' + p.done + '/' + p.total + ' tests · ' + p.pct + '% — certificate locks at 100%</div>' +
+        '<div class="bar" style="margin-top:8px"><i style="width:' + p.pct + '%"></i></div></div>';
+    }
+  }
+  return page('Certificates', '<p><a href="/">← Dashboard</a></p><h1>🏆 Certificate Gallery</h1>' +
+    '<p class="muted">Every lab you finish to 100% earns a signed HexaCyberLab certificate. You have earned <b>' + earned.length + ' of ' + LABS.length + '</b> so far — they are all collected here, ready to view and print.</p>' +
+    '<div class="grid">' + cards + '</div>');
+}
 function casesPage(){
   let cases = {}; try { cases = JSON.parse(fs.readFileSync(path.join(__dirname, 'case-studies.json'), 'utf8')); } catch (e) {}
   const cards = Object.entries(cases).map(([k, cs]) => '<div class="card" style="margin:10px 0"><h3 style="margin-top:0">📌 ' + esc(cs.title) + '</h3><p><b>' + esc(cs.company) + '</b> · ' + esc(cs.year) + ' · <code>' + esc(k) + '</code></p><p>' + esc(cs.story) + '</p><p><b>Impact:</b> ' + esc(cs.impact) + '</p><p><b>Lesson:</b> ' + esc(cs.lesson) + '</p><p class="muted">Source: <a href="' + esc(cs.source_url) + '" target="_blank" rel="noopener">' + esc(cs.source_name) + '</a></p></div>').join('');
@@ -223,15 +242,18 @@ const server = http.createServer((req, res) => {
     if (p === '/business') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(businessPage()); }
     if (p.startsWith('/business/')) { const h = businessLesson(parseInt(p.split('/')[2], 10)); res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(h || page('Not found', '<h1>Not found</h1>')); }
     if (p === '/cases') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(casesPage()); }
+    if (p === '/certificates') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(certificatesPage()); }
     if (p.startsWith('/vendor/')) { const f = path.join(__dirname, 'vendor', path.basename(p)); if (fs.existsSync(f)) { res.writeHead(200, { 'Content-Type': p.endsWith('.css') ? 'text/css' : 'text/javascript' }); return res.end(fs.readFileSync(f)); } }
     if (p === '/open') {
       const lab = byPort.get(Number(u.searchParams.get('port')));
       if (!lab) { res.writeHead(302, { Location: '/' }); return res.end(); }
       writeState({ lastPort: lab.port, lastAt: Date.now() });
-      if (isRunning(lab.port)) { res.writeHead(302, { Location: 'http://localhost:' + lab.port + '/' }); return res.end(); }
+      const toRaw = u.searchParams.get('to') || '/';
+      const to = (toRaw.startsWith('/') && !toRaw.startsWith('//')) ? toRaw : '/';
+      if (isRunning(lab.port)) { res.writeHead(302, { Location: 'http://localhost:' + lab.port + to }); return res.end(); }
       startLab(lab);
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      return res.end(page('Starting lab', '<h1>▶ Starting LAB ' + lab.number + ' — ' + esc(lab.name) + '…</h1><p class="muted">One moment — sending you into the lab.</p><meta http-equiv="refresh" content="1.4;url=http://localhost:' + lab.port + '/">'));
+      return res.end(page('Starting lab', '<h1>▶ Starting LAB ' + lab.number + ' — ' + esc(lab.name) + '…</h1><p class="muted">One moment — sending you into the lab.</p><meta http-equiv="refresh" content="1.4;url=http://localhost:' + lab.port + to + '">'));
     }
     if (p === '/api/search-index') return json(res, LABS.map(l => ({ number: l.number, name: l.name, port: l.port, category: l.category, tests: l.tests })));
     if (p === '/api/labs') return json(res, { lastPort: readState().lastPort || null, labs: LABS.map(l => { const pr = progressOf(l); return { number: l.number, name: l.name, port: l.port, category: l.category, running: isRunning(l.port), ...pr }; }) });
