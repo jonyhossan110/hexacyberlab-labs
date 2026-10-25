@@ -1,5 +1,8 @@
 # HexaAcademy — Vulnerable Online Course Academy Practice Lab
 
+⏱ **Estimated time:** ~3h 50m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 52 of the HexaCyberLab practice-lab series** (Category 6: Education & E-learning).
 
 > ⚠️ **SAFETY WARNING — READ FIRST**

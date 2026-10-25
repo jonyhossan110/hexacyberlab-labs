@@ -1,5 +1,8 @@
 # HexaTutor — LAB 54
 
+⏱ **Estimated time:** ~3h 45m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 6: Education & E-learning** · A deliberately vulnerable **tutor marketplace** built for hands-on web security training.
 
 > ⚠️ **LOCAL USE ONLY.** This application is intentionally insecure. Run it only on your own machine / isolated lab network, never on a public server. All data is fake seed data.

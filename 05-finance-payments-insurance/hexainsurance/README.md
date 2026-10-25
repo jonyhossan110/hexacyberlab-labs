@@ -1,5 +1,8 @@
 # HexaInsurance — LAB 47
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **insurance portal** built for authorised, local-only
 security training. It is LAB 47 of the HexaCyberLab lab programme
 (Category 5: Finance, Payments & Insurance).

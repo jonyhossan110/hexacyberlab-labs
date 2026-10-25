@@ -1,5 +1,8 @@
 # HexaWallet — LAB 42 (Category 5: Finance, Payments & Insurance)
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete **digital wallet** web application — user accounts, wallet balances (simulated seed money), transfers between users, card top-ups, transaction history, linked cards, bank withdrawals and KYC identity records — built as a deliberately vulnerable training lab for the HexaCyberLab 110-lab programme.
 
 > ⚠️ **LOCAL-ONLY.** Intentionally vulnerable. Run it only on your own machine (it binds `127.0.0.1`). All money, cards, people and ID numbers are simulated. Never deploy it publicly.

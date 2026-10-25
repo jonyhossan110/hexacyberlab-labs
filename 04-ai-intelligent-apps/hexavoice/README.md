@@ -1,5 +1,8 @@
 # HexaVoice — LAB 37 of 110 · HexaCyberLab Practice Labs
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete, intentionally vulnerable **voice-AI platform**: user accounts, recordings with
 simulated transcripts, speakers with private voiceprint notes, sharing links, a token API,
 usage minutes and plan billing, webhooks and an admin console.

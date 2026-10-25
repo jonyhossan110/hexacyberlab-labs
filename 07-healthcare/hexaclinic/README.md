@@ -1,5 +1,8 @@
 # HexaClinic — LAB 61 (Category 7: Healthcare & Wellness)
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **clinic management system** built for authorised, local-only web security training. Patients, doctors and reception staff share one portal: appointment booking, doctor schedules, medical records, prescriptions and visit billing — with **26 scored security tests** across **9 features**, each one a real, working vulnerability derived from clinic workflows.
 
 > ⚠️ **Local use only.** Run it on your own machine/lab network. Never deploy it to the internet. All patients, doctors and medical records are invented seed data — there is no real health information in this app.

@@ -1,5 +1,8 @@
 # LAB 68 — HexaNutrition
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **nutrition coaching platform** for authorised, local security practice — part of the HexaCyberLab 110-lab programme (Category 7: Healthcare & Wellness).
 
 > **SAFETY:** This app is intentionally insecure. Run it locally only (it binds 127.0.0.1). Never deploy it publicly, never add real data. All accounts, clients and health details are fake seed data.

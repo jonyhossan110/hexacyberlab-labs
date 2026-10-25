@@ -1,5 +1,8 @@
 # HexaModelHub — LAB 40 (Category 4: AI & Intelligent Applications)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete AI model platform — publisher accounts, model listings with versions and file manifests, API keys with usage quotas, a simulated-inference playground, model cards, and download/like stats — rebuilt as a **local-only, intentionally vulnerable** training lab with the full HexaCyberLab lab system: scored tests, graded hints, a Lab Coach chatbot, sequential key unlock, progress persistence, a completion debrief and a certificate.
 
 > ⚠️ **Local use only.** This app is deliberately insecure. It binds to 127.0.0.1 (port **3049**). Never deploy it publicly, never expose the port, and never reuse its credentials anywhere else.

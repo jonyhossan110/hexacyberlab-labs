@@ -1,5 +1,8 @@
 # HexaAutoParts — Vulnerable Auto-Parts Store Lab
 
+⏱ **Estimated time:** ~2h 45m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 22
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 8** of the HexaCyberLab Category-1 (E-commerce & Retail) lab chain.
 
 An **intentionally vulnerable** auto-parts e-commerce application for hands-on web

@@ -1,5 +1,8 @@
 # HexaVision — LAB 33 of 110 (Category 4: AI & Intelligent Applications)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An image-AI platform — user accounts, image uploads (simulated content), AI analysis jobs (simulated, deterministic results), public/private galleries, collections with share links, API access and a credit system — built as a **complete, intentionally vulnerable training lab** for the HexaCyberLab lab series.
 
 > ⚠️ **LOCAL TRAINING ONLY.** This app is deliberately vulnerable. Run it only on your own machine (it binds 127.0.0.1), never deploy it publicly, and never use these techniques on systems you do not own or have written permission to test.

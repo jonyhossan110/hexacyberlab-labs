@@ -1,5 +1,8 @@
 # HexaFlight — LAB 73 of 110
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 8: Travel, Hospitality & Transport** · A deliberately vulnerable flight-booking simulator, built for local, authorised security practice by **HexaCyberLab**.
 
 > ⚠️ **LOCAL USE ONLY.** This app is intentionally insecure. Run it only on your own machine/lab network. Never deploy it to a public server. All accounts, flights and bookings are fake seed data — there is no connection to any real airline.

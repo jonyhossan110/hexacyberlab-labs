@@ -1,5 +1,8 @@
 # HexaAgri — LAB 105 of 110
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 11: Specialized & Advanced Business Systems** · HexaCyberLab vulnerable practice labs
 
 HexaAgri is a complete agriculture management platform — farms, crops & fields, harvest inventory, a produce market with sales orders & invoices, equipment & maintenance approvals, farm workers, and subsidy applications — built **intentionally vulnerable** for hands-on web penetration-testing practice.

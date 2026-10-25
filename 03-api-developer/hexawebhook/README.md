@@ -1,5 +1,8 @@
 # HexaWebhook — LAB 26 of 110
 
+⏱ **Estimated time:** ~3h 55m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 3: API & Developer Platforms** · A webhook delivery service — projects, endpoints, event subscriptions, delivery attempts with retries, delivery logs and signing secrets.
 
 > ⚠️ **INTENTIONALLY VULNERABLE — local training lab only.** Never deploy this app to a public server. It binds to `127.0.0.1` only and its "delivery engine" is simulated in-app: it never makes a real network request.

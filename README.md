@@ -4,6 +4,8 @@
 
 # HexaCyberLab Practice Labs — The Complete 110-Lab Programme
 
+![Labs: 110](https://img.shields.io/badge/labs-110-blueviolet) ![Scored tests: 2,818](https://img.shields.io/badge/scored_tests-2,818-brightgreen) ![Categories: 11](https://img.shields.io/badge/categories-11-blue) ![Hexa Gateway](https://img.shields.io/badge/Hexa_Gateway-dashboard_%2B_tools-6c5cff) ![Chain verified](https://img.shields.io/badge/key_chain-verified-success)
+
 **110 deliberately vulnerable business applications. 2,818 scored security tests. One unlock chain.**
 
 Built by **Md. Jony Hassain**, Founder of [HexaCyberLab](https://hexacyberlab.great-site.net/), as a complete hands-on training ground for web penetration testing — every lab is a full, working business application with its own realistic workflows, and its own unique set of vulnerabilities derived from how that business actually operates.

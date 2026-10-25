@@ -1,5 +1,8 @@
 # HexaAuth — LAB 29 of 110 (Category 3: API & Developer Platforms)
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 24
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **identity / authentication platform** for hands-on web penetration-testing practice. HexaAuth hosts identity for tenant applications: developer teams register apps, configure simulated OAuth clients, SSO and MFA, and manage the end users who sign in to those apps. **Local use only — never deploy this publicly.**
 
 ## Run it

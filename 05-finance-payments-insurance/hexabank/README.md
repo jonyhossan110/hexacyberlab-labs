@@ -1,5 +1,8 @@
 # HexaBank — Vulnerable Banking Simulator Practice Lab
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 43 of the HexaCyberLab practice-lab series** (Category 5: Finance, Payments & Insurance).
 
 > ⚠️ **SAFETY WARNING — READ FIRST**

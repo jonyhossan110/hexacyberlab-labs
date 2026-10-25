@@ -1,5 +1,8 @@
 # HexaAgency — LAB 96 (Category 10: Property, Jobs & Professional Services)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **agency management platform** — clients, projects,
 contracts, invoices, team members/roles, client portals, deliverables and time
 tracking — built for authorised, **local-only** web security training as part of

@@ -1,5 +1,8 @@
 # HexaCloud — LAB 23 (HexaCyberLab Vulnerable Lab Programme)
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **cloud management console** for hands-on web security training: multi-tenant accounts, virtual resources (servers, storage buckets, databases as simulated records), IAM roles & policies, and billing/usage — with **26 scored security tests across 9 features**.
 
 > ⚠️ **LOCAL TRAINING ONLY.** This application is intentionally insecure. Run it only on your own machine / lab network. Never deploy it to a public server.

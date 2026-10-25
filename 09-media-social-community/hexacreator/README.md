@@ -1,5 +1,8 @@
 # HexaCreator — LAB 87
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **creator platform** (Patreon-style: creator pages, membership tiers, members-only posts, earnings and payouts) built for hands-on web security practice. Zero-dependency Node.js — no `npm install` needed.
 
 > ⚠️ **LOCAL USE ONLY.** This app is intentionally insecure. Run it only on your own machine (it binds `127.0.0.1`), never deploy it publicly, and never put real data in it. All accounts, names and figures are fake seed data.

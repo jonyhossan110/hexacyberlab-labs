@@ -1,5 +1,8 @@
 # HexaWholesale — Vulnerable B2B Wholesale Practice Lab
 
+⏱ **Estimated time:** ~3h 40m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 24
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **SAFETY WARNING — INTENTIONALLY VULNERABLE.**
 > This application is deliberately insecure. It is a local training lab for learning manual web penetration testing (OWASP / WSTG style). Run it **only on your own machine**, bound to `127.0.0.1`. **Never deploy it to a server, LAN, or the internet.** All companies, people, prices and data are synthetic. No real credentials are used.
 

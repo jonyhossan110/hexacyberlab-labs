@@ -1,5 +1,8 @@
 # LAB 107 — HexaInsuranceClaim
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An **intentionally vulnerable** insurance claims processing platform for hands-on web penetration-testing practice. Category 11 — Specialized & Advanced Business Systems, part of the HexaCyberLab 110-lab programme.
 
 > ⚠️ **Local training only.** Run it on your own machine/lab network. It is deliberately insecure. Never deploy it to a public server. All data is fake seed data.

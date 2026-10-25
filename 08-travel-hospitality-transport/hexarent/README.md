@@ -1,5 +1,8 @@
 # HexaRent — LAB 78 (Category 8: Travel, Hospitality & Transport)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **property & equipment rental platform** built for authorised, local-only web security training. Renters, property owners and platform agents share one marketplace: listings with daily rates and availability calendars, rental bookings, security deposits, booking invoices, owner payouts and damage claims — with **26 scored security tests** across **10 features**, each one a real, working vulnerability derived from rental workflows.
 
 > ⚠️ **Local use only.** Run it on your own machine/lab network. Never deploy it to the internet. All renters, owners, listings and bookings are invented seed data — there is no real personal or payment information in this app.

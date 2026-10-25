@@ -1,5 +1,8 @@
 # HexaHealthInsure — LAB 70 of 110
 
+⏱ **Estimated time:** ~5h 12m (guided pace) · 🎚 **Difficulty:** Mixed · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 7: Healthcare & Wellness** · A deliberately vulnerable health-insurance portal, built for local, hands-on web penetration-testing practice.
 
 HexaHealthInsure is a complete (fictional) insurance portal: member / provider (clinic) / adjuster / admin accounts, coverage plans with annual limits, insurance claims, eligibility checks, pre-authorization requests, and provider billing. **All people, plans, claims and money are fake seed data. Nothing connects to any real insurer or service.**

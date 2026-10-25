@@ -1,5 +1,8 @@
 # HexaNewsletter — LAB 88
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 9: Media, Social & Community** · Port **3097** · Zero-dependency Node.js
 
 A complete, deliberately vulnerable **newsletter SaaS** built for hands-on web security practice: publications, subscribers, email campaigns, templates, paid subscriptions, subscriber import/export, campaign analytics, and API keys for sending. All "email sending" is simulated inside the app — nothing ever leaves the process. All data is fake seed data.

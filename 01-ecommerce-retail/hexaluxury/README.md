@@ -1,5 +1,8 @@
 # HexaLuxury — Vulnerable Luxury Goods Store (Practice Lab)
 
+⏱ **Estimated time:** ~2h 55m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 23
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 5** of the HexaCyberLab lab programme.
 
 An **intentionally vulnerable** luxury e-commerce application for hands-on web

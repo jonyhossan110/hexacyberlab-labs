@@ -1,5 +1,8 @@
 # LAB 95 — HexaFreelance
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **freelance marketplace** built for hands-on web security practice:
 clients post jobs, freelancers send proposals, contracts run on milestones, and payments sit in
 (simulated) escrow until milestones are approved and released.

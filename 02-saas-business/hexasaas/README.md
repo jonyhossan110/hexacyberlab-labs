@@ -1,5 +1,8 @@
 # HexaSaaS — Deliberately Vulnerable Multi-Tenant SaaS Lab
 
+⏱ **Estimated time:** ~3h 55m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **WARNING — LOCAL PRACTICE ONLY. NEVER deploy, host, or expose this app on a public server or the internet.** It is intentionally full of security vulnerabilities (cross-tenant data leaks, privilege escalation, SQL injection, SSRF, XSS) for your own authorized manual pentesting practice on your own machine — like OWASP Juice Shop / DVWA. Anyone who can reach it can attack every "tenant" in it. Run it only on localhost.
 
 **LAB 11 of the HexaCyberLab 110-lab series** (Category 2: SaaS & Business Platforms).

@@ -1,5 +1,8 @@
 # HexaLoan — LAB 46 of 110 (Category 5: Finance, Payments & Insurance)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete, deliberately vulnerable **loan platform** built for hands-on web penetration-testing practice: borrower accounts, loan applications with income/credit fields, an eligibility decision, a staff verification → approval workflow, repayment schedules, and document uploads (simulated records). All data is fake seed data. **Local use only.**
 
 ## Run it

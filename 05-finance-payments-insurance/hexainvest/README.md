@@ -1,5 +1,8 @@
 # HexaInvest — LAB 45 (HexaCyberLab Lab Programme)
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An investment simulator with intentionally planted vulnerabilities, built for hands-on web penetration-testing practice. **Local-only: never deploy this publicly.** Every price, balance and trade is simulated fake data inside the app — there are no real market feeds and no real money.
 
 ## The business app

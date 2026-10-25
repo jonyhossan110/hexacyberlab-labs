@@ -1,5 +1,8 @@
 # HexaPay — LAB 41 · HexaCyberLab Lab Programme
 
+⏱ **Estimated time:** ~2h 55m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 32
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **TRAINING LAB — INTENTIONALLY VULNERABLE. LOCAL USE ONLY.**
 > HexaPay is a fictional payment gateway seeded with fake people, fake banks and fake money.
 > It binds to `127.0.0.1` only. **Never deploy it publicly or on a shared network.**

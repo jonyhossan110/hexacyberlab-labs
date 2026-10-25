@@ -1,5 +1,8 @@
 # HexaSocial — LAB 81
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **social network** practice lab (Category 9: Media, Social & Community),
 built for hands-on web penetration-testing training by **HexaCyberLab**.
 

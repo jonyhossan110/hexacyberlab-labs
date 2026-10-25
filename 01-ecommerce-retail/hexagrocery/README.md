@@ -1,5 +1,8 @@
 # HexaGrocery — LAB 6 · Vulnerable Grocery Delivery Lab
 
+⏱ **Estimated time:** ~2h 50m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 22
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An **intentionally vulnerable** grocery delivery web app for hands-on web security practice, part of the HexaCyberLab lab programme. Business flows: product catalogue (fresh food, dairy & eggs, pantry, household), delivery **slots with limited hourly capacity**, cart, checkout with delivery fee and coupons, **live orders**, a **substitution flow** (an out-of-stock item is swapped by the picker and the customer is charged per the substitution rules), an address book, delivery notes, and customer / picker / admin roles.
 
 > ## ⚠️ SAFETY WARNING

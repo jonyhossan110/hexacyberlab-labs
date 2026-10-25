@@ -1,5 +1,8 @@
 # HexaResearch — LAB 34 of 110 (HexaCyberLab Lab Programme)
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An **intentionally vulnerable** AI research assistant, built for hands-on web penetration-testing practice. **Local use only — never deploy this publicly.**
 
 ## The business app

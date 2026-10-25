@@ -1,5 +1,8 @@
 # HexaAgent — LAB 35 (Category 4: AI & Intelligent Applications)
 
+⏱ **Estimated time:** ~3h 45m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An AI agent platform with user accounts, agents carrying **confidential instructions**, tools with
 permission levels, **simulated** task runs (all tool execution is simulated inside the app — no real
 commands are run and no external network calls are made), run logs, shared agents and API keys.

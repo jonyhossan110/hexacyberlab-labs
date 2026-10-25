@@ -1,5 +1,8 @@
 # HexaIncident — LAB 110 (Final Lab)
 
+⏱ **Estimated time:** ~3h 40m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 Category 11: Specialized & Advanced Business Systems · Port 3119 · Zero-dependency Node.js
 
 HexaIncident is a complete incident management platform: incident reports with

@@ -1,5 +1,8 @@
 # HexaFitness — LAB 67
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 7: Healthcare & Wellness** · Port **3076** · Zero-dependency Node.js
 
 A deliberately vulnerable **fitness club platform** built for authorised, local-only security training: member / trainer / admin accounts, membership plans with simulated payments, class schedules & bookings with capacity limits, personal-training sessions paid with credits, member progress tracking, private trainer notes, and guest passes.

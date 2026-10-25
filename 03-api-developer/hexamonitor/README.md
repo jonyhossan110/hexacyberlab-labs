@@ -1,5 +1,8 @@
 # HexaMonitor — LAB 27 (Category 3: API & Developer Platforms)
 
+⏱ **Estimated time:** ~3h 40m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An uptime / website-monitoring SaaS — accounts, monitors, alert rules, maintenance windows, incidents, public status pages, integrations and a JSON API — built as a **local-only, intentionally vulnerable** training lab for the HexaCyberLab lab programme.
 
 > ⚠️ **LOCAL ONLY.** This app contains deliberate vulnerabilities. It binds `127.0.0.1:3036` and must never be deployed or exposed to a network.

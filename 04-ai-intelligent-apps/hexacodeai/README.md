@@ -1,5 +1,8 @@
 # HexaCodeAI — LAB 39 of 110 (Category 4: AI & Intelligent Applications)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete, intentionally vulnerable **AI coding assistant** for local security practice: developer accounts, connected repositories (simulated records), AI-generated patches (simulated, deterministic, inert text — **never executed**), a snippet library, team workspaces and usage quotas.
 
 > ⚠️ LOCAL ONLY. This app is deliberately insecure. It binds to 127.0.0.1. Never deploy it, never expose it to a network, never type a real password or real code into it. All "code", "keys" and "credentials" inside are simulated training data.

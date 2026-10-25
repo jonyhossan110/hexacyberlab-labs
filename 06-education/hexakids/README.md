@@ -1,5 +1,8 @@
 # HexaKids — LAB 57 · Category 6: Education & E-learning
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **children's learning platform** built for authorised security training:
 parent / teacher / admin accounts, child profiles, learning activities with stars and rewards,
 teacher class groups, progress reports, and family subscription plans with simulated billing.

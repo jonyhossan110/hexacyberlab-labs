@@ -1,5 +1,8 @@
 # HexaBilling — LAB 48 of 110
 
+⏱ **Estimated time:** ~4h 10m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete **recurring-billing platform** — business accounts, subscription plans, customers, invoices, usage metering, coupons and saved payment methods — built as an intentionally vulnerable, **local-only** training lab for the HexaCyberLab 110-lab programme.
 
 > ⚠️ **SAFETY:** This application is deliberately insecure. Run it ONLY on your own machine / local network. It binds to `127.0.0.1` and must never be deployed publicly.

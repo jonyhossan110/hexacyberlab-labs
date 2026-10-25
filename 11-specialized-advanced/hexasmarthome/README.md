@@ -1,5 +1,8 @@
 # HexaSmartHome — LAB 102 of 110 (Category 11: Specialized & Advanced Business Systems)
 
+⏱ **Estimated time:** ~3h 40m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **smart-home simulator** built for local, authorised security practice: homes, rooms, simulated devices (door locks, lights, thermostats, cameras), household members with permission levels, invite codes, scenes & automations and activity logs — plus the full HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, completion summary and certificate).
 
 > ⚠️ **Local training only.** This app is intentionally insecure. Run it only on your own machine (it binds `127.0.0.1`), never deploy it publicly, and never use real data. All accounts, homes and devices are fake seed data, and every "device" is simulated inside the app — nothing real is controlled.

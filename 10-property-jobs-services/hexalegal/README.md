@@ -1,5 +1,8 @@
 # HexaLegal — LAB 97 of 110
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 10: Property, Jobs & Professional Services** · Port **3106** · Local-only training lab
 
 HexaLegal is a deliberately vulnerable legal-services portal built for authorised security training: clients track their matters, documents, appointments and invoices, while attorneys manage assigned cases. Every vulnerability in it is intentional, detectable, and documented — the point of the lab is to find them, prove them, and learn how they would be fixed in a real client report.

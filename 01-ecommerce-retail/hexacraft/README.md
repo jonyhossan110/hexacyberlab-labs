@@ -1,5 +1,8 @@
 # HexaCraft — Vulnerable Handmade Marketplace Lab (LAB 7)
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 22
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 HexaCraft is a **deliberately vulnerable** handmade-goods marketplace (independent
 sellers, commissions, reviews, payouts) built for hands-on web security practice.
 It follows the same lab standard as HexaShop / HexaSaaS / HexaAPI / HexaAI:

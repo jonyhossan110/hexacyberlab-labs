@@ -1,5 +1,8 @@
 # HexaExam — LAB 53 (Category 6: Education & E-learning)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **online examination platform** built for hands-on web
 security training: candidate / examiner / admin accounts, an exam catalogue, timed
 exam attempts, automatic grading, attempt limits, results and score reports,

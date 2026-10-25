@@ -1,5 +1,8 @@
 # HexaDirectory — LAB 100
 
+⏱ **Estimated time:** ~3h (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 10: Property, Jobs & Professional Services** · Port **3109** · Zero-dependency Node.js
 
 A deliberately vulnerable **business directory** for hands-on web security practice: business listings with owners, listing claims, customer reviews, lead inquiries, paid premium placement, categories and search — plus the full HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, completion certificate).

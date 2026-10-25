@@ -1,5 +1,8 @@
 # HexaExpense — LAB 50 of 110
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 5: Finance, Payments & Insurance** · HexaCyberLab vulnerable practice labs
 
 HexaExpense is a complete, deliberately vulnerable **expense-management platform**:

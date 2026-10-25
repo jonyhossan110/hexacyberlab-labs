@@ -1,5 +1,8 @@
 # HexaMart — Vulnerable Supermarket Practice Lab · LAB 4
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 23
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **SAFETY WARNING — INTENTIONALLY VULNERABLE APPLICATION**
 > HexaMart contains deliberate security flaws for hands-on practice.
 > Run it **locally only** (it binds to `127.0.0.1`), never deploy it to a

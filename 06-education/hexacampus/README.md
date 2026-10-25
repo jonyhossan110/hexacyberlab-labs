@@ -1,5 +1,8 @@
 # HexaCampus — LAB 55 (Category 6: Education & E-learning)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete, **deliberately vulnerable** university student portal built for authorised security training: student/faculty/admin accounts, course registration, grades & GPA, transcripts, class data, tuition fee statements and payments, faculty grade entry, document uploads and downloads.
 
 > ⚠️ **LOCAL ONLY.** Run it only on your own machine/lab network. It is intentionally insecure. All people, grades, fees and documents are fake seed data. Never deploy it publicly.

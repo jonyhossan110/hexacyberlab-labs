@@ -1,5 +1,8 @@
 # HexaChat — LAB 89 of 110 (Category 9: Media, Social & Community)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **messaging app** built for local, authorised security practice: 1:1 direct messages, group chats with roles and permissions, file attachments, message search, user blocking and channel invites — plus the full HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, completion summary and certificate).
 
 > ⚠️ **Local training only.** This app is intentionally insecure. Run it only on your own machine (it binds `127.0.0.1`), never deploy it publicly, and never use real data. All accounts, messages and files are fake seed data.

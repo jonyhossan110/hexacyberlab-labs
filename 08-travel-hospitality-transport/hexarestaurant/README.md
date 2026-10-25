@@ -1,5 +1,8 @@
 # HexaRestaurant — LAB 80 of 110
 
+⏱ **Estimated time:** ~2h 50m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 8: Travel, Hospitality & Transport** · Port **3089** · Zero-dependency Node.js · **LOCAL USE ONLY**
 
 A complete, deliberately vulnerable restaurant platform built for hands-on web security practice: diner / staff / manager accounts, a menu with search, table bookings, food orders with payments, loyalty points, reviews, a kitchen queue and a manager console — plus the full HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, certificate).

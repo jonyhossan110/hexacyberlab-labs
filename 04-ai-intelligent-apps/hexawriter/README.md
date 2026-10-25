@@ -1,5 +1,8 @@
 # HexaWriter — LAB 32 of 110
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 4: AI & Intelligent Applications** · Port **3041** · Zero-dependency Node.js · Local lab only
 
 HexaWriter is a complete AI writing SaaS — user accounts, documents & projects, simulated AI generation

@@ -1,5 +1,8 @@
 # HexaTelemed — LAB 66 · HexaCyberLab Practice Labs
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **telemedicine platform** for hands-on web security training: patient/doctor/admin accounts, video-consultation booking (simulated sessions with join links), consultation fees, doctor consultation notes, e-prescriptions and refills, follow-up scheduling, and doctor availability management.
 
 > ⚠️ **Local training only.** Every account, patient and record is fake seed data. There are no real video calls and no real patients. Never deploy this app publicly.

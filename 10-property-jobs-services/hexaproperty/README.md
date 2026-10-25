@@ -1,5 +1,8 @@
 # HexaProperty — LAB 91
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 10: Property, Jobs & Professional Services** · Port **3100** · Zero-dependency Node.js
 
 A complete, deliberately vulnerable **real estate portal** for hands-on web security practice:

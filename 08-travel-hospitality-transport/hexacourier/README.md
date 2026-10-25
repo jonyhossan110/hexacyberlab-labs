@@ -1,5 +1,8 @@
 # LAB 77 — HexaCourier
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 30
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **courier delivery service** built for hands-on web security practice — part of the HexaCyberLab 110-lab programme.
 
 > ⚠️ **LOCAL TRAINING ONLY.** Run it on your own machine/lab network. Never deploy it to the internet. All people, parcels and data in the app are fake seed data.

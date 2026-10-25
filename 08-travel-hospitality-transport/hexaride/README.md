@@ -1,5 +1,8 @@
 # HexaRide — LAB 74
 
+⏱ **Estimated time:** ~2h 50m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 8: Travel, Hospitality & Transport** · HexaCyberLab 110-Lab Programme
 
 A deliberately vulnerable **ride-hailing simulator**: rider/driver/admin accounts, trip requests with distance-based fare estimates, automatic driver assignment, a trip status flow, wallet payments, driver earnings and payouts, promo codes and ratings. Built for hands-on web security practice (OWASP Top 10).

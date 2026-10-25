@@ -1,5 +1,8 @@
 # HexaConsult — LAB 98 (Category 10: Property, Jobs & Professional Services)
 
+⏱ **Estimated time:** ~3h (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **consulting platform** built for HexaCyberLab hands-on web security training: consultants with expertise profiles and hourly rates, client appointments/booking, engagements with milestones, report/deliverable downloads, and invoices — wrapped in the full HexaCyberLab Lab System (progress, Mission Board, Lab Coach, sequential unlock keys, certificate).
 
 > ⚠️ **LOCAL USE ONLY.** This app is intentionally vulnerable. Run it only on your own machine/lab network. Never deploy it to a public server. All accounts, data and money are fake.

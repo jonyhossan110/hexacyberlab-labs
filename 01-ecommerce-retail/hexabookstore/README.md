@@ -1,5 +1,8 @@
 # HexaBookStore — LAB 9 · Vulnerable Bookstore Practice Lab
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **SAFETY WARNING — INTENTIONALLY VULNERABLE**
 > This is a deliberately insecure training application. It contains real,
 > working vulnerabilities on purpose. Run it **locally only**, on a machine

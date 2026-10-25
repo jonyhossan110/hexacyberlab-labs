@@ -1,5 +1,8 @@
 # HexaSupply — LAB 103
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **supply chain management platform** (suppliers, purchase orders, shipments, inventory, warehouses, approvals, supplier invoices) built for hands-on web penetration-testing practice. Part of the HexaCyberLab 110-lab programme.
 
 > ⚠️ **LOCAL ONLY.** Run it on your own machine/lab network only. Never deploy it publicly — it contains intentional vulnerabilities. All data is fake seed data.

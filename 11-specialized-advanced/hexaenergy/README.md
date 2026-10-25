@@ -1,5 +1,8 @@
 # HexaEnergy — LAB 106
 
+⏱ **Estimated time:** ~3h 45m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 11 · Specialized & Advanced Business Systems**
 
 A deliberately vulnerable **energy utility platform** for hands-on web penetration-testing practice: customers, meters, usage readings, tariffs, billing/invoices, payments, service connections and support tickets.

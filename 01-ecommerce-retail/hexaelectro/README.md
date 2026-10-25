@@ -1,5 +1,8 @@
 # HexaElectro — Vulnerable Electronics Shop (Practice Lab)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 27
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 > ⚠️ **SAFETY WARNING — INTENTIONALLY VULNERABLE APPLICATION**
 > HexaElectro contains deliberate security vulnerabilities for **local, authorised
 > penetration-testing practice only**. It binds to `127.0.0.1` by design.

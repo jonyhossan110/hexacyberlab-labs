@@ -1,5 +1,8 @@
 # HexaRAG — LAB 36 (Category 4: AI & Intelligent Applications)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 31
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **RAG (retrieval-augmented generation) platform** for hands-on web security training: workspaces (tenants), document collections, document indexing with simulated chunking, a query/chat interface with **simulated deterministic retrieval + answers (no real model calls)**, API keys with scopes, public share links, query logs and an admin console — built by **Md. Jony Hassain, Founder of HexaCyberLab**.
 
 > ⚠️ **Local-only training lab.** It contains deliberate vulnerabilities. Run it only on your own machine / lab network. Never deploy it publicly.

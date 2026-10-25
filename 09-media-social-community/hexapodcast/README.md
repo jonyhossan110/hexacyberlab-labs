@@ -1,5 +1,8 @@
 # HexaPodcast — LAB 85
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 9: Media, Social & Community** · Port **3094** · Zero-dependency Node.js
 
 A complete, deliberately vulnerable podcast platform for hands-on security training: shows, episodes, creators, listeners, subscriptions, premium episodes, creator analytics, episode comments/ratings and creator payouts — plus the full HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, completion summary and certificate).

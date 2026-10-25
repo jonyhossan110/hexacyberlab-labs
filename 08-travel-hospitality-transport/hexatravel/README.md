@@ -1,5 +1,8 @@
 # HexaTravel — LAB 71
 
+⏱ **Estimated time:** ~3h (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 8: Travel, Hospitality & Transport** · HexaCyberLab 110-lab programme
 Built by Md. Jony Hassain, Founder of HexaCyberLab.
 

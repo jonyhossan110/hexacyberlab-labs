@@ -1,5 +1,8 @@
 # HexaShop — Vulnerable E-Commerce Practice Lab
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 1 of the HexaCyberLab practice-lab series.**
 
 > ⚠️ **SAFETY WARNING — READ FIRST**

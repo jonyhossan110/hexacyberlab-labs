@@ -1,5 +1,8 @@
 # HexaJobs — LAB 93 of the HexaCyberLab Lab Programme
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 10: Property, Jobs & Professional Services** · Port **3102** · Zero-dependency Node.js
 
 HexaJobs is a deliberately vulnerable **job portal**: job listings, employers, job seekers,

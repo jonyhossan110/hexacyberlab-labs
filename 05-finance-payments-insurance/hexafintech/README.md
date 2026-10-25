@@ -1,5 +1,8 @@
 # HexaFintech — LAB 44 of 110
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 5: Finance, Payments & Insurance** · HexaCyberLab vulnerable-lab series
 
 A complete (and deliberately vulnerable) fintech platform: user financial profiles, a linked-accounts

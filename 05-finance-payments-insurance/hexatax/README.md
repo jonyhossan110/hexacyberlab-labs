@@ -1,5 +1,8 @@
 # HexaTax — LAB 49 of 110
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 5: Finance, Payments & Insurance** · Port **3058** · Zero-dependency Node.js · Local training use only
 
 HexaTax is a complete tax-preparation platform: taxpayer accounts, tax returns with income and

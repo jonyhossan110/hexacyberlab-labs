@@ -1,5 +1,8 @@
 # HexaAuction — LAB 99 (Category 10: Property, Jobs & Professional Services)
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **online auction platform** built for hands-on web security practice:
 listings, bids, reserve prices, sellers, watchlists, settlements and a winner flow — plus the full
 HexaCyberLab lab system (progress, hints, Lab Coach, sequential unlock keys, certificate).

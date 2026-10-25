@@ -1,5 +1,8 @@
 # HexaCare — LAB 62 (Category 7: Healthcare & Wellness)
 
+⏱ **Estimated time:** ~3h 30m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **patient portal** built for hands-on web security practice, part of the HexaCyberLab 110-lab programme. Patients, doctors, a nurse and an admin use it for visit history, care plans, medications, lab results, secure messaging and appointments — and every one of those workflows carries real, exploitable flaws for you to find.
 
 > ⚠️ **LOCAL USE ONLY.** Run it on your own machine, never expose it to the internet. All people, records and data are fake. The vulnerabilities are intentional.

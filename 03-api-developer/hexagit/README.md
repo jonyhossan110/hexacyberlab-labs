@@ -1,5 +1,8 @@
 # HexaGit — LAB 25 · Category 3: API & Developer Platforms
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **code-hosting platform** (repositories, branches & files, pull requests, issues, collaborators, invites and API access tokens) built for authorised, local-only web-security training. It is part of the HexaCyberLab 110-lab programme created by **Md. Jony Hassain, Founder of HexaCyberLab**.
 
 > ⚠️ **Intentionally insecure.** For training on your own machine only. Binds `127.0.0.1` — never deploy it publicly or on a shared network.

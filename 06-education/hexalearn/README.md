@@ -1,5 +1,8 @@
 # LAB 51 — HexaLearn
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An online learning platform (courses, enrollments, lesson progress, quizzes, certificates, instructor payouts) built **deliberately vulnerable** for authorised, local-only web security training. Part of the HexaCyberLab 110-lab programme (Category 6: Education & E-learning), built by **Md. Jony Hassain, Founder of HexaCyberLab**.
 
 > ⚠️ **Local-only training lab.** Run it only on your own machine/lab network. Never deploy it to a public server. All accounts, courses and money are fake seed data.

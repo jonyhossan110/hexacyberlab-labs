@@ -1,5 +1,8 @@
 # HexaHotel — LAB 72
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **HexaCyberLab 110-Lab Programme · Category 8: Travel, Hospitality & Transport**
 
 A deliberately vulnerable hotel booking platform built for authorised, local-only

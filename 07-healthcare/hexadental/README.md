@@ -1,5 +1,8 @@
 # HexaDental — LAB 65 · HexaCyberLab Practice Labs
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 7: Healthcare & Wellness** · Port **3074** · Zero-dependency Node.js
 
 A deliberately vulnerable **dental clinic platform** for local, authorised security training: patient / dentist / hygienist / admin accounts, appointment booking, treatment plans with itemised costs, clinical records & X-ray files, invoices and payment plans. **All patients and data are invented.** Run it only on your own machine — it is intentionally insecure.

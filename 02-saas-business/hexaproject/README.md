@@ -1,5 +1,8 @@
 # HexaProject — Vulnerable Project-Management Practice Lab
 
+⏱ **Estimated time:** ~3h 35m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 27
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 13 of the HexaCyberLab practice-lab series** (Category 2: SaaS & Business Platforms).
 
 > ⚠️ **SAFETY WARNING — READ FIRST**

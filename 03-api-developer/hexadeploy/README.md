@@ -1,5 +1,8 @@
 # HexaDeploy — LAB 24 of 110
 
+⏱ **Estimated time:** ~3h 40m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **HexaCyberLab vulnerable lab · Category 3: API & Developer Platforms**
 A deliberately vulnerable **deployment platform** — projects, build pipelines (simulated),
 environments (development / staging / production), environment secrets, deploy history,

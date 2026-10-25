@@ -1,5 +1,8 @@
 # LAB 86 — HexaMusic
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 28
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **music streaming platform** built for hands-on web penetration-testing practice. Part of the HexaCyberLab 110-lab programme (Category 9: Media, Social & Community).
 
 > ⚠️ **LOCAL USE ONLY.** This app is intentionally insecure. Run it only on your own machine/lab network. Never deploy it publicly. All accounts, tracks and data are fake seed data. All "audio" is simulated — no real media files exist.

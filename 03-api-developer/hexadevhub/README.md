@@ -1,5 +1,8 @@
 # HexaDevHub — LAB 22 of 110
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 3: API & Developer Platforms** · Port **3031** · Zero-dependency Node.js · Local-only training lab.
 
 HexaDevHub is a deliberately vulnerable **developer portal**: developer accounts, projects,

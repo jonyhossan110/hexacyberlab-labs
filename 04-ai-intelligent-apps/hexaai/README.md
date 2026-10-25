@@ -1,5 +1,8 @@
 # HexaAI — Deliberately Vulnerable AI Platform Lab (LAB 31)
 
+⏱ **Estimated time:** ~2h 35m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [UK Parliament: Hours of Systematic Password Guessing](https://www.newscientist.com/article/2138672-cyberattack-on-uk-parliament-exploited-weak-email-passwords/) — UK Houses of Parliament (2017)
+
 HexaCyberLab's AI practice lab in the 110-lab series: an **AI SaaS platform** — a support chatbot, document Q&A (RAG), an AI summariser, an AI agent with real tools (customer lookup + refunds), a shared knowledge base, prompt templates, an "Ask your data" analytics chat, AI compliance summaries, a plugin-pack importer, and a usage meter — used by two fictional companies, **Lumen Bank** (fintech) and **MediCare Plus** (health).
 
 The lab carries **26 scored security tests across 8 features**, expanding the app's original 18 vulnerability groups (the **OWASP Top 10 for LLM Applications, 2025**) into individually detected challenges: direct + indirect prompt injection (LLM01), sensitive-information disclosure (LLM02), supply-chain pack imports (LLM03), knowledge poisoning (LLM04), improper output handling incl. bot-driven XSS and output→SQL (LLM05), excessive agency (LLM06), system-prompt leakage (LLM07), RAG isolation failure (LLM08), misinformation stamps (LLM09), unbounded consumption (LLM10) — plus login brute force and user enumeration on the platform's own auth. Every flaw is marked in the code with a `// VULN(<n>):` comment, and every scored test is defined in the `TESTS` registry in `server.js`.

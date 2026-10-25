@@ -1,5 +1,8 @@
 # HexaDataHub — LAB 28 (Category 3: API & Developer Platforms)
 
+⏱ **Estimated time:** ~3h 45m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **data platform** built for authorised, local-only security training:
 workspaces (multi-tenant), datasets, file imports (CSV / JSON / XML), exports, public share links
 and a token-authenticated API — wrapped in the full HexaCyberLab lab system (progress, hints,

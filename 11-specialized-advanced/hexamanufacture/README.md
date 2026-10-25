@@ -1,5 +1,8 @@
 # LAB 104 — HexaManufacture 🏭
 
+⏱ **Estimated time:** ~3h 20m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A complete **manufacturing ERP** training lab: production lines, work orders, raw-materials inventory, purchase orders, quality checks, machine maintenance and suppliers — built as a deliberately vulnerable practice application for authorised security training.
 
 > ⚠️ **LOCAL USE ONLY.** This app contains intentional, real vulnerabilities. Run it only on your own machine / lab network (it binds `127.0.0.1`). Never deploy it publicly, never use real data. All accounts and data are fake.

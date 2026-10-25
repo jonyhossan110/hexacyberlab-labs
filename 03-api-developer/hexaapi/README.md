@@ -1,5 +1,8 @@
 # HexaAPI — Deliberately Vulnerable API Platform Lab (LAB 21)
 
+⏱ **Estimated time:** ~2h 35m (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [UK Parliament: Hours of Systematic Password Guessing](https://www.newscientist.com/article/2138672-cyberattack-on-uk-parliament-exploited-weak-email-passwords/) — UK Houses of Parliament (2017)
+
 HexaCyberLab's API-security practice lab, now **LAB 21** of the 110-lab programme: an **API platform with a developer portal** — a REST API (v2 current, v1 legacy) plus a small GraphQL endpoint, serving two client companies, wrapped in a portal UI with docs, an explorer, an API-keys page and an admin console. Business focus: API keys, endpoints, quotas and usage metering for developer accounts.
 
 **18 intentional vulnerability groups** covering the **OWASP API Security Top 10 (2023)** — led by BOLA (API1), broken authentication (API2), excessive data exposure / mass assignment (API3), BFLA (API5), SSRF (API7), improper inventory (API9) and unsafe consumption (API10) — plus GraphQL flaws, API-key failures, token-lifecycle flaws, parameter pollution, an export leak, registration enumeration and forged webhooks. Every flaw is marked in the code with a `// VULN(<n>):` comment, numbered to match `VULNERABILITIES.md` and the in-app `/lab-guide`.

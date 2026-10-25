@@ -1,5 +1,8 @@
 # HexaStream — LAB 84 of 110
 
+⏱ **Estimated time:** ~3h (guided pace) · 🎚 **Difficulty:** Beginner · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 9: Media, Social & Community** · Port **3093** · Zero-dependency Node.js
 
 HexaStream is a complete (simulated) video-streaming platform — video library, channels,

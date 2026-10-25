@@ -1,5 +1,8 @@
 # HexaSupport — Vulnerable Customer-Support SaaS Practice Lab
 
+⏱ **Estimated time:** ~3h 25m (guided pace) · 🎚 **Difficulty:** Advanced · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **LAB 18 of the HexaCyberLab practice-lab series** (Category 2: SaaS & Business Platforms).
 
 > ⚠️ **SAFETY WARNING — READ FIRST**

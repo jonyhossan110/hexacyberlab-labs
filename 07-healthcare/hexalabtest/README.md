@@ -1,5 +1,8 @@
 # HexaLabTest — LAB 64 of 110 (Category 7: Healthcare & Wellness)
 
+⏱ **Estimated time:** ~3h 10m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 35
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An intentionally vulnerable **diagnostic laboratory platform** for hands-on web security practice: patient / doctor / lab-technician / admin accounts, a priced test catalog, test orders, sample-status tracking, technician result entry, doctor-reviewed reports, and home sample-collection bookings.
 
 > ⚠️ **LOCAL TRAINING ONLY.** Every patient, result and record is fake seed data. Run it only on your own machine (`127.0.0.1:3073`). Never deploy it to a server or the internet.

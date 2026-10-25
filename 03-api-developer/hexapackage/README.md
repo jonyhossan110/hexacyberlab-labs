@@ -1,5 +1,8 @@
 # HexaPackage — LAB 30 of 110 (Category 3: API & Developer Platforms)
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 25
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 An **intentionally vulnerable** software package registry for hands-on web security practice.
 Publishers hold accounts, own packages with maintainers, publish immutable-in-theory versions,
 manage publish tokens (read/publish scopes) and watch download statistics.

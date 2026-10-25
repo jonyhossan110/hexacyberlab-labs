@@ -1,5 +1,8 @@
 # HexaLibrary — LAB 56
 
+⏱ **Estimated time:** ~3h 15m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 A deliberately vulnerable **digital library platform** built for hands-on web
 security practice. Part of the HexaCyberLab 110-lab programme
 (Category 6: Education & E-learning).

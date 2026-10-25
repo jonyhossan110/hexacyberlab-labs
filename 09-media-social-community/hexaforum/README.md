@@ -1,5 +1,8 @@
 # HexaForum — LAB 82 of 110
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 9: Media, Social & Community** · Port **3091** · Zero-dependency Node.js
 
 A complete, deliberately vulnerable **discussion forum** built for hands-on web

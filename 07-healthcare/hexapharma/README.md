@@ -1,5 +1,8 @@
 # HexaPharma — LAB 63 · HexaCyberLab Practice Labs
 
+⏱ **Estimated time:** ~3h 5m (guided pace) · 🎚 **Difficulty:** Intermediate · 🧪 **Scored tests:** 26
+📖 **Real-world case for this lab's bugs:** [TalkTalk: SQL Injection on Forgotten Pages](https://thehackernews.com/2016/10/talktalk-data-breach.html) — TalkTalk (UK) (2015)
+
 **Category 7: Healthcare & Wellness** · Port **3072** · Zero-dependency Node.js
 
 HexaPharma is a complete online pharmacy — customer / pharmacist / admin accounts, a medicine catalog (OTC + prescription-only), prescription upload with a pharmacist verification workflow, cart & checkout, orders, refills and delivery addresses — built **intentionally vulnerable** for hands-on web security practice. All people, medicines, prescriptions and orders are fake seed data. Nothing connects to any real pharmacy or service.
