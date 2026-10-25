@@ -730,6 +730,19 @@ async function handle(req, res) {
     return send(res, 200, forgotPage('Invalid reset token.'));
   }
 
+  /* ---- completion pages: no login needed (the completion key and certificate must stay reachable even if the session is gone) ---- */
+  if (p === '/complete' && method === 'GET') return send(res, 200, completePage(user));
+  if (p === '/certificate' && method === 'GET') {
+    if (doneCount() < TESTS.length) return redirect(res, '/complete');
+    return send(res, 200, certificatePage(user));
+  }
+  if (p === '/tester-name' && method === 'POST') {
+    const body = parseBody(req, await readBody(req));
+    progress.testerName = String(body.name || '').slice(0, 60);
+    saveProgress();
+    return redirect(res, '/complete');
+  }
+
   /* ---- everything below needs a signed-in user ---- */
   if (!user) return redirect(res, '/login');
 
@@ -883,17 +896,6 @@ async function handle(req, res) {
     return send(res, 200, profilePage(user, session, 'Profile saved.'));
   }
   if (p === '/tests' && method === 'GET') return send(res, 200, testsPage(user));
-  if (p === '/complete' && method === 'GET') return send(res, 200, completePage(user));
-  if (p === '/certificate' && method === 'GET') {
-    if (doneCount() < TESTS.length) return redirect(res, '/complete');
-    return send(res, 200, certificatePage(user));
-  }
-  if (p === '/tester-name' && method === 'POST') {
-    const body = parseBody(req, await readBody(req));
-    progress.testerName = String(body.name || '').slice(0, 60);
-    saveProgress();
-    return redirect(res, '/complete');
-  }
 
   return send(res, 404, 'Not found');
 }
