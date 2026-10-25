@@ -1,0 +1,16 @@
+<?php
+/* The 12 scored tests of RS-03, with a field hint for each. */
+return [
+    ['id' => 'plugin-sqli',         'name' => 'Plugin AJAX handler SQL Injection',           'hint' => 'The Hexa Contact message search (wp-admin, admin-ajax action=hc_search_messages) glues your term into a LIKE query. A quote and a boolean make it return messages that do not contain your term — including the private one.'],
+    ['id' => 'plugin-xss',          'name' => 'Plugin stored XSS (shortcode output)',        'hint' => 'The gallery plugin\u{2019}s [badge] shortcode in comments is printed without escaping. Leave a comment that carries markup inside a badge, then open the post.'],
+    ['id' => 'lfi',                 'name' => 'Plugin local file inclusion',                 'hint' => 'The gallery template parameter is included as a file path. Climb out of the templates folder with ../ until you reach the lab\u{2019}s .env.'],
+    ['id' => 'upload-bypass',       'name' => 'Media upload extension bypass',               'hint' => 'The media library checks only the FINAL extension of a filename, but the uploads server executes a file when any middle segment is .php (classic Apache behaviour). Name your file accordingly, upload it, then visit it.'],
+    ['id' => 'user-enum',           'name' => 'Author archive user enumeration',             'hint' => 'Ask the home page for ?author=1, ?author=2, … and watch where a valid id sends you — and what a slug tells you.'],
+    ['id' => 'xmlrpc-brute',        'name' => 'XML-RPC multicall password brute force',      'hint' => 'xmlrpc.php accepts system.multicall batches of wp.getUsersBlogs guesses. Ten guesses against one account — nothing slows down, nothing locks.'],
+    ['id' => 'rest-exposure',       'name' => 'REST API exposes user emails and slugs',     'hint' => 'The /wp-json/wp/v2/users route answers anonymous visitors. Compare what it returns with what a public profile ought to show.'],
+    ['id' => 'settings-csrf',       'name' => 'Plugin settings CSRF (no nonce)',            'hint' => 'The Hexa Contact settings form in wp-admin has no nonce. Submit it with no Referer (or a foreign one) while logged in as the admin.'],
+    ['id' => 'debug-log',           'name' => 'debug.log and version disclosure',            'hint' => 'HexaPress leaves a debug log under wp-content and a readme.html that announces the exact version. Ask the server for both.'],
+    ['id' => 'privilege-escalation','name' => 'Subscriber to admin — role parameter trust','hint' => 'The profile form shows your role as plain text — but the save handler trusts a role field if the request carries one. Subscribers are the natural starting point.'],
+    ['id' => 'object-injection',    'name' => 'PHP object injection via serialized cookie',  'hint' => 'A wp_prefs cookie is base64\u{2019}d serialized data fed to unserialize(), and the HexaPress_Prefs class has a __wakeup gadget. Craft the cookie; the gadget fires on arrival. The Code Review page shows the class.'],
+    ['id' => 'report',              'name' => 'Mini report — one professional finding',     'hint' => 'On the Complete page, write up one flaw like you would for a client: title, severity, evidence, impact, fix.'],
+];

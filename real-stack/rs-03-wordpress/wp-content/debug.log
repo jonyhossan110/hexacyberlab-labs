@@ -1,0 +1,8 @@
+[02-Oct-2026 07:12:44 UTC] PHP Notice: WP_DEBUG enabled on a production site — HexaPress 6.4.2, PHP 8.3.6
+[02-Oct-2026 07:12:44 UTC] HexaPress core loaded: wanderpress, table prefix wp_, debug logging to wp-content/debug.log
+[05-Oct-2026 18:40:03 UTC] PHP Warning: Undefined array key "color" in wp-content/plugins/hexa-gallery/hexa-gallery.php on line 31
+[08-Oct-2026 09:02:51 UTC] PHP Notice: Failed login attempt for elena@wanderpress.example from 203.0.113.44 (password partially logged by the auth logger: Summit!...)
+[11-Oct-2026 22:17:09 UTC] HexaPress database error: [SQLite] no such column: is_private — query by hc_ajax_search_messages made by current_user_can check missing
+[14-Oct-2026 06:55:31 UTC] PHP Warning: include(): failed opening template for inclusion in wp-content/plugins/hexa-gallery/hexa-gallery.php on line 48
+[17-Oct-2026 13:29:58 UTC] PHP Notice: unserialize() ran on the wp_prefs cookie in public/index.php — value supplied by the visitor (reading-prefs feature)
+[19-Oct-2026 08:03:12 UTC] PHP Notice: xmlrpc.php called by an unrecognised user agent 41 times in one hour — no rate limiting configured
