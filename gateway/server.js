@@ -8,7 +8,7 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawn, execFile } = require('node:child_process');
+const { spawn, execFile, spawnSync } = require('node:child_process');
 const crypto = require('node:crypto');
 
 const ROOT = path.join(__dirname, '..');
@@ -17,6 +17,26 @@ const PRELOAD = path.join(__dirname, 'hexa-preload.js');
 const INDEX = JSON.parse(fs.readFileSync(path.join(__dirname, 'lab-index.json'), 'utf8'));
 const LABS = INDEX.labs;
 const byPort = new Map(LABS.map(l => [l.port, l]));
+/* Real Stack track: 11 milestone labs in real stacks (PHP/Python/Express/Go),
+   loaded additively — the core 110 are untouched. See gateway/real-stack-index.json. */
+let RS_LABS = [];
+try {
+  const rsIdx = JSON.parse(fs.readFileSync(path.join(__dirname, 'real-stack-index.json'), 'utf8'));
+  RS_LABS = (rsIdx.labs || []).map(e => ({ ...e, rs: true, category: 'real-stack' }));
+  for (const l of RS_LABS) byPort.set(l.port, l);
+} catch (e) { RS_LABS = []; }
+const ALL_LABS = LABS.concat(RS_LABS);
+function probeRuntime(cmds, args){
+  for (const c of cmds) { try { const r = spawnSync(c, args, { timeout: 5000 }); if (!r.error) return true; } catch (e) {} }
+  return false;
+}
+const RUNTIMES = {
+  php: probeRuntime(['php'], ['--version']),
+  python3: probeRuntime(['python3', 'python'], ['--version']),
+  go: probeRuntime(['go'], ['version']),
+  node: true,
+};
+function runtimeOk(lab){ return !lab.runtime || RUNTIMES[lab.runtime] !== false; }
 const STATE_FILE = path.join(__dirname, 'gateway-state.json');
 function readState(){ try { return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8')); } catch (e) { return {}; } }
 function writeState(patch){ const s = { ...readState(), ...patch }; try { fs.writeFileSync(STATE_FILE, JSON.stringify(s, null, 1)); } catch (e) {} return s; }
@@ -65,6 +85,20 @@ function pushLine(port, line){
 }
 function startLab(lab){
   if (isRunning(lab.port)) return { ok: true, already: true };
+  if (lab.rs && lab.start) {
+    if (!runtimeOk(lab)) return { ok: false, error: 'runtime missing: ' + lab.runtime + ' is not installed on this machine (see the lab README for setup)' };
+    const proc = spawn(lab.start.cmd, lab.start.args, {
+      cwd: labDir(lab), env: { ...process.env, PORT: String(lab.port), HEXA_GATEWAY: 'http://localhost:' + PORT },
+      windowsHide: true, shell: !!lab.start.shell,
+    });
+    children.set(lab.port, { proc, lines: [], clients: new Set() });
+    pushLine(lab.port, '— starting ' + lab.number + ' ' + lab.name + ' (' + lab.stack + ') on http://localhost:' + lab.port + ' —');
+    proc.stdout.on('data', d => String(d).split(/\r?\n/).filter(Boolean).forEach(l => pushLine(lab.port, l)));
+    proc.stderr.on('data', d => String(d).split(/\r?\n/).filter(Boolean).forEach(l => pushLine(lab.port, '⚠ ' + l)));
+    proc.on('error', e => pushLine(lab.port, '⚠ failed to start: ' + e.message));
+    proc.on('exit', code => { pushLine(lab.port, '— ' + lab.number + ' stopped (exit ' + code + ') —'); });
+    return { ok: true };
+  }
   const meta = JSON.stringify({ number: lab.number, name: lab.name, port: lab.port, classes: lab.classes, tests: lab.tests });
   const proc = spawn(process.execPath, ['-r', PRELOAD, 'server.js'], {
     cwd: labDir(lab), env: { ...process.env, HEXA_LAB: meta, HEXA_GATEWAY: 'http://localhost:' + PORT },
@@ -131,6 +165,30 @@ function md(mdText){
 const CSS = 'body{margin:0;font-family:Arial,sans-serif;background:#14141d;color:#e8ebf4}a{color:#9fc1ff}main{max-width:1180px;margin:0 auto;padding:24px 16px 80px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}.card{background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:13px 15px}.bar{height:9px;background:#333a52;border-radius:6px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#4f7cff,#9b5cff)}button{background:#2a3350;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}button.go{background:linear-gradient(90deg,#4f7cff,#9b5cff);border:none;color:#fff;font-weight:bold}.muted{color:#9aa3bd;font-size:13px}.badge{font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid #46538a;margin-left:7px;vertical-align:middle;white-space:nowrap}pre{background:#0f1119;padding:14px;border-radius:10px;overflow:auto;line-height:1.5}code{background:#0f1119;padding:1px 6px;border-radius:5px}li{margin:4px 0;line-height:1.55}p{line-height:1.6}';
 function page(title, body){ return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(title) + ' · HexaCyberLab Gateway</title><style>' + CSS + '</style></head><body><main>' + body + '</main></body></html>'; }
 
+function rsMilestoneCard(blockNo){
+  const lab = RS_LABS.find(l => l.afterCategory === blockNo);
+  if (!lab) return '';
+  const p = progressOf(lab);
+  const note = runtimeOk(lab) ? '' : '<div style="color:#ffc857;font-size:13px;margin-top:4px">\u26a0 This milestone needs <b>' + esc(lab.needs || lab.runtime) + '</b>, which was not detected on this machine \u2014 see the lab README for the one-time setup. Nothing is broken; the lab simply cannot start until the runtime exists.</div>';
+  const depNote = (lab.runtime === 'python3' || /express/i.test(lab.stack || '')) ? '<div class="muted" style="margin-top:4px">First start installs its dependencies (one-time) \u2014 watch the Console, then Open the lab.</div>' : '';
+  return '<div id="rs-' + lab.port + '" style="margin:12px 0 4px;background:linear-gradient(90deg,#26331a,#1d2333);border:1px solid #7aa33c;border-radius:12px;padding:14px 18px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div>' +
+    '<b style="font-size:16px">\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><span class="badge" style="color:' + p.statusColor + '">' + (p.status === 'Locked' ? 'Not started' : p.status) + '</span>' +
+    '<div class="muted">Real Stack milestone \u00b7 after LAB ' + (blockNo * 10) + ' \u00b7 ' + esc(lab.stack) + ' \u00b7 http://localhost:' + lab.port + ' \u00b7 ' + p.total + ' tests \u00b7 \u23f1 ' + fmtEst(lab.estMinutes) + ' \u00b7 \ud83c\udf9a ' + esc(lab.difficulty || 'Mixed') + '</div>' + note + depNote + '</div>' +
+    '<span class="st muted">checking\u2026</span></div>' +
+    '<div class="bar" style="margin:8px 0"><i style="width:' + p.pct + '%"></i></div>' +
+    '<div><span class="pct">' + p.done + '/' + p.total + ' \u00b7 ' + p.pct + '%</span></div>' +
+    '<div style="margin-top:9px;display:flex;gap:6px"><button class="go" onclick="act(' + lab.port + ',\'start\')">\u25b6 Start</button>' +
+    '<button onclick="act(' + lab.port + ',\'stop\')">\u25a0 Stop</button>' +
+    '<a href="/open?port=' + lab.port + '" target="_blank"><button>Open lab \u2197</button></a>' +
+    '<a href="/logs?port=' + lab.port + '"><button>\ud83d\udcdf Console</button></a>' +
+    '<button onclick="resetLab(' + lab.port + ')">\u21ba Reset</button></div></div>';
+}
+function rsScript(){
+  if (!RS_LABS.length) return '';
+  return '<script>async function rsRefresh(){try{var j=await (await fetch("/api/rs-labs")).json();j.labs.forEach(function(l){var el=document.getElementById("rs-"+l.port);if(!el)return;var st=el.querySelector(".st");if(st){st.textContent=l.running?"\u25cf running":"\u25cb stopped";st.style.color=l.running?"#43e97b":"";}var pc=el.querySelector(".pct");if(pc)pc.textContent=l.done+"/"+l.total+" \u00b7 "+l.pct+"%";var bar=el.querySelector(".bar>i");if(bar)bar.style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status==="Locked"?"Not started":l.status;bg.style.color=l.statusColor;}});}catch(e){}}rsRefresh();setInterval(rsRefresh,4000);</' + 'script>';
+}
+
 function dashboardPage(){
   const cats = [...new Set(LABS.map(l => l.category))];
   const gwState = readState();
@@ -138,7 +196,7 @@ function dashboardPage(){
   const contChip = contLab ? '<p><a id="contBtn" href="/open?port=' + contLab.port + '"><button class="go" style="font-size:15px;padding:9px 18px">▶ Continue: LAB ' + contLab.number + ' — ' + esc(contLab.name) + ' (' + progressOf(contLab).pct + '%)</button></a></p>' : '<p><a id="contBtn" href="#" style="display:none"><button class="go"></button></a></p>';
   let totalDone = 0, totalTests = 0;
   let sections = '';
-  for (const cat of cats) {
+  for (let ci = 0; ci < cats.length; ci++) { const cat = cats[ci];
     const labs = LABS.filter(l => l.category === cat);
     const catDone = labs.reduce((s, l) => s + progressOf(l).done, 0);
     const catTotal = labs.reduce((s, l) => s + progressOf(l).total, 0);
@@ -159,6 +217,7 @@ function dashboardPage(){
         '<button onclick="resetLab(' + lab.port + ')">↺ Reset</button></div></div>';
     }
     sections += '</div>';
+    sections += rsMilestoneCard(ci + 1);
   }
   const lotd = LABS.slice().sort((a, b) => a.number - b.number)[Math.floor(Date.now() / 86400000) % LABS.length];
   const lotdBanner = '<div style="background:linear-gradient(90deg,#2a2356,#1d2a4d);border:1px solid #6c5cff;border-radius:12px;padding:14px 18px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px"><div><div style="font-size:17px">🌟 <b>Lab of the Day — LAB ' + lotd.number + ': ' + esc(lotd.name) + '</b></div><div class="muted">A fresh pick every day · ⏱ ' + fmtEst(lotd.estMinutes) + ' · 🎚 ' + esc(lotd.difficulty) + ' · ' + lotd.tests.length + ' tests</div></div><a href="/open?port=' + lotd.port + '" target="_blank"><button class="go">Open today\'s lab ↗</button></a></div>';
@@ -170,9 +229,9 @@ function dashboardPage(){
     '<div style="background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><b>🔎 Find a vulnerability to practise</b><div class="muted" style="margin:4px 0 10px">Search ' + totalTests + ' tests across all 110 labs — try “SQL injection”, “IDOR”, “SSRF”, “race condition”… (press / to jump here)</div><input id="vsearch" type="text" placeholder="Type a vulnerability, e.g. IDOR" style="width:100%;box-sizing:border-box;background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:10px 12px;font-size:15px"><div id="vresults" style="margin-top:6px"></div></div>' +
     '<div style="display:flex;gap:18px;align-items:center;background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="#333a52" stroke-width="9"/><circle id="ringFg" cx="46" cy="46" r="38" fill="none" stroke="#43e97b" stroke-width="9" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="' + (238.8 * (1 - (totalTests ? totalDone / totalTests : 0))).toFixed(1) + '" transform="rotate(-90 46 46)"/><text id="ringPct" x="46" y="51" text-anchor="middle" fill="#e8ebf4" font-size="17" font-weight="bold">' + (totalTests ? Math.floor(totalDone / totalTests * 100) : 0) + '%</text></svg><div><div style="font-size:19px"><b id="ringDone">' + totalDone + '</b> of ' + totalTests + ' tests passed across all 110 labs</div><div class="muted">Your whole programme at a glance — the ring fills as tests pass, and a lab card turns Completed at 100%.</div></div></div>' +
     sections +
-    '<script>var SIDX=null;var CLSL={sqli:"SQL Injection",idor:"IDOR / Broken Access Control",xss:"Cross-Site Scripting (XSS)",csrf:"CSRF",ssrf:"SSRF",xxe:"XXE","file-upload":"File Upload","path-traversal":"Path Traversal",jwt:"JWT / Token Attacks","brute-force":"Brute Force","password-storage":"Password Storage","default-credentials":"Default Credentials","mass-assignment":"Mass Assignment","api-exposure":"Data Exposure","race-condition":"Race Condition","business-logic":"Business Logic","prompt-injection":"Prompt Injection / LLM","rce-injection":"RCE / Code Injection","open-redirect":"Open Redirect",misconfiguration:"Misconfiguration","auth-bypass":"Authentication",graphql:"GraphQL",general:"General"};function E(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}function clsLabel(c){return CLSL[c]||c;}var vs=document.getElementById("vsearch"),vr=document.getElementById("vresults");document.addEventListener("keydown",function(e){if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();vs.focus();}});vs.addEventListener("input",async function(){var q=vs.value.trim().toLowerCase();if(q.length<2){vr.innerHTML="";return;}if(!SIDX){try{SIDX=await (await fetch("/api/search-index")).json();}catch(e){vr.innerHTML="<div class=\\"muted\\">Search index unavailable.</div>";return;}}var out=[];SIDX.forEach(function(l){var hits=l.tests.filter(function(t){return t.name.toLowerCase().indexOf(q)>-1||clsLabel(t.cls).toLowerCase().indexOf(q)>-1||t.cls.indexOf(q)>-1;});if(!hits.length&&l.name.toLowerCase().indexOf(q)>-1)hits=l.tests.slice(0,3);if(hits.length)out.push({l:l,hits:hits});});if(!out.length){vr.innerHTML="<div class=\\"muted\\" style=\\"padding-top:6px\\">No matching tests — try a shorter word, like sql, idor, xss, token, upload.</div>";return;}vr.innerHTML=out.slice(0,12).map(function(o){return "<div style=\\"padding:8px 0;border-top:1px solid #333a52\\"><b>LAB "+o.l.number+" — "+E(o.l.name)+"</b> <span class=\\"muted\\">"+o.hits.length+" matching test"+(o.hits.length>1?"s":"")+"</span> <a href=\\"/open?port="+o.l.port+"\\" target=\\"_blank\\"><button class=\\"go\\">Open lab ↗</button></a><div class=\\"muted\\">"+o.hits.slice(0,6).map(function(t){return E(t.name);}).join(" · ")+(o.hits.length>6?" · +"+(o.hits.length-6)+" more":"")+"</div></div>";}).join("")+(out.length>12?"<div class=\\"muted\\">…and "+(out.length-12)+" more labs — refine the search.</div>":"");});</' + 'script>' +
+    '<script>var SIDX=null;var CLSL={sqli:"SQL Injection",idor:"IDOR / Broken Access Control",xss:"Cross-Site Scripting (XSS)",csrf:"CSRF",ssrf:"SSRF",xxe:"XXE","file-upload":"File Upload","path-traversal":"Path Traversal",jwt:"JWT / Token Attacks","brute-force":"Brute Force","password-storage":"Password Storage","default-credentials":"Default Credentials","mass-assignment":"Mass Assignment","api-exposure":"Data Exposure","race-condition":"Race Condition","business-logic":"Business Logic","prompt-injection":"Prompt Injection / LLM","rce-injection":"RCE / Code Injection","open-redirect":"Open Redirect",misconfiguration:"Misconfiguration","auth-bypass":"Authentication",graphql:"GraphQL",nosql:"NoSQL Injection","prototype-pollution":"Prototype Pollution",general:"General"};function E(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}function clsLabel(c){return CLSL[c]||c;}var vs=document.getElementById("vsearch"),vr=document.getElementById("vresults");document.addEventListener("keydown",function(e){if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();vs.focus();}});vs.addEventListener("input",async function(){var q=vs.value.trim().toLowerCase();if(q.length<2){vr.innerHTML="";return;}if(!SIDX){try{SIDX=await (await fetch("/api/search-index")).json();}catch(e){vr.innerHTML="<div class=\\"muted\\">Search index unavailable.</div>";return;}}var out=[];SIDX.forEach(function(l){var hits=l.tests.filter(function(t){return t.name.toLowerCase().indexOf(q)>-1||clsLabel(t.cls).toLowerCase().indexOf(q)>-1||t.cls.indexOf(q)>-1;});if(!hits.length&&l.name.toLowerCase().indexOf(q)>-1)hits=l.tests.slice(0,3);if(hits.length)out.push({l:l,hits:hits});});if(!out.length){vr.innerHTML="<div class=\\"muted\\" style=\\"padding-top:6px\\">No matching tests — try a shorter word, like sql, idor, xss, token, upload.</div>";return;}vr.innerHTML=out.slice(0,12).map(function(o){return "<div style=\\"padding:8px 0;border-top:1px solid #333a52\\"><b>LAB "+o.l.number+" — "+E(o.l.name)+"</b> <span class=\\"muted\\">"+o.hits.length+" matching test"+(o.hits.length>1?"s":"")+"</span> <a href=\\"/open?port="+o.l.port+"\\" target=\\"_blank\\"><button class=\\"go\\">Open lab ↗</button></a><div class=\\"muted\\">"+o.hits.slice(0,6).map(function(t){return E(t.name);}).join(" · ")+(o.hits.length>6?" · +"+(o.hits.length-6)+" more":"")+"</div></div>";}).join("")+(out.length>12?"<div class=\\"muted\\">…and "+(out.length-12)+" more labs — refine the search.</div>":"");});</' + 'script>' +
     '<script>async function act(port,kind){await fetch("/api/"+kind+"?port="+port,{method:"POST"});setTimeout(refresh,600);}async function resetLab(port){if(!confirm("Reset this lab? Its saved progress, state and runtime database will be deleted so it starts completely fresh."))return;await fetch("/api/reset?port="+port,{method:"POST"});setTimeout(refresh,600);}var impF=document.getElementById("impFile");if(impF)impF.addEventListener("change",async function(){var f=impF.files[0];if(!f)return;try{var t=await f.text();var r=await (await fetch("/api/import-progress",{method:"POST",headers:{"Content-Type":"application/json"},body:t})).json();alert(r.ok?("Progress imported for "+r.imported+" lab(s)."):("Import failed: "+(r.error||"unknown error")));}catch(e){alert("Import failed — could not read the file.");}impF.value="";refresh();});async function refresh(){try{var j=await (await fetch("/api/labs")).json();j.labs.forEach(function(l){var el=document.getElementById("lab-"+l.port);if(!el)return;el.querySelector(".st").textContent=l.running?"● running":"○ stopped";el.querySelector(".st").style.color=l.running?"#43e97b":"";el.querySelector(".pct").textContent=l.done+"/"+l.total+" · "+l.pct+"%";el.querySelector(".bar>i").style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status;bg.style.color=l.statusColor;}});var td=0,tt=0;j.labs.forEach(function(l){td+=l.done;tt+=l.total;});var pc=tt?Math.floor(td/tt*100):0;var rf=document.getElementById("ringFg");if(rf)rf.style.strokeDashoffset=(238.8*(1-pc/100)).toFixed(1);var rp=document.getElementById("ringPct");if(rp)rp.textContent=pc+"%";var rd=document.getElementById("ringDone");if(rd)rd.textContent=td;var ca={};j.labs.forEach(function(l){ca[l.category]=ca[l.category]||{d:0,t:0};ca[l.category].d+=l.done;ca[l.category].t+=l.total;});Object.keys(ca).forEach(function(k){var pc2=ca[k].t?Math.floor(ca[k].d/ca[k].t*100):0;var cf=document.querySelector(".catfill[data-cat=\\""+k+"\\"]");if(cf)cf.style.width=pc2+"%";var ct=document.querySelector(".cattxt[data-cat=\\""+k+"\\"]");if(ct)ct.textContent=ca[k].d+"/"+ca[k].t+" · "+pc2+"%";});var cb=document.getElementById("contBtn");if(cb&&j.lastPort){var ll=null;j.labs.forEach(function(x){if(x.port===j.lastPort)ll=x;});if(ll){cb.style.display="";cb.href="/open?port="+ll.port;var bb=cb.querySelector("button");if(bb)bb.textContent="▶ Continue: LAB "+ll.number+" — "+ll.name+" ("+ll.pct+"%)";}}}catch(e){}}refresh();setInterval(refresh,4000);</' + 'script>';
-  return page('Dashboard', body);
+  return page('Dashboard', body + rsScript());
 }
 
 function logsPage(port){
@@ -238,9 +297,20 @@ function certificatesPage(){
         '<div class="bar" style="margin-top:8px"><i style="width:' + p.pct + '%"></i></div></div>';
     }
   }
+  let rsSection = '';
+  if (RS_LABS.length) {
+    let rsCards = '';
+    for (const lab of RS_LABS) {
+      const p = progressOf(lab);
+      rsCards += p.complete
+        ? '<div class="card" style="border-color:#7aa33c;background:linear-gradient(180deg,#26331a,#1d2333)"><b>\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><div class="muted">' + esc(lab.stack) + ' \u00b7 milestone completed 100%</div></div>'
+        : '<div class="card" style="opacity:.75"><b>\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><div class="muted">' + p.done + '/' + p.total + ' tests \u00b7 ' + p.pct + '% \u2014 milestone badge at 100%</div><div class="bar" style="margin-top:8px"><i style="width:' + p.pct + '%"></i></div></div>';
+    }
+    rsSection = '<h2 style="margin-top:28px">\ud83c\udf93 Real Stack Milestones</h2><div class="grid">' + rsCards + '</div>';
+  }
   return page('Certificates', '<p><a href="/">← Dashboard</a></p><h1>🏆 Certificate Gallery</h1>' +
     '<p class="muted">Every lab you finish to 100% earns a signed HexaCyberLab certificate. You have earned <b>' + earned.length + ' of ' + LABS.length + '</b> so far — they are all collected here, ready to view and print.</p>' +
-    '<div class="grid">' + cards + '</div>');
+    '<div class="grid">' + cards + '</div>' + rsSection);
 }
 function casesPage(){
   let cases = {}; try { cases = JSON.parse(fs.readFileSync(path.join(__dirname, 'case-studies.json'), 'utf8')); } catch (e) {}
@@ -274,11 +344,12 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(page('Starting lab', '<h1>▶ Starting LAB ' + lab.number + ' — ' + esc(lab.name) + '…</h1><p class="muted">One moment — sending you into the lab.</p><meta http-equiv="refresh" content="1.4;url=http://localhost:' + lab.port + to + '">'));
     }
-    if (p === '/api/search-index') return json(res, LABS.map(l => ({ number: l.number, name: l.name, port: l.port, category: l.category, tests: l.tests })));
+    if (p === '/api/search-index') return json(res, ALL_LABS.map(l => ({ number: l.number, name: l.name, port: l.port, category: l.category, tests: l.tests })));
+    if (p === '/api/rs-labs') return json(res, { labs: RS_LABS.map(l => { const pr = progressOf(l); return { number: l.number, name: l.name, port: l.port, running: isRunning(l.port), runtime: l.runtime || null, runtimeOk: runtimeOk(l), ...pr }; }) });
     if (p === '/api/labs') return json(res, { lastPort: readState().lastPort || null, labs: LABS.map(l => { const pr = progressOf(l); return { number: l.number, name: l.name, port: l.port, category: l.category, running: isRunning(l.port), ...pr }; }) });
     if (p === '/api/export-progress') {
       const labs = {};
-      for (const l of LABS) { try { labs[l.relPath] = JSON.parse(fs.readFileSync(path.join(ROOT, l.relPath, 'progress.json'), 'utf8')); } catch (e) { /* lab not started yet */ } }
+      for (const l of ALL_LABS) { try { labs[l.relPath] = JSON.parse(fs.readFileSync(path.join(ROOT, l.relPath, 'progress.json'), 'utf8')); } catch (e) { /* lab not started yet */ } }
       res.writeHead(200, { 'Content-Type': 'application/json', 'Content-Disposition': 'attachment; filename="hexacyberlab-progress.json"' });
       return res.end(JSON.stringify({ app: 'hexacyberlab-progress', version: 1, exportedAt: new Date().toISOString(), labs }, null, 2));
     }
@@ -288,7 +359,7 @@ const server = http.createServer((req, res) => {
         try {
           const j = JSON.parse(b || '{}');
           if (!j || typeof j !== 'object' || !j.labs || typeof j.labs !== 'object') return json(res, { ok: false, error: 'not a HexaCyberLab progress export' });
-          const known = new Map(LABS.map(l => [l.relPath, l]));
+          const known = new Map(ALL_LABS.map(l => [l.relPath, l]));
           let imported = 0;
           for (const rel of Object.keys(j.labs)) {
             const lab = known.get(rel); const prog = j.labs[rel];
@@ -312,6 +383,11 @@ const server = http.createServer((req, res) => {
         const dir = path.join(ROOT, lab.relPath);
         for (const f of fs.readdirSync(dir)) {
           if (f === 'progress.json' || f === 'progress.json.sig' || f === 'state.json' || /\.(db|sqlite|sqlite3)$/i.test(f)) { fs.rmSync(path.join(dir, f), { force: true }); removed.push(f); }
+        }
+        // Real Stack labs may keep their runtime store in a data/ folder (e.g. RS-09's JSON collections)
+        if (lab.rs) {
+          const dd = path.join(dir, 'data');
+          if (fs.existsSync(dd)) for (const f of fs.readdirSync(dd)) { fs.rmSync(path.join(dd, f), { force: true }); removed.push('data/' + f); }
         }
       } catch (e) { /* lab folder unreadable — report what was removed */ }
       return json(res, { ok: true, removed });
