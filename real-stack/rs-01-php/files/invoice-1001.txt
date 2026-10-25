@@ -1,0 +1,5 @@
+NordKart AS — Invoice 1001
+Customer: Lars Pettersen
+Item: Bergen Wool Throw x1
+Total: EUR 79.00
+Paid by card, 2026-09-28
