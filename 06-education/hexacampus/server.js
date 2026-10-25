@@ -17,7 +17,7 @@ const PORT = 3064;
 const HOST = '127.0.0.1';
 const DIR = __dirname;
 const PROGRESS_FILE = path.join(DIR, 'progress.json');
-const LOGO_BUF = fs.readFileSync(path.join(DIR, 'logo.png'));
+const LOGO_BUF = (() => { try { return fs.readFileSync(path.join(DIR, 'logo.png')); } catch (e) { return null; } })();
 
 // --- lab-system key material: encoded fragments, scattered (spec §7) ---
 const _eA = ['TC1YSA==', 'Ni01NQ==', 'NzdTSA=='];
@@ -490,6 +490,7 @@ const server = http.createServer(async (req, res) => {
     const method = req.method;
 
     if (p === '/logo.png') {
+      if (!LOGO_BUF) { res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found'); }
       res.writeHead(200, { 'Content-Type': 'image/png' });
       return res.end(LOGO_BUF);
     }
