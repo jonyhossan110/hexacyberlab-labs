@@ -35,6 +35,7 @@ function progressOf(lab){
   return { done, total, pct: total ? Math.floor(done/total*100) : 0, complete: !!pr.completedAt || (total > 0 && done >= total) };
 }
 function isRunning(port){ const c = children.get(port); return !!(c && c.proc && !c.proc.killed && c.proc.exitCode === null); }
+function fmtEst(min){ if (!min) return ''; const h = Math.floor(min / 60), m = min % 60; return h ? ('~' + h + 'h ' + (m ? m + 'm' : '').trim()).trim() : ('~' + m + 'm'); }
 function pushLine(port, line){
   const c = children.get(port); if (!c) return;
   const tagged = '[' + (byPort.get(port) ? byPort.get(port).name : port) + '] ' + line;
@@ -120,7 +121,7 @@ function dashboardPage(){
     for (const lab of labs) {
       const p = progressOf(lab); totalDone += p.done; totalTests += p.total;
       sections += '<div class="card" id="lab-' + lab.port + '"><b>LAB ' + lab.number + ' — ' + esc(lab.name) + '</b>' +
-        '<div class="muted">http://localhost:' + lab.port + ' · ' + p.total + ' tests</div>' +
+        '<div class="muted">http://localhost:' + lab.port + ' · ' + p.total + ' tests · ⏱ ' + fmtEst(lab.estMinutes) + ' · 🎚 ' + esc(lab.difficulty || 'Mixed') + '</div>' +
         '<div class="bar" style="margin:8px 0"><i style="width:' + p.pct + '%"></i></div>' +
         '<div style="display:flex;justify-content:space-between;align-items:center"><span class="pct">' + p.done + '/' + p.total + ' · ' + p.pct + '%</span>' +
         '<span class="st muted">checking…</span></div>' +
