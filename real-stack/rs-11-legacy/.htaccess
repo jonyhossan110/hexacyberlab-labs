@@ -1,0 +1,4 @@
+# BrightTravel old Apache rules (2013)
+# php_flag register_globals off   <- was on until 2013
+# php_flag display_errors on   <- "so Margaret can see what broke"
+Options -Indexes

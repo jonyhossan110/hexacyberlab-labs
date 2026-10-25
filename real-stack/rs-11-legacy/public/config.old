@@ -1,0 +1,9 @@
+<?php
+/* config.OLD — copy of inc/config.php kept in the web root during the 2013
+   MySQL-to-SQLite port, "in case we need to roll back". We never rolled back.
+   The database master password below is still the live one. */
+$db_host = 'localhost';
+$db_user = 'brighttravel';
+$db_pass = 'Sunny-Travel-DB-2012!';
+$admin_email = 'bookings@brighttravel.example';
+$BT_MARKER = 'BT-CONFIG-SECRET-7f3a9c';
