@@ -1,0 +1,6 @@
+Team offsite — reading & agenda (May)
+=====================================
+Reading picks: DDIA ch. 5–9, the Raft paper, our own March postmortem.
+Day 1: sync architecture review. Day 2: roadmap games + the kayak trip
+that Finance approved in a moment of weakness.
+Budget code for bookings: OFFSITE-MAY (expenses, not a secret).

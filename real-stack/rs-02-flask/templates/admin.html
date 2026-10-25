@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Workspace admin</h1>
+<p class="muted">{{ users|length }} users · {{ note_count }} notes total.</p>
+<table>
+<tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Password hash (MD5)</th></tr>
+{% for u in users %}<tr><td>{{ u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td><td><code>{{ u.password_hash }}</code></td></tr>{% endfor %}
+</table>
+<p class="muted">Support runbook: if a user is locked out, look up their hash here and compare it with the hash of the password they claim to have used. (Yes. Really. It is in the runbook.)</p>
+{% endblock %}

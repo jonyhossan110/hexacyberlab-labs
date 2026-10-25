@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>{% block title %}HexaNotes{% endblock %} · HexaNotes</title>
+<link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<div class="labbar"><span>⬢ <b>RS-02 · Real Stack Lab</b> — Python / Flask, the way real startups ship it</span>
+<span><a href="/lab/brief">📋 Brief</a><a href="/lab/tests">🎯 Tests {{ lab_done }}/{{ lab_total }}</a><a href="/lab/guide">📖 Guide</a><a href="/lab/review">🔍 Code Review</a><a href="/lab/logs">🛡 Logs</a><a href="/lab/complete">🏁 Complete ({{ lab_pct }}%)</a></span></div>
+<header class="shop"><a class="logo" href="/">HexaNotes</a><nav>
+{% if user %}<a href="/dashboard">My Notes</a><a href="/search">Search</a><a href="/note/new">＋ New note</a><a href="/profile">{{ user.name }}</a>{% if user.role == 'admin' %}<a href="/admin">Admin</a>{% endif %}<a href="/logout">Logout</a>{% else %}<a href="/login">Login</a><a href="/register">Register</a>{% endif %}
+</nav></header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer class="foot">HexaNotes Ltd — a training app. Nothing here is real: every account, note and password is fictional.</footer>
+</body></html>

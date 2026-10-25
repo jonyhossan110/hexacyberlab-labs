@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Blue-Team Corner{% endblock %}
+{% block content %}
+<h1>🛡 Blue-team corner — what the defence sees</h1>
+<p class="muted">This is the application's own log. After an attack, read your trail: which lines expose you, which look like ordinary note-taking? Real engagements are won and lost in this file.</p>
+<pre class="log">{% for line in lines %}{{ line }}{% endfor %}</pre>
+{% endblock %}

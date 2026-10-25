@@ -1,0 +1,8 @@
+HexaNotes — Getting Started
+===========================
+1. Write your first note with Ctrl+Shift+N or the New Note button.
+2. Drag a note onto a teammate's avatar to share it.
+3. Press Ctrl+K anywhere for the command palette.
+4. Attachments ride with the note: guides like this one live with the
+   note they belong to.
+Questions? Ask in the shared note "HexaNotes tips & shortcuts".

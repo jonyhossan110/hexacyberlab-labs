@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h1>Your profile</h1>
+<p><b>{{ profile_user.name }}</b> · {{ profile_user.email }} · role: {{ profile_user.role }}</p>
+{% if profile_user.avatar_url %}<img src="{{ profile_user.avatar_url }}" style="width:72px;height:72px;object-fit:cover;border-radius:50%">{% endif %}
+<p class="muted">Legacy password hash (shown for support diagnostics): <code>{{ profile_user.password_hash }}</code></p>
+{% if profile_user.bio %}<p>{{ profile_user.bio }}</p>{% endif %}
+{% if msg %}<p class="ok">{{ msg }}</p>{% endif %}
+<h2>Edit profile</h2>
+<form method="post" class="form">
+<label>Display name<input name="name" value="{{ profile_user.name }}"></label>
+<label>Bio<textarea name="bio" rows="3">{{ profile_user.bio }}</textarea></label>
+<label>Avatar URL<input name="avatar_url" value="{{ profile_user.avatar_url }}"></label>
+<label>Website<input name="website" value="{{ profile_user.website }}"></label>
+<button>Save profile</button>
+</form>
+{% endblock %}

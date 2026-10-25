@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ note.title }}{% endblock %}
+{% block content %}
+<p class="muted"><a href="/dashboard">← My notes</a></p>
+<h1>{{ note.title }}</h1>
+<p class="muted">by {{ note.author }} · {{ '🌐 Shared with the workspace' if note.shared else '🔒 Private' }} · {{ note.created }}</p>
+<div class="notebody">{{ note.body | safe }}</div>
+{% if note.attach_name %}<p>📎 Attachment: <a href="/attachment/{{ note.attach_name }}">{{ note.attach_name }}</a></p>{% endif %}
+{% endblock %}

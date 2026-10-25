@@ -1,0 +1,2 @@
+HEXANOTES-SSTI-PROOF-7f3a
+If you are reading this sentence inside the landing-page greeting, the template engine evaluated your input instead of printing it. That is the bug: user input reached render_template_string.

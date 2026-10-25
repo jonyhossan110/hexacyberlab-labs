@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Admins only{% endblock %}
+{% block content %}
+<h1>403 — admins only</h1>
+<p>This area is restricted to workspace administrators. Your role is <b>{{ user.role }}</b>.</p>
+{% endblock %}

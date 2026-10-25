@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Client Brief{% endblock %}
+{% block content %}
+<h1>📋 Engagement brief — HexaNotes Ltd</h1>
+<p><b>Client:</b> HexaNotes Ltd, a (fictional) ten-person SaaS startup selling a shared note-taking workspace. The app was built fast in 2021 on Flask and has grown paying customers faster than it has grown engineering discipline. A prospective enterprise customer has asked for a security assessment before signing. You are the assessor.</p>
+<p><b>Scope:</b> this application only — every route on this host and port. The seeded accounts and your own registered account are in scope. Other ports and other labs are <b>out of scope</b>, exactly as on a real engagement.</p>
+<p><b>Rules of engagement:</b> no denial of service, no deleting other users' notes beyond what a test needs to prove, and everything you do is logged (see the Logs page — the blue team is watching, like real life).</p>
+<p><b>How scoring works:</b> twelve tests are scored server-side the moment your action is detected — for example, the server notices when another user's private note is actually returned to you, or when a template you influenced is actually evaluated, not before. Work black-box first; open the Code Review only for your second pass.</p>
+<p><b>Deliverable:</b> at 100% you will write one mini finding in professional format on the Complete page, and you will also get the chance to prove how weak the password storage is by cracking one of the app's own hashes.</p>
+{% endblock %}

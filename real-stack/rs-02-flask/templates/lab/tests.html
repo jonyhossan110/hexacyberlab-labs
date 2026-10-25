@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Tests{% endblock %}
+{% block content %}
+<h1>🎯 RS-02 tests — {{ done_n }}/{{ tests_def|length }} passed</h1>
+<p class="muted">Detected server-side, the moment the action really happens. Hints point at the area, never the payload.</p>
+{% for t in tests_def %}<div class="review"><b>{{ '✅' if done.get(t.id) else '⬜' }} {{ t.name }}</b><p class="muted">{{ t.hint }}</p></div>{% endfor %}
+{% endblock %}

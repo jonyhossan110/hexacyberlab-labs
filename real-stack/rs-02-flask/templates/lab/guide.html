@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Real Website Guide{% endblock %}
+{% block content %}
+<h1>📖 Real Website Guide — recognising Flask / Werkzeug</h1>
+<h2>Fingerprint drill — prove it is Flask before you test</h2>
+<ul>
+<li><b>Server header:</b> <code>Werkzeug/3.x Python/3.12</code> — the dev server introduces itself by name and version.</li>
+<li><b>Default 404:</b> ask for a nonsense URL. Werkzeug's built-in "The requested URL was not found on the server" page is unmistakable.</li>
+<li><b>The debugger:</b> with debug mode on, an error page becomes an interactive traceback with source snippets — and <code>/console</code> appears. Trigger an error on purpose and look.</li>
+<li><b>Session cookie:</b> real Flask signs its session cookie (it starts with <code>eyJ</code>, base64 JSON, dot-separated signature). HexaNotes invented its own — decode yours and notice what is missing.</li>
+<li><b>Errors leak paths:</b> Python tracebacks print absolute file paths (<code>/srv/app/hexanotes/...</code>) — free reconnaissance about the deployment.</li>
+<li><b>WhatWeb:</b> <code>whatweb http://localhost:3202</code> from the gateway terminal names the stack in seconds.</li>
+</ul>
+<h2>What to test first on a real Flask site</h2>
+<ol>
+<li>Is debug mode on anywhere reachable? <code>/console</code> plus a leaked PIN is remote code execution.</li>
+<li>Anywhere user text is rendered: greetings, PDF/email generators, previews. Jinja2 evaluates <code>&#123;&#123; … &#125;&#125;</code> eagerly when a developer builds templates from strings.</li>
+<li>Session handling: weak or leaked SECRET_KEY means forged cookies on real Flask; homemade cookies (like this app's) mean no cryptography at all.</li>
+<li>Passwords: fast unsalted hashes (MD5/SHA1) still show up in startup codebases — one database leak and every password falls in minutes.</li>
+<li>The <code>next</code>/<code>redirect</code> parameter on login — the classic place for an open redirect that powers phishing.</li>
+</ol>
+<h2>Burp workflow for this lab</h2>
+<p>Proxy the app and map it with the site map. Work the search box and note ids in <b>Repeater</b>; decode and rebuild the session cookie by hand and watch the app accept it; compare the <b>Location</b> headers on login responses in <b>Comparer</b> when you vary the <code>next</code> parameter. For the debugger console, the PIN is printed in the app's own server output — the gateway's console view shows it, exactly the way real server logs leak into the wrong hands.</p>
+<h2>The professional habit</h2>
+<p>Note every flaw as: what, where, proof, impact. The Complete page will ask you to write one up properly — that write-up is what a client actually pays for.</p>
+{% endblock %}

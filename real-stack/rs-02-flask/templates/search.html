@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h1>Search notes</h1>
+<form action="/search" method="get" class="searchbar"><input name="q" value="{{ q }}" placeholder="Search titles and bodies"><button>Search</button></form>
+{% if err %}<pre class="err">{{ err }}</pre>{% endif %}
+{% if q %}<p class="muted">{{ rows|length }} result(s) for "{{ q }}"</p>{% endif %}
+{% for n in rows %}<div class="review"><b><a href="/note/{{ n.id }}">{{ n.title }}</a></b> <span class="muted">by {{ n.author }} · {{ 'shared' if n.shared else 'private' }}</span><p>{{ n.body[:220] | safe }}{% if n.body|length > 220 %}…{% endif %}</p></div>{% endfor %}
+{% endblock %}

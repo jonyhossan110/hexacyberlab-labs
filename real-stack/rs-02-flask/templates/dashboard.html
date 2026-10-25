@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}My Notes{% endblock %}
+{% block content %}
+<h1>Hei, {{ user.name.split(' ')[0] }} 📓</h1>
+<form action="/search" method="get" class="searchbar"><input name="q" placeholder="Search your notes and shared notes…"><button>Search</button></form>
+<p><a href="/note/new">＋ New note</a> · <a href="/invite">✉ Invite a teammate</a></p>
+<h2>Your notes</h2>
+{% if mine %}<div class="grid">
+{% for n in mine %}<a class="card" href="/note/{{ n.id }}"><h3>{{ n.title }}</h3><p>{{ n.body[:140] }}{% if n.body|length > 140 %}…{% endif %}</p><span class="muted">{{ '🌐 Shared' if n.shared else '🔒 Private' }}{% if n.attach_name %} · 📎 attachment{% endif %}</span></a>{% endfor %}
+</div>{% else %}<p>No notes yet — write your first one.</p>{% endif %}
+<h2>Shared with you</h2>
+{% if shared %}<div class="grid">
+{% for n in shared %}<a class="card" href="/note/{{ n.id }}"><h3>{{ n.title }}</h3><p>{{ n.body[:140] }}{% if n.body|length > 140 %}…{% endif %}</p><span class="muted">by {{ n.author }}{% if n.attach_name %} · 📎 attachment{% endif %}</span></a>{% endfor %}
+</div>{% else %}<p>Nothing shared with you yet.</p>{% endif %}
+{% endblock %}

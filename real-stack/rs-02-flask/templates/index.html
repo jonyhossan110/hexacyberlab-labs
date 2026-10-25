@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Your team's thinking, in one place{% endblock %}
+{% block content %}
+<section class="hero">
+<h1>Notes your whole team can think in</h1>
+<p>Capture in seconds, share with one drag, find anything ever written. HexaNotes is the notebook that grew up into a workspace.</p>
+<p><b>Try the welcome mat:</b> tell us your name and we will greet you properly.</p>
+<form method="post" class="searchbar"><input name="name" placeholder="Your name"><button>Say hello</button></form>
+{% if err %}<pre class="err">{{ err }}</pre>{% endif %}
+{% if greeting %}<div class="greeting">{{ greeting | safe }}</div>{% endif %}
+</section>
+<div class="grid">
+<div class="card"><h3>⚡ Quick capture</h3><p>Double-tap Space anywhere and the thought is saved before it evaporates.</p></div>
+<div class="card"><h3>👥 Shared by default</h3><p>Drag a note onto a teammate and it is theirs too. Knowledge stops living in one head.</p></div>
+<div class="card"><h3>🔎 Search everything</h3><p>Full-text search across every note you can see — titles, bodies, the lot.</p></div>
+<div class="card"><h3>📎 Attachments</h3><p>Guides, drafts and shortcut sheets ride along with the note they belong to.</p></div>
+</div>
+<p class="muted">Demo account for the lab: marcus.webb@example.net / Sunflower!23 — or register your own.</p>
+{% endblock %}
