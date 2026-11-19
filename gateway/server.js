@@ -66,12 +66,12 @@ function readProgress(lab){
 }
 function progressOf(lab){
   const pr = readProgress(lab);
-  if (!pr) return { done: 0, total: lab.testCount, pct: 0, complete: false, status: 'Locked', statusColor: '#9aa3bd' };
+  if (!pr) return { done: 0, total: lab.testCount, pct: 0, complete: false, status: 'Locked', statusColor: '#9AA3B8' };
   const done = Object.values(pr.tests).filter(Boolean).length;
   const total = lab.testCount || done;
   const complete = !!pr.completedAt || (total > 0 && done >= total);
   const status = complete ? 'Completed' : ((pr.unlocked || done > 0) ? 'In progress' : 'Locked');
-  const statusColor = complete ? '#43e97b' : (status === 'In progress' ? '#ffc857' : '#9aa3bd');
+  const statusColor = complete ? '#3FB68B' : (status === 'In progress' ? '#7C6CF0' : '#9AA3B8');
   return { done, total, pct: total ? Math.floor(done/total*100) : 0, complete, status, statusColor };
 }
 function isRunning(port){ const c = children.get(port); return !!(c && c.proc && !c.proc.killed && c.proc.exitCode === null); }
@@ -123,7 +123,7 @@ function stopLab(lab){
    servers (host must be localhost/127.0.0.1 AND the port must be a lab port
    from the programme index — anything else is rejected), a shared request
    history, a client-side decoder panel, and a per-lab Mission panel fed by
-   gateway/hints.json (objective + 4-level hint ladder + collapsed solution). */
+   gateway/hints.json (objective + free hint cards + collapsed solution). */
 let HINTS = {};
 try { HINTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'hints.json'), 'utf8')); } catch (e) { HINTS = {}; }
 const LAB_PORTS = new Set(ALL_LABS.map(l => l.port));
@@ -183,16 +183,16 @@ function md(mdText){
 }
 
 /* ---------------- pages ---------------- */
-const CSS = 'body{margin:0;font-family:Arial,sans-serif;background:#14141d;color:#e8ebf4}a{color:#9fc1ff}main{max-width:1180px;margin:0 auto;padding:24px 16px 80px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}.card{background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:13px 15px}.bar{height:9px;background:#333a52;border-radius:6px;overflow:hidden}.bar>i{display:block;height:100%;background:linear-gradient(90deg,#4f7cff,#9b5cff)}button{background:#2a3350;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px}button.go{background:linear-gradient(90deg,#4f7cff,#9b5cff);border:none;color:#fff;font-weight:bold}.muted{color:#9aa3bd;font-size:13px}.badge{font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid #46538a;margin-left:7px;vertical-align:middle;white-space:nowrap}pre{background:#0f1119;padding:14px;border-radius:10px;overflow:auto;line-height:1.5}code{background:#0f1119;padding:1px 6px;border-radius:5px}li{margin:4px 0;line-height:1.55}p{line-height:1.6}';
+const CSS = 'body{margin:0;font-family:-apple-system,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;background:#0B1020;color:#EDF0F7}a{color:#7C6CF0}main{max-width:1180px;margin:0 auto;padding:24px 16px 80px}h1,h2,h3{letter-spacing:-.01em}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px}.card{background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.35)}.bar{height:8px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}.bar>i{display:block;height:100%;background:#7C6CF0}button{background:#141B33;color:#EDF0F7;border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:13px}button:hover{background:#1A2242}button.go{background:linear-gradient(135deg,#7C5CFC,#5568E8);border:none;color:#fff;font-weight:600}button.go:hover{filter:brightness(1.08)}.muted{color:#9AA3B8;font-size:13px}.badge{font-size:11px;padding:2px 9px;border-radius:99px;border:1px solid rgba(255,255,255,.08);margin-left:7px;vertical-align:middle;white-space:nowrap}pre{background:#0E1428;border:1px solid rgba(255,255,255,.08);padding:14px;border-radius:10px;overflow:auto;line-height:1.5}code{background:#0E1428;padding:1px 6px;border-radius:5px}li{margin:4px 0;line-height:1.55}p{line-height:1.6}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid rgba(124,108,240,.45);outline-offset:1px}';
 function page(title, body){ return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + esc(title) + ' · HexaCyberLab Gateway</title><style>' + CSS + '</style></head><body><main>' + body + '</main></body></html>'; }
 
 function rsMilestoneCard(blockNo){
   const lab = RS_LABS.find(l => l.afterCategory === blockNo);
   if (!lab) return '';
   const p = progressOf(lab);
-  const note = runtimeOk(lab) ? '' : '<div style="color:#ffc857;font-size:13px;margin-top:4px">\u26a0 This milestone needs <b>' + esc(lab.needs || lab.runtime) + '</b>, which was not detected on this machine \u2014 see the lab README for the one-time setup. Nothing is broken; the lab simply cannot start until the runtime exists.</div>';
+  const note = runtimeOk(lab) ? '' : '<div style="color:#D9A45B;font-size:13px;margin-top:4px">\u26a0 This milestone needs <b>' + esc(lab.needs || lab.runtime) + '</b>, which was not detected on this machine \u2014 see the lab README for the one-time setup. Nothing is broken; the lab simply cannot start until the runtime exists.</div>';
   const depNote = (lab.runtime === 'python3' || /express/i.test(lab.stack || '')) ? '<div class="muted" style="margin-top:4px">First start installs its dependencies (one-time) \u2014 watch the Console, then Open the lab.</div>' : '';
-  return '<div id="rs-' + lab.port + '" style="margin:12px 0 4px;background:linear-gradient(90deg,#26331a,#1d2333);border:1px solid #7aa33c;border-radius:12px;padding:14px 18px">' +
+  return '<div id="rs-' + lab.port + '" style="margin:12px 0 4px;background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 18px;box-shadow:0 1px 2px rgba(0,0,0,.35)">' +
     '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div>' +
     '<b style="font-size:16px">\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><span class="badge" style="color:' + p.statusColor + '">' + (p.status === 'Locked' ? 'Not started' : p.status) + '</span>' +
     '<div class="muted">Real Stack milestone \u00b7 after LAB ' + (blockNo * 10) + ' \u00b7 ' + esc(lab.stack) + ' \u00b7 http://localhost:' + lab.port + ' \u00b7 ' + p.total + ' tests \u00b7 \u23f1 ' + fmtEst(lab.estMinutes) + ' \u00b7 \ud83c\udf9a ' + esc(lab.difficulty || 'Mixed') + '</div>' + note + depNote + '</div>' +
@@ -207,7 +207,7 @@ function rsMilestoneCard(blockNo){
 }
 function rsScript(){
   if (!RS_LABS.length) return '';
-  return '<script>async function rsRefresh(){try{var j=await (await fetch("/api/rs-labs")).json();j.labs.forEach(function(l){var el=document.getElementById("rs-"+l.port);if(!el)return;var st=el.querySelector(".st");if(st){st.textContent=l.running?"\u25cf running":"\u25cb stopped";st.style.color=l.running?"#43e97b":"";}var pc=el.querySelector(".pct");if(pc)pc.textContent=l.done+"/"+l.total+" \u00b7 "+l.pct+"%";var bar=el.querySelector(".bar>i");if(bar)bar.style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status==="Locked"?"Not started":l.status;bg.style.color=l.statusColor;}});}catch(e){}}rsRefresh();setInterval(rsRefresh,4000);</' + 'script>';
+  return '<script>async function rsRefresh(){try{var j=await (await fetch("/api/rs-labs")).json();j.labs.forEach(function(l){var el=document.getElementById("rs-"+l.port);if(!el)return;var st=el.querySelector(".st");if(st){st.textContent=l.running?"\u25cf running":"\u25cb stopped";st.style.color=l.running?"#3FB68B":"";}var pc=el.querySelector(".pct");if(pc)pc.textContent=l.done+"/"+l.total+" \u00b7 "+l.pct+"%";var bar=el.querySelector(".bar>i");if(bar)bar.style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status==="Locked"?"Not started":l.status;bg.style.color=l.statusColor;}});}catch(e){}}rsRefresh();setInterval(rsRefresh,4000);</' + 'script>';
 }
 
 function dashboardPage(){
@@ -241,17 +241,17 @@ function dashboardPage(){
     sections += rsMilestoneCard(ci + 1);
   }
   const lotd = LABS.slice().sort((a, b) => a.number - b.number)[Math.floor(Date.now() / 86400000) % LABS.length];
-  const lotdBanner = '<div style="background:linear-gradient(90deg,#2a2356,#1d2a4d);border:1px solid #6c5cff;border-radius:12px;padding:14px 18px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px"><div><div style="font-size:17px">🌟 <b>Lab of the Day — LAB ' + lotd.number + ': ' + esc(lotd.name) + '</b></div><div class="muted">A fresh pick every day · ⏱ ' + fmtEst(lotd.estMinutes) + ' · 🎚 ' + esc(lotd.difficulty) + ' · ' + lotd.tests.length + ' tests</div></div><a href="/open?port=' + lotd.port + '" target="_blank"><button class="go">Open today\'s lab ↗</button></a></div>';
+  const lotdBanner = '<div style="background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 18px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px"><div><div style="font-size:17px">🌟 <b>Lab of the Day — LAB ' + lotd.number + ': ' + esc(lotd.name) + '</b></div><div class="muted">A fresh pick every day · ⏱ ' + fmtEst(lotd.estMinutes) + ' · 🎚 ' + esc(lotd.difficulty) + ' · ' + lotd.tests.length + ' tests</div></div><a href="/open?port=' + lotd.port + '" target="_blank"><button class="go">Open today\'s lab ↗</button></a></div>';
   const body = '<h1>⬢ HexaCyberLab — Programme Dashboard</h1>' +
     '<p class="muted">110 labs · ' + totalTests + ' scored tests · <b>' + totalDone + ' passed overall</b>. Start a lab, open it, and watch the live console: every request the server receives, everything it accepts and sends back, and every test the moment it passes. Switch labs by changing the port in the URL — each port is a different lab, exactly like a different website.</p>' +
     '<p><a href="/workbench"><button class="go">🧰 Open Workbench</button></a> <a href="/business"><button>💼 Business Skills (unlockable)</button></a> <a href="/cases"><button>📖 Real-World Case Studies</button></a> <a href="/certificates"><button>🏆 Certificates</button></a> <a href="/random"><button>🎲 Random lab</button></a> <a href="/api/export-progress"><button>⬇ Export progress</button></a> <button onclick="document.getElementById(\'impFile\').click()">⬆ Import progress</button><input type="file" id="impFile" accept="application/json" style="display:none"></p>' +
     contChip +
     lotdBanner +
-    '<div style="background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><b>🔎 Find a vulnerability to practise</b><div class="muted" style="margin:4px 0 10px">Search ' + totalTests + ' tests across all 110 labs — try “SQL injection”, “IDOR”, “SSRF”, “race condition”… (press / to jump here)</div><input id="vsearch" type="text" placeholder="Type a vulnerability, e.g. IDOR" style="width:100%;box-sizing:border-box;background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:10px 12px;font-size:15px"><div id="vresults" style="margin-top:6px"></div></div>' +
-    '<div style="display:flex;gap:18px;align-items:center;background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="#333a52" stroke-width="9"/><circle id="ringFg" cx="46" cy="46" r="38" fill="none" stroke="#43e97b" stroke-width="9" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="' + (238.8 * (1 - (totalTests ? totalDone / totalTests : 0))).toFixed(1) + '" transform="rotate(-90 46 46)"/><text id="ringPct" x="46" y="51" text-anchor="middle" fill="#e8ebf4" font-size="17" font-weight="bold">' + (totalTests ? Math.floor(totalDone / totalTests * 100) : 0) + '%</text></svg><div><div style="font-size:19px"><b id="ringDone">' + totalDone + '</b> of ' + totalTests + ' tests passed across all 110 labs</div><div class="muted">Your whole programme at a glance — the ring fills as tests pass, and a lab card turns Completed at 100%.</div></div></div>' +
+    '<div style="background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;margin:16px 0"><b>🔎 Find a vulnerability to practise</b><div class="muted" style="margin:4px 0 10px">Search ' + totalTests + ' tests across all 110 labs — try “SQL injection”, “IDOR”, “SSRF”, “race condition”… (press / to jump here)</div><input id="vsearch" type="text" placeholder="Type a vulnerability, e.g. IDOR" style="width:100%;box-sizing:border-box;background:#0E1428;color:#EDF0F7;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px 12px;font-size:15px"><div id="vresults" style="margin-top:6px"></div></div>' +
+    '<div style="display:flex;gap:18px;align-items:center;background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;margin:16px 0"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle id="ringFg" cx="46" cy="46" r="38" fill="none" stroke="#3FB68B" stroke-width="9" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="' + (238.8 * (1 - (totalTests ? totalDone / totalTests : 0))).toFixed(1) + '" transform="rotate(-90 46 46)"/><text id="ringPct" x="46" y="51" text-anchor="middle" fill="#EDF0F7" font-size="17" font-weight="bold">' + (totalTests ? Math.floor(totalDone / totalTests * 100) : 0) + '%</text></svg><div><div style="font-size:19px"><b id="ringDone">' + totalDone + '</b> of ' + totalTests + ' tests passed across all 110 labs</div><div class="muted">Your whole programme at a glance — the ring fills as tests pass, and a lab card turns Completed at 100%.</div></div></div>' +
     sections +
-    '<script>var SIDX=null;var CLSL={sqli:"SQL Injection",idor:"IDOR / Broken Access Control",xss:"Cross-Site Scripting (XSS)",csrf:"CSRF",ssrf:"SSRF",xxe:"XXE","file-upload":"File Upload","path-traversal":"Path Traversal",jwt:"JWT / Token Attacks","brute-force":"Brute Force","password-storage":"Password Storage","default-credentials":"Default Credentials","mass-assignment":"Mass Assignment","api-exposure":"Data Exposure","race-condition":"Race Condition","business-logic":"Business Logic","prompt-injection":"Prompt Injection / LLM","rce-injection":"RCE / Code Injection","open-redirect":"Open Redirect",misconfiguration:"Misconfiguration","auth-bypass":"Authentication",graphql:"GraphQL",nosql:"NoSQL Injection","prototype-pollution":"Prototype Pollution",general:"General"};function E(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}function clsLabel(c){return CLSL[c]||c;}var vs=document.getElementById("vsearch"),vr=document.getElementById("vresults");document.addEventListener("keydown",function(e){if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();vs.focus();}});vs.addEventListener("input",async function(){var q=vs.value.trim().toLowerCase();if(q.length<2){vr.innerHTML="";return;}if(!SIDX){try{SIDX=await (await fetch("/api/search-index")).json();}catch(e){vr.innerHTML="<div class=\\"muted\\">Search index unavailable.</div>";return;}}var out=[];SIDX.forEach(function(l){var hits=l.tests.filter(function(t){return t.name.toLowerCase().indexOf(q)>-1||clsLabel(t.cls).toLowerCase().indexOf(q)>-1||t.cls.indexOf(q)>-1;});if(!hits.length&&l.name.toLowerCase().indexOf(q)>-1)hits=l.tests.slice(0,3);if(hits.length)out.push({l:l,hits:hits});});if(!out.length){vr.innerHTML="<div class=\\"muted\\" style=\\"padding-top:6px\\">No matching tests — try a shorter word, like sql, idor, xss, token, upload.</div>";return;}vr.innerHTML=out.slice(0,12).map(function(o){return "<div style=\\"padding:8px 0;border-top:1px solid #333a52\\"><b>LAB "+o.l.number+" — "+E(o.l.name)+"</b> <span class=\\"muted\\">"+o.hits.length+" matching test"+(o.hits.length>1?"s":"")+"</span> <a href=\\"/open?port="+o.l.port+"\\" target=\\"_blank\\"><button class=\\"go\\">Open lab ↗</button></a><div class=\\"muted\\">"+o.hits.slice(0,6).map(function(t){return E(t.name);}).join(" · ")+(o.hits.length>6?" · +"+(o.hits.length-6)+" more":"")+"</div></div>";}).join("")+(out.length>12?"<div class=\\"muted\\">…and "+(out.length-12)+" more labs — refine the search.</div>":"");});</' + 'script>' +
-    '<script>async function act(port,kind){await fetch("/api/"+kind+"?port="+port,{method:"POST"});setTimeout(refresh,600);}async function resetLab(port){if(!confirm("Reset this lab? Its saved progress, state and runtime database will be deleted so it starts completely fresh."))return;await fetch("/api/reset?port="+port,{method:"POST"});setTimeout(refresh,600);}var impF=document.getElementById("impFile");if(impF)impF.addEventListener("change",async function(){var f=impF.files[0];if(!f)return;try{var t=await f.text();var r=await (await fetch("/api/import-progress",{method:"POST",headers:{"Content-Type":"application/json"},body:t})).json();alert(r.ok?("Progress imported for "+r.imported+" lab(s)."):("Import failed: "+(r.error||"unknown error")));}catch(e){alert("Import failed — could not read the file.");}impF.value="";refresh();});async function refresh(){try{var j=await (await fetch("/api/labs")).json();j.labs.forEach(function(l){var el=document.getElementById("lab-"+l.port);if(!el)return;el.querySelector(".st").textContent=l.running?"● running":"○ stopped";el.querySelector(".st").style.color=l.running?"#43e97b":"";el.querySelector(".pct").textContent=l.done+"/"+l.total+" · "+l.pct+"%";el.querySelector(".bar>i").style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status;bg.style.color=l.statusColor;}});var td=0,tt=0;j.labs.forEach(function(l){td+=l.done;tt+=l.total;});var pc=tt?Math.floor(td/tt*100):0;var rf=document.getElementById("ringFg");if(rf)rf.style.strokeDashoffset=(238.8*(1-pc/100)).toFixed(1);var rp=document.getElementById("ringPct");if(rp)rp.textContent=pc+"%";var rd=document.getElementById("ringDone");if(rd)rd.textContent=td;var ca={};j.labs.forEach(function(l){ca[l.category]=ca[l.category]||{d:0,t:0};ca[l.category].d+=l.done;ca[l.category].t+=l.total;});Object.keys(ca).forEach(function(k){var pc2=ca[k].t?Math.floor(ca[k].d/ca[k].t*100):0;var cf=document.querySelector(".catfill[data-cat=\\""+k+"\\"]");if(cf)cf.style.width=pc2+"%";var ct=document.querySelector(".cattxt[data-cat=\\""+k+"\\"]");if(ct)ct.textContent=ca[k].d+"/"+ca[k].t+" · "+pc2+"%";});var cb=document.getElementById("contBtn");if(cb&&j.lastPort){var ll=null;j.labs.forEach(function(x){if(x.port===j.lastPort)ll=x;});if(ll){cb.style.display="";cb.href="/open?port="+ll.port;var bb=cb.querySelector("button");if(bb)bb.textContent="▶ Continue: LAB "+ll.number+" — "+ll.name+" ("+ll.pct+"%)";}}}catch(e){}}refresh();setInterval(refresh,4000);</' + 'script>';
+    '<script>var SIDX=null;var CLSL={sqli:"SQL Injection",idor:"IDOR / Broken Access Control",xss:"Cross-Site Scripting (XSS)",csrf:"CSRF",ssrf:"SSRF",xxe:"XXE","file-upload":"File Upload","path-traversal":"Path Traversal",jwt:"JWT / Token Attacks","brute-force":"Brute Force","password-storage":"Password Storage","default-credentials":"Default Credentials","mass-assignment":"Mass Assignment","api-exposure":"Data Exposure","race-condition":"Race Condition","business-logic":"Business Logic","prompt-injection":"Prompt Injection / LLM","rce-injection":"RCE / Code Injection","open-redirect":"Open Redirect",misconfiguration:"Misconfiguration","auth-bypass":"Authentication",graphql:"GraphQL",nosql:"NoSQL Injection","prototype-pollution":"Prototype Pollution",general:"General"};function E(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}function clsLabel(c){return CLSL[c]||c;}var vs=document.getElementById("vsearch"),vr=document.getElementById("vresults");document.addEventListener("keydown",function(e){if(e.key==="/"&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();vs.focus();}});vs.addEventListener("input",async function(){var q=vs.value.trim().toLowerCase();if(q.length<2){vr.innerHTML="";return;}if(!SIDX){try{SIDX=await (await fetch("/api/search-index")).json();}catch(e){vr.innerHTML="<div class=\\"muted\\">Search index unavailable.</div>";return;}}var out=[];SIDX.forEach(function(l){var hits=l.tests.filter(function(t){return t.name.toLowerCase().indexOf(q)>-1||clsLabel(t.cls).toLowerCase().indexOf(q)>-1||t.cls.indexOf(q)>-1;});if(!hits.length&&l.name.toLowerCase().indexOf(q)>-1)hits=l.tests.slice(0,3);if(hits.length)out.push({l:l,hits:hits});});if(!out.length){vr.innerHTML="<div class=\\"muted\\" style=\\"padding-top:6px\\">No matching tests — try a shorter word, like sql, idor, xss, token, upload.</div>";return;}vr.innerHTML=out.slice(0,12).map(function(o){return "<div style=\\"padding:8px 0;border-top:1px solid rgba(255,255,255,.08)\\"><b>LAB "+o.l.number+" — "+E(o.l.name)+"</b> <span class=\\"muted\\">"+o.hits.length+" matching test"+(o.hits.length>1?"s":"")+"</span> <a href=\\"/open?port="+o.l.port+"\\" target=\\"_blank\\"><button class=\\"go\\">Open lab ↗</button></a><div class=\\"muted\\">"+o.hits.slice(0,6).map(function(t){return E(t.name);}).join(" · ")+(o.hits.length>6?" · +"+(o.hits.length-6)+" more":"")+"</div></div>";}).join("")+(out.length>12?"<div class=\\"muted\\">…and "+(out.length-12)+" more labs — refine the search.</div>":"");});</' + 'script>' +
+    '<script>async function act(port,kind){await fetch("/api/"+kind+"?port="+port,{method:"POST"});setTimeout(refresh,600);}async function resetLab(port){if(!confirm("Reset this lab? Its saved progress, state and runtime database will be deleted so it starts completely fresh."))return;await fetch("/api/reset?port="+port,{method:"POST"});setTimeout(refresh,600);}var impF=document.getElementById("impFile");if(impF)impF.addEventListener("change",async function(){var f=impF.files[0];if(!f)return;try{var t=await f.text();var r=await (await fetch("/api/import-progress",{method:"POST",headers:{"Content-Type":"application/json"},body:t})).json();alert(r.ok?("Progress imported for "+r.imported+" lab(s)."):("Import failed: "+(r.error||"unknown error")));}catch(e){alert("Import failed — could not read the file.");}impF.value="";refresh();});async function refresh(){try{var j=await (await fetch("/api/labs")).json();j.labs.forEach(function(l){var el=document.getElementById("lab-"+l.port);if(!el)return;el.querySelector(".st").textContent=l.running?"● running":"○ stopped";el.querySelector(".st").style.color=l.running?"#3FB68B":"";el.querySelector(".pct").textContent=l.done+"/"+l.total+" · "+l.pct+"%";el.querySelector(".bar>i").style.width=l.pct+"%";var bg=el.querySelector(".badge");if(bg&&l.status){bg.textContent=l.status;bg.style.color=l.statusColor;}});var td=0,tt=0;j.labs.forEach(function(l){td+=l.done;tt+=l.total;});var pc=tt?Math.floor(td/tt*100):0;var rf=document.getElementById("ringFg");if(rf)rf.style.strokeDashoffset=(238.8*(1-pc/100)).toFixed(1);var rp=document.getElementById("ringPct");if(rp)rp.textContent=pc+"%";var rd=document.getElementById("ringDone");if(rd)rd.textContent=td;var ca={};j.labs.forEach(function(l){ca[l.category]=ca[l.category]||{d:0,t:0};ca[l.category].d+=l.done;ca[l.category].t+=l.total;});Object.keys(ca).forEach(function(k){var pc2=ca[k].t?Math.floor(ca[k].d/ca[k].t*100):0;var cf=document.querySelector(".catfill[data-cat=\\""+k+"\\"]");if(cf)cf.style.width=pc2+"%";var ct=document.querySelector(".cattxt[data-cat=\\""+k+"\\"]");if(ct)ct.textContent=ca[k].d+"/"+ca[k].t+" · "+pc2+"%";});var cb=document.getElementById("contBtn");if(cb&&j.lastPort){var ll=null;j.labs.forEach(function(x){if(x.port===j.lastPort)ll=x;});if(ll){cb.style.display="";cb.href="/open?port="+ll.port;var bb=cb.querySelector("button");if(bb)bb.textContent="▶ Continue: LAB "+ll.number+" — "+ll.name+" ("+ll.pct+"%)";}}}catch(e){}}refresh();setInterval(refresh,4000);</' + 'script>';
   return page('Dashboard', body + rsScript());
 }
 
@@ -259,8 +259,8 @@ function logsPage(port){
   const lab = byPort.get(Number(port));
   const body = '<p><a href="/">← Dashboard</a></p><h1>📟 Live server console — ' + (lab ? 'LAB ' + lab.number + ' ' + esc(lab.name) : port) + '</h1>' +
     '<p class="muted">Everything this lab\'s server receives, accepts and sends back — live, like watching a real production server. Requests you make in the lab (or with Burp / the Workbench / curl) appear here the moment they happen; passed tests are announced with a ★.</p>' +
-    '<div id="log" style="background:#0f1119;border:1px solid #333a52;border-radius:10px;padding:14px;font-family:Consolas,monospace;font-size:13px;height:65vh;overflow:auto;white-space:pre-wrap"></div>' +
-    '<script>var el=document.getElementById("log");var es=new EventSource("/api/logs?port=' + port + '");es.onmessage=function(e){var line=JSON.parse(e.data);var d=document.createElement("div");if(line.indexOf("★")>-1)d.style.color="#43e97b";d.textContent=line;el.appendChild(d);el.scrollTop=el.scrollHeight;};</' + 'script>';
+    '<div id="log" style="background:#0E1428;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;font-family:Consolas,monospace;font-size:13px;height:65vh;overflow:auto;white-space:pre-wrap"></div>' +
+    '<script>var el=document.getElementById("log");var es=new EventSource("/api/logs?port=' + port + '");es.onmessage=function(e){var line=JSON.parse(e.data);var d=document.createElement("div");if(line.indexOf("★")>-1)d.style.color="#3FB68B";d.textContent=line;el.appendChild(d);el.scrollTop=el.scrollHeight;};</' + 'script>';
   return page('Console', body);
 }
 
@@ -271,13 +271,20 @@ function workbenchPage(labPort){
   const opts = hintLabs.map(l => '<option value="' + esc(l.dir) + '" data-port="' + l.port + '"' + (lab && l.dir === lab.dir ? ' selected' : '') + '>LAB ' + l.number + ' — ' + esc(l.name) + '</option>').join('');
   const body = `<style>
 .wbgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:900px){.wbgrid{grid-template-columns:1fr}}
-.wbcard{background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.wbcard{background:#121830;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.35)}
 .wbcard h2{margin:0 0 10px;font-size:17px}
-.wbcard input[type=text],.wbcard select,.wbcard textarea{background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:8px 10px;font-size:13px;font-family:Consolas,monospace;box-sizing:border-box}
+.wbcard input[type=text],.wbcard select,.wbcard textarea{background:#0E1428;color:#EDF0F7;border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:8px 10px;font-size:13px;font-family:Consolas,monospace;box-sizing:border-box}
 .wbcard textarea{width:100%;resize:vertical}
 .wbrow{display:flex;gap:8px;flex-wrap:wrap}.wbrow>*{margin-bottom:8px}
 #wbRespBody,#wbRespHeaders{max-height:46vh;white-space:pre-wrap;word-break:break-word}
-#mSol{background:#0f1119;border:1px solid #7aa33c;border-radius:10px;padding:12px 14px;white-space:pre-wrap;line-height:1.6}
+#mHints details{background:#141B33;border:1px solid rgba(255,255,255,.08);border-radius:10px;margin:0 0 8px}
+#mHints summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;color:#EDF0F7;font-size:13.5px;list-style:none}
+#mHints summary::-webkit-details-marker{display:none}
+#mHints summary::after{content:"▾";color:#6B7386;font-size:11px;flex:0 0 auto;transition:transform .15s ease}
+#mHints details[open]>summary::after{transform:rotate(180deg)}
+#mHints summary:hover{background:rgba(255,255,255,.03)}
+#mHints details>p{margin:0;padding:0 14px 12px;color:#9AA3B8;font-size:13.5px;line-height:1.6}
+#mSol{background:#0E1428;border:1px solid rgba(255,255,255,.08);border-left:3px solid #7C6CF0;border-radius:10px;padding:12px 14px;white-space:pre-wrap;line-height:1.6}
 </style>
 <p><a href="/">← Dashboard</a></p>
 <h1>🧰 Hexa Workbench — Burp-lite for the labs</h1>
@@ -286,8 +293,8 @@ function workbenchPage(labPort){
 <div class="wbrow"><select id="mLab" onchange="missionLabChanged()">${opts}</select>
 <select id="mMode" onchange="setMode()"><option value="guided">Guided (hints available)</option><option value="unguided">Unguided (no help)</option></select></div>
 <p id="mObj" style="line-height:1.6"></p>
-<div id="mHelp"><div class="wbrow"><button class="go" id="mHintBtn" onclick="showHint()">💡 Show hint</button><button id="mSolBtn" onclick="toggleSol()">📖 Reveal solution</button></div>
-<ol id="mHints" style="line-height:1.65"></ol>
+<div id="mHelp"><div id="mHints"></div>
+<div class="wbrow"><button id="mSolBtn" onclick="toggleSol()">📖 Reveal solution</button></div>
 <div id="mSol" style="display:none"></div></div></div>
 <div class="wbgrid"><div>
 <div class="wbcard"><h2>✉️ Request builder</h2>
@@ -309,7 +316,7 @@ function workbenchPage(labPort){
 <pre id="decOut" style="white-space:pre-wrap;word-break:break-word"></pre></div>
 </div></div>
 <script>
-var HIST=[], M=null, hintLvl=0;
+var HIST=[], M=null;
 function E(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function pretty(b){try{return JSON.stringify(JSON.parse(b),null,2);}catch(e){return b;}}
 async function sendWb(){
@@ -329,7 +336,7 @@ async function sendWb(){
 async function loadHistory(){
   try{
     var j=await (await fetch("/api/wb/history")).json(); HIST=j.history||[];
-    document.getElementById("wbHist").innerHTML=HIST.length?HIST.map(function(h,i){return "<div style='padding:7px 0;border-top:1px solid #333a52;cursor:pointer' onclick='loadHist("+i+")'><b>"+E(h.method)+"</b> "+E(h.url)+" → <b>"+h.status+"</b> <span class='muted'>"+E(String(h.time).replace("T"," ").slice(0,19))+" · lab :"+h.labPort+"</span></div>";}).join(""):"<div class='muted'>No requests sent yet.</div>";
+    document.getElementById("wbHist").innerHTML=HIST.length?HIST.map(function(h,i){return "<div style='padding:7px 0;border-top:1px solid rgba(255,255,255,.08);cursor:pointer' onclick='loadHist("+i+")'><b>"+E(h.method)+"</b> "+E(h.url)+" → <b>"+h.status+"</b> <span class='muted'>"+E(String(h.time).replace("T"," ").slice(0,19))+" · lab :"+h.labPort+"</span></div>";}).join(""):"<div class='muted'>No requests sent yet.</div>";
   }catch(e){}
 }
 function loadHist(i){ var h=HIST[i]; if(!h) return; document.getElementById("wbMethod").value=h.method; document.getElementById("wbUrl").value=h.url; document.getElementById("wbHeaders").value=h.reqHeaders||""; document.getElementById("wbBody").value=h.reqBody||""; window.scrollTo(0,0); }
@@ -344,21 +351,14 @@ function decJwt(){ try{ var p=decIn().trim().split("."); if(p.length<2) throw ne
 function decHexE(){ var s=decIn(), o=""; for(var i=0;i<s.length;i++){ var h=s.charCodeAt(i).toString(16); o+=(h.length<2?"0":"")+h; } decOut(o); }
 function decHexD(){ try{ var s=decIn().replace(/\\s+/g,""); if(s.length%2||/[^0-9a-fA-F]/.test(s)) throw new Error("hex input must be an even number of hex digits"); var o=""; for(var i=0;i<s.length;i+=2) o+=String.fromCharCode(parseInt(s.substr(i,2),16)); decOut(o); }catch(e){ decOut("⚠ "+e.message); } }
 async function loadMission(){
-  var dir=document.getElementById("mLab").value; hintLvl=0;
+  var dir=document.getElementById("mLab").value;
   document.getElementById("mHints").innerHTML=""; var sol=document.getElementById("mSol"); sol.style.display="none"; sol.textContent="";
-  var btn=document.getElementById("mHintBtn"); btn.disabled=false; btn.textContent="💡 Show hint";
   try{
     var r=await fetch("/api/hints?lab="+encodeURIComponent(dir)); var j=await r.json();
     if(j.error){ document.getElementById("mObj").textContent="No mission authored for this lab yet."; M=null; return; }
     M=j; document.getElementById("mObj").textContent=j.objective||"";
-    btn.textContent="💡 Show hint 1 of "+(j.hints?j.hints.length:0);
+    document.getElementById("mHints").innerHTML=(j.hints||[]).map(function(h){ return "<details><summary><b>"+E(h.title||"Hint")+"</b></summary><p>"+E(h.body||"")+"</p></details>"; }).join("");
   }catch(e){ document.getElementById("mObj").textContent="Mission unavailable."; M=null; }
-}
-function showHint(){
-  if(!M||!M.hints||hintLvl>=M.hints.length) return;
-  var li=document.createElement("li"); li.textContent=M.hints[hintLvl]; document.getElementById("mHints").appendChild(li); hintLvl++;
-  var btn=document.getElementById("mHintBtn");
-  if(hintLvl>=M.hints.length){ btn.disabled=true; btn.textContent="All hints shown"; } else { btn.textContent="💡 Show hint "+(hintLvl+1)+" of "+M.hints.length; }
 }
 function toggleSol(){ var s=document.getElementById("mSol"); if(!M) return; if(s.style.display==="none"){ s.textContent=M.solution||""; s.style.display="block"; } else { s.style.display="none"; } }
 function setMode(){ var ung=document.getElementById("mMode").value==="unguided"; document.getElementById("mHelp").style.display=ung?"none":"block"; }
@@ -398,7 +398,7 @@ function certificatesPage(){
   for (const lab of LABS) {
     const p = progressOf(lab);
     if (p.complete) {
-      cards += '<div class="card" style="border-color:#8a6d3b;background:linear-gradient(180deg,#232033,#1d2333)"><b>🏆 LAB ' + lab.number + ' — ' + esc(lab.name) + '</b>' +
+      cards += '<div class="card" style="border-color:rgba(63,182,139,.45);background:#141B33"><b>🏆 LAB ' + lab.number + ' — ' + esc(lab.name) + '</b>' +
         '<div class="muted">' + p.total + ' tests · completed 100%</div>' +
         '<div style="margin-top:9px"><a href="/open?port=' + lab.port + '&to=/certificate" target="_blank"><button class="go">View certificate ↗</button></a></div></div>';
     } else {
@@ -413,7 +413,7 @@ function certificatesPage(){
     for (const lab of RS_LABS) {
       const p = progressOf(lab);
       rsCards += p.complete
-        ? '<div class="card" style="border-color:#7aa33c;background:linear-gradient(180deg,#26331a,#1d2333)"><b>\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><div class="muted">' + esc(lab.stack) + ' \u00b7 milestone completed 100%</div></div>'
+        ? '<div class="card" style="border-color:rgba(63,182,139,.45);background:#141B33"><b>\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><div class="muted">' + esc(lab.stack) + ' \u00b7 milestone completed 100%</div></div>'
         : '<div class="card" style="opacity:.75"><b>\ud83c\udf93 ' + lab.number + ' \u2014 ' + esc(lab.name) + '</b><div class="muted">' + p.done + '/' + p.total + ' tests \u00b7 ' + p.pct + '% \u2014 milestone badge at 100%</div><div class="bar" style="margin-top:8px"><i style="width:' + p.pct + '%"></i></div></div>';
     }
     rsSection = '<h2 style="margin-top:28px">\ud83c\udf93 Real Stack Milestones</h2><div class="grid">' + rsCards + '</div>';
