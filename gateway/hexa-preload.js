@@ -137,7 +137,7 @@ let pages = null;
 try { pages = require(path.join(__dirname, 'hexa-pages.js')); } catch (e) {}
 
 const TOOLBAR = '<div id="hexa-toolbar" style="position:fixed;left:14px;bottom:14px;z-index:9999;background:#1d2333;border:1px solid #46538a;border-radius:30px;padding:7px 10px;font-family:Arial,sans-serif;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.35);display:flex;gap:4px">' +
-  '<a target="_blank" rel="noopener" href="' + GATEWAY + '/terminal?lab=' + (LAB.port || '') + '" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">🖥 Terminal</a>' +
+  '<a target="_blank" rel="noopener" href="' + GATEWAY + '/workbench?lab=' + (LAB.port || '') + '" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">🧰 Workbench</a>' +
   '<a href="/hexa/debugger" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">🐛 Debugger</a>' +
   '<a href="/hexa/case-study" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">📖 Real Case</a>' +
   '<a href="/hexa/burp" style="color:#e8ebf4;text-decoration:none;padding:4px 9px;border-radius:20px">🧰 Burp</a>' +

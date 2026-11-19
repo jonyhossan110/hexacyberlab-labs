@@ -2,13 +2,14 @@
 /* HexaCyberLab Gateway — one command runs the whole 110-lab programme.
    node gateway/server.js  →  http://localhost:4000
    Dashboard (status/port/progress for all 110 labs) · start/stop labs ·
-   live server console (every request, every passed test) · Kali terminal ·
+   live server console (every request, every passed test) · Hexa Workbench
+   (Burp-lite request builder + per-lab mission hints) ·
    unlockable Business Skills · real-world case studies.
    Local only: binds 127.0.0.1. Never expose this port to a network. */
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawn, execFile, spawnSync } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const crypto = require('node:crypto');
 
 const ROOT = path.join(__dirname, '..');
@@ -54,7 +55,6 @@ function signProgressFile(labDir){
   } catch (e) { /* signing is best-effort; the lab guard explains failures */ }
 }
 const children = new Map(); // port -> {proc, lines:[], clients:Set}
-let wslDistros = [];
 
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function labDir(lab){ return path.join(ROOT, lab.relPath); }
@@ -117,36 +117,57 @@ function stopLab(lab){
   return { ok: false, error: 'not running under the gateway' };
 }
 
-/* ---------------- terminal ---------------- */
-const termSessions = new Map();
-function shellOptions(){
-  if (process.platform === 'win32') {
-    const opts = [{ id: 'powershell', label: 'PowerShell' }, { id: 'cmd', label: 'Command Prompt' }];
-    for (const d of wslDistros) opts.push({ id: 'wsl:' + d, label: 'WSL — ' + d + (/kali/i.test(d) ? ' (Kali Linux)' : '') });
-    return opts;
+/* ---------------- Hexa Workbench (Burp-lite) + missions ----------------
+   The Workbench replaces the old shell-in-a-tab: web testing is HTTP, so the
+   gateway now offers a request builder/repeater that can ONLY talk to lab
+   servers (host must be localhost/127.0.0.1 AND the port must be a lab port
+   from the programme index — anything else is rejected), a shared request
+   history, a client-side decoder panel, and a per-lab Mission panel fed by
+   gateway/hints.json (objective + 4-level hint ladder + collapsed solution). */
+let HINTS = {};
+try { HINTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'hints.json'), 'utf8')); } catch (e) { HINTS = {}; }
+const LAB_PORTS = new Set(ALL_LABS.map(l => l.port));
+const wbHistory = []; // newest first, max 100: {time, labPort, method, url, status, reqHeaders, reqBody}
+function wbParseHeaders(h){
+  const out = {};
+  if (!h) return out;
+  if (typeof h === 'object') { for (const k of Object.keys(h)) out[k] = String(h[k]); return out; }
+  for (const line of String(h).split(/\r?\n/)) {
+    const i = line.indexOf(':');
+    if (i > 0) out[line.slice(0, i).trim()] = line.slice(i + 1).trim();
   }
-  return [{ id: 'bash', label: 'bash (Kali / Linux terminal)' }, { id: 'sh', label: 'sh' }];
+  return out;
 }
-function startTerm(shellId, labPort){
-  const id = Math.random().toString(36).slice(2, 10);
-  let cmd, args;
-  const lab = byPort.get(Number(labPort));
-  const cwd = lab ? labDir(lab) : ROOT;
-  if (process.platform === 'win32') {
-    if (shellId && shellId.startsWith('wsl:')) { cmd = 'wsl.exe'; args = ['-d', shellId.slice(4), '--', 'bash', '-i']; }
-    else if (shellId === 'cmd') { cmd = 'cmd.exe'; args = []; }
-    else { cmd = 'powershell.exe'; args = ['-NoLogo']; }
-  } else { cmd = shellId === 'sh' ? 'sh' : 'bash'; args = ['-i']; }
-  const proc = spawn(cmd, args, { cwd, windowsHide: true, env: { ...process.env, HEXA_TARGET: lab ? 'http://localhost:' + lab.port : '', TERM: 'xterm-256color', PS1: '\\[\\033[01;32m\\]┌──(hexa㉿kali)-[\\w]\\n\\[\\033[01;32m\\]└─\\$\\[\\033[0m\\] ' } });
-  const sess = { proc, clients: new Set(), buf: '' };
-  termSessions.set(id, sess);
-  const emit = d => { sess.buf += d; if (sess.buf.length > 60000) sess.buf = sess.buf.slice(-60000); for (const res of sess.clients) { try { res.write('data: ' + JSON.stringify(d) + '\n\n'); } catch(e) {} } };
-  proc.stdout.on('data', d => emit(String(d)));
-  proc.stderr.on('data', d => emit(String(d)));
-  proc.on('exit', () => emit('\r\n[terminal closed]\r\n'));
-  const target = lab ? ('Target for this lab: http://localhost:' + lab.port + '  (try: curl -s http://localhost:' + lab.port + '/ | head)') : '';
-  setTimeout(() => emit('⬢ Hexa terminal — your real shell on YOUR machine. Test only your local labs.\r\n' + target + '\r\n'), 350);
-  return id;
+function wbSend(opts){
+  return new Promise((resolve) => {
+    let url;
+    try { url = new URL(String(opts.url || '')); } catch (e) { return resolve({ error: 'invalid URL' }); }
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return resolve({ error: 'only http/https URLs are allowed' });
+    if (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') return resolve({ error: 'Workbench targets must be localhost lab servers' });
+    const port = Number(url.port || (url.protocol === 'https:' ? 443 : 80));
+    if (!LAB_PORTS.has(port)) return resolve({ error: 'port ' + port + ' is not a lab port — the Workbench only talks to labs in the programme index' });
+    const method = String(opts.method || 'GET').toUpperCase();
+    const headers = wbParseHeaders(opts.headers);
+    for (const k of Object.keys(headers)) { const lk = k.toLowerCase(); if (lk === 'host' || lk === 'content-length') delete headers[k]; }
+    let body = (opts.body == null) ? '' : String(opts.body);
+    if (method === 'GET' || method === 'HEAD') body = '';
+    if (body) headers['Content-Length'] = Buffer.byteLength(body);
+    const lib = url.protocol === 'https:' ? require('node:https') : http;
+    const req = lib.request(url, { method, headers, timeout: 15000 }, (resp) => {
+      const chunks = []; let size = 0;
+      resp.on('data', c => { size += c.length; if (size <= 200 * 1024) chunks.push(c); });
+      resp.on('end', () => {
+        const buf = Buffer.concat(chunks);
+        wbHistory.unshift({ time: new Date().toISOString(), labPort: port, method, url: url.toString(), status: resp.statusCode, reqHeaders: typeof opts.headers === 'string' ? opts.headers : Object.entries(wbParseHeaders(opts.headers)).map(([k, v]) => k + ': ' + v).join('\n'), reqBody: body });
+        if (wbHistory.length > 100) wbHistory.length = 100;
+        resolve({ status: resp.statusCode, statusText: resp.statusMessage || '', headers: resp.headers, body: buf.toString('utf8'), truncated: size > buf.length });
+      });
+    });
+    req.on('timeout', () => { req.destroy(); resolve({ error: 'request timed out after 15s (is the lab running?)' }); });
+    req.on('error', e => resolve({ error: 'request failed: ' + e.message + ' (is the lab running?)' }));
+    if (body) req.write(body);
+    req.end();
+  });
 }
 
 /* ---------------- tiny markdown ---------------- */
@@ -223,7 +244,7 @@ function dashboardPage(){
   const lotdBanner = '<div style="background:linear-gradient(90deg,#2a2356,#1d2a4d);border:1px solid #6c5cff;border-radius:12px;padding:14px 18px;margin:16px 0;display:flex;justify-content:space-between;align-items:center;gap:14px"><div><div style="font-size:17px">🌟 <b>Lab of the Day — LAB ' + lotd.number + ': ' + esc(lotd.name) + '</b></div><div class="muted">A fresh pick every day · ⏱ ' + fmtEst(lotd.estMinutes) + ' · 🎚 ' + esc(lotd.difficulty) + ' · ' + lotd.tests.length + ' tests</div></div><a href="/open?port=' + lotd.port + '" target="_blank"><button class="go">Open today\'s lab ↗</button></a></div>';
   const body = '<h1>⬢ HexaCyberLab — Programme Dashboard</h1>' +
     '<p class="muted">110 labs · ' + totalTests + ' scored tests · <b>' + totalDone + ' passed overall</b>. Start a lab, open it, and watch the live console: every request the server receives, everything it accepts and sends back, and every test the moment it passes. Switch labs by changing the port in the URL — each port is a different lab, exactly like a different website.</p>' +
-    '<p><a href="/terminal"><button class="go">🖥 Open Kali Terminal</button></a> <a href="/business"><button>💼 Business Skills (unlockable)</button></a> <a href="/cases"><button>📖 Real-World Case Studies</button></a> <a href="/certificates"><button>🏆 Certificates</button></a> <a href="/random"><button>🎲 Random lab</button></a> <a href="/api/export-progress"><button>⬇ Export progress</button></a> <button onclick="document.getElementById(\'impFile\').click()">⬆ Import progress</button><input type="file" id="impFile" accept="application/json" style="display:none"></p>' +
+    '<p><a href="/workbench"><button class="go">🧰 Open Workbench</button></a> <a href="/business"><button>💼 Business Skills (unlockable)</button></a> <a href="/cases"><button>📖 Real-World Case Studies</button></a> <a href="/certificates"><button>🏆 Certificates</button></a> <a href="/random"><button>🎲 Random lab</button></a> <a href="/api/export-progress"><button>⬇ Export progress</button></a> <button onclick="document.getElementById(\'impFile\').click()">⬆ Import progress</button><input type="file" id="impFile" accept="application/json" style="display:none"></p>' +
     contChip +
     lotdBanner +
     '<div style="background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 18px;margin:16px 0"><b>🔎 Find a vulnerability to practise</b><div class="muted" style="margin:4px 0 10px">Search ' + totalTests + ' tests across all 110 labs — try “SQL injection”, “IDOR”, “SSRF”, “race condition”… (press / to jump here)</div><input id="vsearch" type="text" placeholder="Type a vulnerability, e.g. IDOR" style="width:100%;box-sizing:border-box;background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:10px 12px;font-size:15px"><div id="vresults" style="margin-top:6px"></div></div>' +
@@ -237,26 +258,115 @@ function dashboardPage(){
 function logsPage(port){
   const lab = byPort.get(Number(port));
   const body = '<p><a href="/">← Dashboard</a></p><h1>📟 Live server console — ' + (lab ? 'LAB ' + lab.number + ' ' + esc(lab.name) : port) + '</h1>' +
-    '<p class="muted">Everything this lab\'s server receives, accepts and sends back — live, like watching a real production server. Requests you make in the lab (or with Burp / the terminal / curl) appear here the moment they happen; passed tests are announced with a ★.</p>' +
+    '<p class="muted">Everything this lab\'s server receives, accepts and sends back — live, like watching a real production server. Requests you make in the lab (or with Burp / the Workbench / curl) appear here the moment they happen; passed tests are announced with a ★.</p>' +
     '<div id="log" style="background:#0f1119;border:1px solid #333a52;border-radius:10px;padding:14px;font-family:Consolas,monospace;font-size:13px;height:65vh;overflow:auto;white-space:pre-wrap"></div>' +
     '<script>var el=document.getElementById("log");var es=new EventSource("/api/logs?port=' + port + '");es.onmessage=function(e){var line=JSON.parse(e.data);var d=document.createElement("div");if(line.indexOf("★")>-1)d.style.color="#43e97b";d.textContent=line;el.appendChild(d);el.scrollTop=el.scrollHeight;};</' + 'script>';
   return page('Console', body);
 }
 
-function terminalPage(labPort){
-  const opts = shellOptions().map(o => '<option value="' + esc(o.id) + '">' + esc(o.label) + '</option>').join('');
-  const xtermCss = fs.existsSync(path.join(__dirname, 'vendor', 'xterm.css')) ? '<link rel="stylesheet" href="/vendor/xterm.css">' : '';
-  const xtermJs = fs.existsSync(path.join(__dirname, 'vendor', 'xterm.js')) ? '<script src="/vendor/xterm.js"></' + 'script>' : '';
-  const body = '<p><a href="/">← Dashboard</a></p><h1>🖥 Kali Terminal</h1>' +
-    '<p class="muted">A real shell on <b>your own machine</b>, in a browser tab — the Kali way of testing: <code>curl</code>, <code>nmap</code>, <code>sqlmap</code>, <code>whatweb</code>… Your target "websites" are the labs: <code>http://localhost:&lt;port&gt;</code>. Pick a shell and connect. (On Windows, WSL distros appear here when installed — install Kali with <code>wsl --install -d kali-linux</code>.)</p>' +
-    '<div style="display:flex;gap:8px;margin-bottom:10px"><select id="sh" style="background:#2a3350;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:8px">' + opts + '</select>' +
-    '<button class="go" onclick="connect()">Connect</button><span class="muted" id="st"></span></div>' +
-    '<div id="term" style="background:#0f1119;border:1px solid #333a52;border-radius:10px;height:62vh;padding:8px"></div>' +
-    xtermCss + xtermJs +
-    '<script>var term,es,sid,lineMode=false;function connect(){var sh=document.getElementById("sh").value;fetch("/api/term/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({shell:sh,lab:' + (labPort ? Number(labPort) : 'null') + '})}).then(function(r){return r.json()}).then(function(j){sid=j.id;document.getElementById("st").textContent="connected ("+sh+")";if(window.Terminal){term=new Terminal({cols:120,rows:34,theme:{background:"#0f1119"}});term.open(document.getElementById("term"));}else{document.getElementById("term").innerHTML="<pre id=\\"plain\\" style=\\"height:100%;overflow:auto;margin:0\\"></pre><input id=\\"pin\\" style=\\"width:100%;background:#0f1119;color:#e8ebf4;border:none;border-top:1px solid #333a52;padding:8px\\" placeholder=\\"type a command and press Enter\\">";lineMode=true;var pin=document.getElementById("pin");pin.focus();pin.addEventListener("keydown",function(e){if(e.key==="Enter"){send(pin.value+"\\r");document.getElementById("plain").textContent+="\\r\\n$ "+pin.value+"\\r\\n";pin.value="";}});}es=new EventSource("/api/term/stream?id="+sid);es.onmessage=function(e){var d=JSON.parse(e.data);if(term)term.write(d);else{var p=document.getElementById("plain");p.textContent+=d;p.scrollTop=p.scrollHeight;}};if(term)term.onData(send);});}function send(d){fetch("/api/term/input",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:sid,data:d})});}</' + 'script>';
-  return page('Kali Terminal', body);
+function workbenchPage(labPort){
+  const lab = byPort.get(Number(labPort)) || LABS[0];
+  const port = lab ? lab.port : 3000;
+  const hintLabs = Object.keys(HINTS).map(dir => ALL_LABS.find(l => l.dir === dir)).filter(Boolean);
+  const opts = hintLabs.map(l => '<option value="' + esc(l.dir) + '" data-port="' + l.port + '"' + (lab && l.dir === lab.dir ? ' selected' : '') + '>LAB ' + l.number + ' — ' + esc(l.name) + '</option>').join('');
+  const body = `<style>
+.wbgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:900px){.wbgrid{grid-template-columns:1fr}}
+.wbcard{background:#1d2333;border:1px solid #333a52;border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.wbcard h2{margin:0 0 10px;font-size:17px}
+.wbcard input[type=text],.wbcard select,.wbcard textarea{background:#0f1119;color:#e8ebf4;border:1px solid #46538a;border-radius:8px;padding:8px 10px;font-size:13px;font-family:Consolas,monospace;box-sizing:border-box}
+.wbcard textarea{width:100%;resize:vertical}
+.wbrow{display:flex;gap:8px;flex-wrap:wrap}.wbrow>*{margin-bottom:8px}
+#wbRespBody,#wbRespHeaders{max-height:46vh;white-space:pre-wrap;word-break:break-word}
+#mSol{background:#0f1119;border:1px solid #7aa33c;border-radius:10px;padding:12px 14px;white-space:pre-wrap;line-height:1.6}
+</style>
+<p><a href="/">← Dashboard</a></p>
+<h1>🧰 Hexa Workbench — Burp-lite for the labs</h1>
+<p class="muted">Craft and replay HTTP requests against the labs, Burp-Repeater style. The Workbench only talks to lab servers on this machine (localhost + a lab port from the programme index) — anything else is rejected. If a request fails, start the lab from the dashboard first. Requests you send also appear in the lab's live console.</p>
+<div class="wbcard"><h2>🎯 Mission</h2>
+<div class="wbrow"><select id="mLab" onchange="missionLabChanged()">${opts}</select>
+<select id="mMode" onchange="setMode()"><option value="guided">Guided (hints available)</option><option value="unguided">Unguided (no help)</option></select></div>
+<p id="mObj" style="line-height:1.6"></p>
+<div id="mHelp"><div class="wbrow"><button class="go" id="mHintBtn" onclick="showHint()">💡 Show hint</button><button id="mSolBtn" onclick="toggleSol()">📖 Reveal solution</button></div>
+<ol id="mHints" style="line-height:1.65"></ol>
+<div id="mSol" style="display:none"></div></div></div>
+<div class="wbgrid"><div>
+<div class="wbcard"><h2>✉️ Request builder</h2>
+<div class="wbrow"><select id="wbMethod"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option><option>PATCH</option></select>
+<input type="text" id="wbUrl" style="flex:1;min-width:260px" value="http://localhost:${port}/"></div>
+<textarea id="wbHeaders" rows="4" placeholder="Headers — one per line, e.g.&#10;Cookie: session=abc123&#10;Content-Type: application/json"></textarea>
+<textarea id="wbBody" rows="6" placeholder="Request body (sent for POST / PUT / PATCH / DELETE)"></textarea>
+<div class="wbrow" style="margin-top:8px"><button class="go" onclick="sendWb()">▶ Send request</button><span class="muted" id="wbStatus"></span></div></div>
+<div class="wbcard"><h2>📨 Response</h2>
+<div style="font-size:16px;margin-bottom:8px">Status: <b id="wbRespStatus">—</b></div>
+<div class="muted">Headers</div><pre id="wbRespHeaders"></pre>
+<div class="muted">Body</div><pre id="wbRespBody"></pre></div>
+</div><div>
+<div class="wbcard"><h2>🕘 History</h2><div id="wbHist"><div class="muted">No requests sent yet.</div></div>
+<p class="muted">Click an entry to reload that request into the builder.</p></div>
+<div class="wbcard"><h2>🔣 Decoder</h2>
+<textarea id="decIn" rows="5" placeholder="Paste text, Base64, hex or a JWT here"></textarea>
+<div class="wbrow" style="margin-top:8px"><button onclick="decB64e()">Base64 encode</button><button onclick="decB64d()">Base64 decode</button><button onclick="decUrlE()">URL encode</button><button onclick="decUrlD()">URL decode</button><button onclick="decJwt()">JWT decode</button><button onclick="decHexE()">Hex encode</button><button onclick="decHexD()">Hex decode</button></div>
+<pre id="decOut" style="white-space:pre-wrap;word-break:break-word"></pre></div>
+</div></div>
+<script>
+var HIST=[], M=null, hintLvl=0;
+function E(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function pretty(b){try{return JSON.stringify(JSON.parse(b),null,2);}catch(e){return b;}}
+async function sendWb(){
+  var st=document.getElementById("wbStatus"); st.textContent="sending…";
+  var payload={method:document.getElementById("wbMethod").value, url:document.getElementById("wbUrl").value.trim(), headers:document.getElementById("wbHeaders").value, body:document.getElementById("wbBody").value};
+  try{
+    var r=await fetch("/api/wb/send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    var j=await r.json();
+    if(j.error){ st.textContent="⚠ "+j.error; document.getElementById("wbRespStatus").textContent="—"; document.getElementById("wbRespHeaders").textContent=""; document.getElementById("wbRespBody").textContent=""; loadHistory(); return; }
+    st.textContent="";
+    document.getElementById("wbRespStatus").textContent=j.status+" "+j.statusText+(j.truncated?" · (body truncated at 200 KB)":"");
+    document.getElementById("wbRespHeaders").textContent=Object.keys(j.headers||{}).map(function(k){return k+": "+j.headers[k];}).join("\\n");
+    document.getElementById("wbRespBody").textContent=pretty(j.body||"");
+  }catch(e){ st.textContent="⚠ "+e.message; }
+  loadHistory();
 }
-
+async function loadHistory(){
+  try{
+    var j=await (await fetch("/api/wb/history")).json(); HIST=j.history||[];
+    document.getElementById("wbHist").innerHTML=HIST.length?HIST.map(function(h,i){return "<div style='padding:7px 0;border-top:1px solid #333a52;cursor:pointer' onclick='loadHist("+i+")'><b>"+E(h.method)+"</b> "+E(h.url)+" → <b>"+h.status+"</b> <span class='muted'>"+E(String(h.time).replace("T"," ").slice(0,19))+" · lab :"+h.labPort+"</span></div>";}).join(""):"<div class='muted'>No requests sent yet.</div>";
+  }catch(e){}
+}
+function loadHist(i){ var h=HIST[i]; if(!h) return; document.getElementById("wbMethod").value=h.method; document.getElementById("wbUrl").value=h.url; document.getElementById("wbHeaders").value=h.reqHeaders||""; document.getElementById("wbBody").value=h.reqBody||""; window.scrollTo(0,0); }
+function decOut(t){ document.getElementById("decOut").textContent=t; }
+function decIn(){ return document.getElementById("decIn").value; }
+function decB64e(){ try{ decOut(btoa(unescape(encodeURIComponent(decIn())))); }catch(e){ decOut("⚠ "+e.message); } }
+function decB64d(){ try{ decOut(decodeURIComponent(escape(atob(decIn().trim())))); }catch(e){ decOut("⚠ not valid Base64 ("+e.message+")"); } }
+function decUrlE(){ decOut(encodeURIComponent(decIn())); }
+function decUrlD(){ try{ decOut(decodeURIComponent(decIn())); }catch(e){ decOut("⚠ "+e.message); } }
+function b64url(s){ s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; return atob(s); }
+function decJwt(){ try{ var p=decIn().trim().split("."); if(p.length<2) throw new Error("a JWT has at least 2 dot-separated parts"); decOut("HEADER\\n"+pretty(b64url(p[0]))+"\\n\\nPAYLOAD\\n"+pretty(b64url(p[1]))); }catch(e){ decOut("⚠ not a decodable JWT ("+e.message+")"); } }
+function decHexE(){ var s=decIn(), o=""; for(var i=0;i<s.length;i++){ var h=s.charCodeAt(i).toString(16); o+=(h.length<2?"0":"")+h; } decOut(o); }
+function decHexD(){ try{ var s=decIn().replace(/\\s+/g,""); if(s.length%2||/[^0-9a-fA-F]/.test(s)) throw new Error("hex input must be an even number of hex digits"); var o=""; for(var i=0;i<s.length;i+=2) o+=String.fromCharCode(parseInt(s.substr(i,2),16)); decOut(o); }catch(e){ decOut("⚠ "+e.message); } }
+async function loadMission(){
+  var dir=document.getElementById("mLab").value; hintLvl=0;
+  document.getElementById("mHints").innerHTML=""; var sol=document.getElementById("mSol"); sol.style.display="none"; sol.textContent="";
+  var btn=document.getElementById("mHintBtn"); btn.disabled=false; btn.textContent="💡 Show hint";
+  try{
+    var r=await fetch("/api/hints?lab="+encodeURIComponent(dir)); var j=await r.json();
+    if(j.error){ document.getElementById("mObj").textContent="No mission authored for this lab yet."; M=null; return; }
+    M=j; document.getElementById("mObj").textContent=j.objective||"";
+    btn.textContent="💡 Show hint 1 of "+(j.hints?j.hints.length:0);
+  }catch(e){ document.getElementById("mObj").textContent="Mission unavailable."; M=null; }
+}
+function showHint(){
+  if(!M||!M.hints||hintLvl>=M.hints.length) return;
+  var li=document.createElement("li"); li.textContent=M.hints[hintLvl]; document.getElementById("mHints").appendChild(li); hintLvl++;
+  var btn=document.getElementById("mHintBtn");
+  if(hintLvl>=M.hints.length){ btn.disabled=true; btn.textContent="All hints shown"; } else { btn.textContent="💡 Show hint "+(hintLvl+1)+" of "+M.hints.length; }
+}
+function toggleSol(){ var s=document.getElementById("mSol"); if(!M) return; if(s.style.display==="none"){ s.textContent=M.solution||""; s.style.display="block"; } else { s.style.display="none"; } }
+function setMode(){ var ung=document.getElementById("mMode").value==="unguided"; document.getElementById("mHelp").style.display=ung?"none":"block"; }
+function missionLabChanged(){ var sel=document.getElementById("mLab"); var port=sel.options[sel.selectedIndex].getAttribute("data-port"); if(port) document.getElementById("wbUrl").value="http://localhost:"+port+"/"; loadMission(); }
+loadMission(); loadHistory();
+</script>`;
+  return page('Hexa Workbench', body);
+}
 function businessPage(){
   const dir = path.join(ROOT, 'business-skills');
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => /^\d{2}-.*\.md$/.test(f)).sort() : [];
@@ -326,7 +436,7 @@ const server = http.createServer((req, res) => {
   try {
     if (p === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(dashboardPage()); }
     if (p === '/logs') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(logsPage(u.searchParams.get('port'))); }
-    if (p === '/terminal') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(terminalPage(u.searchParams.get('lab'))); }
+    if (p === '/workbench') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(workbenchPage(u.searchParams.get('lab'))); }
     if (p === '/random') { const lab = LABS[Math.floor(Math.random() * LABS.length)]; res.writeHead(302, { Location: '/open?port=' + lab.port }); return res.end(); }
     if (p === '/business') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(businessPage()); }
     if (p.startsWith('/business/')) { const h = businessLesson(parseInt(p.split('/')[2], 10)); res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); return res.end(h || page('Not found', '<h1>Not found</h1>')); }
@@ -407,31 +517,23 @@ const server = http.createServer((req, res) => {
       else res.write('data: ' + JSON.stringify('Lab is not running under the gateway. Start it from the dashboard first.') + '\n\n');
       return;
     }
-    if (p === '/api/term/start' && req.method === 'POST') {
-      let b = ''; req.on('data', d => b += d); req.on('end', () => { const j = JSON.parse(b || '{}'); json(res, { id: startTerm(j.shell, j.lab) }); });
+    if (p === '/api/wb/send' && req.method === 'POST') {
+      let b = ''; req.on('data', d => { b += d; if (b.length > 1000000) req.destroy(); });
+      req.on('end', async () => { let j = {}; try { j = JSON.parse(b || '{}'); } catch (e) {} json(res, await wbSend(j)); });
       return;
     }
-    if (p === '/api/term/stream') {
-      const s = termSessions.get(u.searchParams.get('id'));
-      res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
-      if (s) { if (s.buf) res.write('data: ' + JSON.stringify(s.buf) + '\n\n'); s.clients.add(res); req.on('close', () => s.clients.delete(res)); }
-      return;
-    }
-    if (p === '/api/term/input' && req.method === 'POST') {
-      let b = ''; req.on('data', d => b += d); req.on('end', () => { const j = JSON.parse(b || '{}'); const s = termSessions.get(j.id); if (s) { try { s.proc.stdin.write(j.data); } catch (e) {} } json(res, { ok: true }); });
-      return;
+    if (p === '/api/wb/history') return json(res, { history: wbHistory });
+    if (p === '/api/hints') {
+      const entry = HINTS[u.searchParams.get('lab')];
+      if (!entry) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end(JSON.stringify({ error: 'no mission authored for this lab' })); }
+      return json(res, entry);
     }
     res.writeHead(404); res.end('not found');
   } catch (e) { res.writeHead(500); res.end('gateway error: ' + e.message); }
 });
 
-if (process.platform === 'win32') {
-  execFile('wsl.exe', ['-l', '-q'], { encoding: 'buffer' }, (err, out) => {
-    if (!err && out) wslDistros = out.toString('utf16le').split(/\r?\n/).map(s => s.replace(/\0/g, '').trim()).filter(Boolean);
-  });
-}
 server.listen(PORT, '127.0.0.1', () => {
   console.log('⬢ HexaCyberLab Gateway — http://localhost:' + PORT);
-  console.log('  110 labs · dashboard · live consoles · Kali terminal · business skills');
+  console.log('  110 labs · dashboard · live consoles · workbench + missions · business skills');
   console.log('  Local only (127.0.0.1). Keep it that way — this gateway can start programs on your machine.');
 });
