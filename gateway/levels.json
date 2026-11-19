@@ -1,0 +1,1212 @@
+{
+ "3000": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 4,
+  "learn": [
+   "SQL injection",
+   "Core web flaws",
+   "Login & account flaws"
+  ]
+ },
+ "3010": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Login & account flaws"
+  ]
+ },
+ "3011": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3012": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Login & account flaws"
+  ]
+ },
+ "3013": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3014": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.09,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Business logic flaws"
+  ]
+ },
+ "3015": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.14,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "Business logic flaws",
+   "SQL injection"
+  ]
+ },
+ "3016": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.95,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3017": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3018": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Mass assignment",
+   "CSRF"
+  ]
+ },
+ "3020": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3021": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Mass assignment"
+  ]
+ },
+ "3022": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3023": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3024": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3025": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.8,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3026": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3027": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3028": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3029": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3030": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.24,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "GraphQL flaws",
+   "Brute force"
+  ]
+ },
+ "3031": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3032": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3033": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3034": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.08,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3035": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.15,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "CSRF"
+  ]
+ },
+ "3036": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3037": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Brute force",
+   "Login & account flaws"
+  ]
+ },
+ "3038": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "SQL injection"
+  ]
+ },
+ "3039": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.84,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3040": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Prompt injection",
+   "Access control & IDOR"
+  ]
+ },
+ "3041": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3042": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3043": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.84,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3044": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3045": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.97,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "CSRF"
+  ]
+ },
+ "3046": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3047": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "CSRF"
+  ]
+ },
+ "3048": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3049": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3050": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.94,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3051": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3052": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "CSRF"
+  ]
+ },
+ "3053": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3054": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3055": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3056": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3057": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Business logic flaws"
+  ]
+ },
+ "3058": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "SQL injection"
+  ]
+ },
+ "3059": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3060": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3061": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3062": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3063": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3064": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3065": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3066": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3067": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3068": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3069": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.15,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3070": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 2,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "CSRF"
+  ]
+ },
+ "3071": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3072": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3073": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.06,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3074": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3075": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3076": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Login & account flaws"
+  ]
+ },
+ "3077": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3078": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.77,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "SQL injection"
+  ]
+ },
+ "3079": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3080": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3081": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3082": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3083": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3084": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3085": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3086": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.97,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3087": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3088": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Login & account flaws"
+  ]
+ },
+ "3089": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3090": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3091": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3092": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3093": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3094": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.04,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3095": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.07,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3096": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3097": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3098": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3099": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.08,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "SQL injection"
+  ]
+ },
+ "3100": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.08,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3101": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 2,
+  "learn": [
+   "Access control & IDOR",
+   "Core web flaws",
+   "SQL injection"
+  ]
+ },
+ "3102": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3103": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3104": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3105": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 1.96,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3106": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3107": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3108": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2.04,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3109": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3110": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 2,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3111": {
+  "level": 2,
+  "levelName": "Intermediate",
+  "score": 2,
+  "categoryStep": 4,
+  "learn": [
+   "Core web flaws",
+   "Cross-site scripting (XSS)",
+   "Access control & IDOR"
+  ]
+ },
+ "3112": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 8,
+  "learn": [
+   "Core web flaws",
+   "Business logic flaws",
+   "Access control & IDOR"
+  ]
+ },
+ "3113": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 9,
+  "learn": [
+   "Core web flaws",
+   "SQL injection",
+   "Cross-site scripting (XSS)"
+  ]
+ },
+ "3114": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 5,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3115": {
+  "level": 3,
+  "levelName": "Advanced",
+  "score": 2,
+  "categoryStep": 6,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3116": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.88,
+  "categoryStep": 1,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ },
+ "3117": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.12,
+  "categoryStep": 10,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "CSRF"
+  ]
+ },
+ "3118": {
+  "level": 1,
+  "levelName": "Beginner",
+  "score": 1.92,
+  "categoryStep": 3,
+  "learn": [
+   "Core web flaws",
+   "Login & account flaws",
+   "SQL injection"
+  ]
+ },
+ "3119": {
+  "level": 4,
+  "levelName": "Elite",
+  "score": 2.08,
+  "categoryStep": 7,
+  "learn": [
+   "Core web flaws",
+   "Access control & IDOR",
+   "SQL injection"
+  ]
+ }
+}
